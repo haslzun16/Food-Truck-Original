@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import SignIn from './src/Screens/SignIn'
 import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
-import BottomNavigation from './BottomNavigation'
+import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
 //import { decode, encode } from 'base-64'
 import * as firebase from 'firebase';
@@ -95,7 +95,7 @@ export default function App() {
                 try {
                     await firebase
                         .auth()
-                        .signInWithEmailAndPassword(data.email, data.password)
+                        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
                         .then((userCredential) => {
                             //signed in 
                             userToken = firebase.auth().currentUser.getIdToken();
@@ -115,7 +115,7 @@ export default function App() {
             signUp: async data => {
                 let userToken;
                 try {
-                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password);
+                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim());
                     const currentUser = firebase.auth().currentUser;
 
                     const db = firebase.firestore();
