@@ -96,12 +96,14 @@ export default function App() {
                 try {
                     await firebase
                         .auth()
+
                         .signInWithEmailAndPassword(data.email, data.password)
                         .then(data => {
                             userToken = data.user.uid
                         }).catch(error => {
                             console.log(error);
                         });
+
 
 
                 } catch (err) {
@@ -117,6 +119,7 @@ export default function App() {
             signUp: async data => {
                 let userToken;
                 try {
+
                     await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
                     .then(data => {
                         userToken = data.user.uid
@@ -124,6 +127,7 @@ export default function App() {
                         console.log(error);
                     });
                     
+
                 } catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }

@@ -1,3 +1,4 @@
+
 /**
  * Bottom Navigation
  *
@@ -80,5 +81,6 @@ class BottomNavigation extends Component {
         );
     }
 };
+
 
 export default BottomNavigation;

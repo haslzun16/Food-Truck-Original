@@ -13,23 +13,18 @@ import * as React from 'react';
 import { Button, View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Component } from 'react';
+import {AuthContext} from '../../App'
 //import { auth } from "../firebase";
 
 
 
 const Home = ({ navigation }) => {
 
+    const {signOut} = React.useContext(AuthContext);
 
-
-   /* const logout = () => {
-        auth
-            .signOut()
-            .then(() => console.log("User signed out"))
-        navigation.replace('SignIn');
-
-    }*/
-
-
+    const logout = () => {
+        signOut();
+    }
 
     return (
       <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
@@ -54,7 +49,7 @@ const Home = ({ navigation }) => {
             </View>
             </View>
 
-            {/*  <Button onPress={logout} title="Log Out" /> */}
+            {<Button onPress={logout} title="Sign Out" />}
       </LinearGradient>
         );
 }
