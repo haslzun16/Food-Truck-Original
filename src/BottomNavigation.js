@@ -1,3 +1,4 @@
+
 /**
  * Bottom Navigation
  *
@@ -10,10 +11,12 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import Home from './Screens/Home';
 import Map from './Screens/Map';
 import Events from './Screens/Events';
 import Orders from './Screens/Orders';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -78,5 +81,6 @@ class BottomNavigation extends Component {
         );
     }
 };
+
 
 export default BottomNavigation;

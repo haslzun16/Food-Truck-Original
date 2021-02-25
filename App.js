@@ -92,22 +92,26 @@ export default function App() {
                 // We will also need to handle errors if sign in failed
                 // After getting token, we need to persist the token using `AsyncStorage`
                 let userToken;
+                
                 try {
                     await firebase
                         .auth()
-                        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
-                        .then((userCredential) => {
-                            //signed in 
-                            userToken = firebase.auth().currentUser.getIdToken();
 
+                        .signInWithEmailAndPassword(data.email, data.password)
+                        .then(data => {
+                            userToken = data.user.uid
+                        }).catch(error => {
+                            console.log(error);
+                        });
 
-                            console.log(userToken);
-                        })
 
 
                 } catch (err) {
                     Alert.alert("There is something wrong!", err.message);
                 }
+                
+
+               console.log("I am Here Look Here " + userToken)
 
                 dispatch({ type: 'SIGN_IN', token: userToken });
             },
@@ -115,21 +119,32 @@ export default function App() {
             signUp: async data => {
                 let userToken;
                 try {
-                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim());
-                    const currentUser = firebase.auth().currentUser;
 
-                    const db = firebase.firestore();
-                    db.collection("users")
-                        .doc(currentUser.uid)
-                        .set({
-                            email: currentUser.email,
-                            firstName: data.fullName,
-                        });
-                    userToken = firebase.auth().currentUser.getIdToken();
-                    console.log(userToken);
+                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
+                    .then(data => {
+                        userToken = data.user.uid
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                    
+
                 } catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }
+                try{
+                    await firebase
+                    .database()
+                    .ref('users/' + userToken)
+                    .set({
+                        userId: userToken,
+                        Fullname: data.fullName,
+                        phone: data.phone
+                    });
+                }catch (err) {
+                    Alert.alert("There is something wrong!!!!", err.message);
+                }
+                
+
                 dispatch({ type: 'SIGN_IN', token: userToken });
             }
             
@@ -138,9 +153,9 @@ export default function App() {
     );
 
 
-firebase.auth().onAuthStateChanged((user) => {
-            console.log(user);
-})
+//firebase.auth().onAuthStateChanged((user) => {
+           //console.log(user);
+//})
 
     return (
         <AuthContext.Provider value={authContext}>
