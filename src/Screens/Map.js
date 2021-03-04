@@ -8,18 +8,28 @@
 
 
 
-import * as React from 'react';
+//import * as React from 'react';
+import React from "react";
 import { Button, View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+//import { LinearGradient } from 'expo-linear-gradient';
 import { Component } from 'react';
+import MapView from "react-native-maps";
 
 
 class Map extends Component {
     render() {
         return (
-            <View>
-                <Text> Map </Text>
-            </View>
+            <MapView
+                style={{
+                    flex: 1
+                }}
+                initialRegion={{
+                    latitude: 37.78825,
+                    longitude: -122.4324,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                }}
+            />
         );
     }
 }
