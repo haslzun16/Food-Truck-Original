@@ -5,6 +5,7 @@ import database from "firebase/database";
 const firebaseConfig = {
   apiKey: "AIzaSyBxGHYixNRHXakbnHjsw9qKcQjsb0JssUI",
   authDomain: "foodtruck-a92cc.firebaseapp.com",
+  databaseURL: "https://foodtruck-a92cc-default-rtdb.firebaseio.com/",
   projectId: "foodtruck-a92cc",
   storageBucket: "foodtruck-a92cc.appspot.com",
   messagingSenderId: "233124233438",

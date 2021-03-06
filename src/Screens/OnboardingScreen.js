@@ -9,6 +9,7 @@
 import * as React from 'react';
 import { Text, Image, TouchableOpacity } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
+import { AuthContext } from '../../App'
 
 //Done button
 const Done = ({ ...props }) => (
@@ -20,11 +21,16 @@ const Done = ({ ...props }) => (
 );
 
 function OnboardingScreen({ navigation }) {
+    const {skip} = React.useContext(AuthContext);
+
+
+
+
     return (
         <Onboarding
             DoneButtonComponent={Done}
-            onSkip={() => navigation.replace("SignIn")} //If Skip button clicked go to sign in page and replace
-            onDone={() => navigation.replace("SignIn")} //If Done button clicked go to sign in page and replace
+            onSkip={() => skip()} //If Skip button clicked go to sign in page and replace
+            onDone={() => skip()} //If Done button clicked go to sign in page and replace
             pages={[
                 //First Page
                 {

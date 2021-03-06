@@ -48,6 +48,7 @@ export default function App() {
                         ...prevState,
                         isSignout: false,
                         userToken: action.token,
+                        isLoading: false,
                     };
                 case 'SIGN_OUT':
                     return {
@@ -55,6 +56,10 @@ export default function App() {
                         isSignout: true,
                         userToken: null,
                     };
+                case 'SKIP':
+                    return{
+                        isLoading: false,
+                    }
 
             }
         },
@@ -65,25 +70,25 @@ export default function App() {
         }
     );
 
-    React.useEffect(() => {
-        // Fetch the token from storage then navigate to our appropriate place
-        const bootstrapAsync = async () => {
-            let userToken;
+    // React.useEffect(() => {
+    //     // Fetch the token from storage then navigate to our appropriate place
+    //     const bootstrapAsync = async () => {
+    //         let userToken;
 
-            try {
-                userToken = await firebase.auth().currentUser.getIdTokenResult();
-            } catch (err) {
-                Alert.alert("Restoring token failed");
-            }
+    //         try {
+    //             userToken = await firebase.auth().currentUser.getIdTokenResult();
+    //         } catch (err) {
+    //             Alert.alert("Restoring token failed");
+    //         }
 
-            // After restoring token, we may need to validate it in production apps
+    //         // After restoring token, we may need to validate it in production apps
 
-            // This will switch to the App screen or Auth screen and this loading
-            // screen will be unmounted and thrown away.
-            dispatch({ type: 'RESTORE_TOKEN', token: userToken });
-        };
-        bootstrapAsync();
-    }, []);
+    //         // This will switch to the App screen or Auth screen and this loading
+    //         // screen will be unmounted and thrown away.
+    //         dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+    //     };
+    //     bootstrapAsync();
+    // }, []);
 
     const authContext = React.useMemo(
         () => ({
@@ -114,8 +119,10 @@ export default function App() {
                 dispatch({ type: 'SIGN_IN', token: userToken });
             },
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
+            skip:() => dispatch({ type: 'SKIP' }),
             signUp: async data => {
                 let userToken;
+                let reference;
                 try {
                     await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
                     .then(data => {
@@ -128,9 +135,15 @@ export default function App() {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }
                 try{
+                    if(data.isVender == true){
+                        reference = 'vender/'
+                    }
+                    else{
+                        reference = 'users/'
+                    }
                     await firebase
                     .database()
-                    .ref('users/' + userToken)
+                    .ref(reference + userToken)
                     .set({
                         userId: userToken,
                         Fullname: data.fullName,
@@ -157,17 +170,21 @@ export default function App() {
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
                 <Stack.Navigator>
-                    {state.isLoading ? (
+                    { state.userToken == null ? (
+                        state.isLoading ? (
+                        
                         <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
-                    ) : state.userToken == null ? (
-                        <>
-                                <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                                <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
-                        </>
+                        
+                        ) :(
+                            <>
+                            <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                            <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+                            </>
+                    )
                         ) : (
                                 <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
                             )}
-                    <Stack.Screen name="Account" component={Account} options={{ headerShown: false }} />
+                    
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>
