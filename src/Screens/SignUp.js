@@ -21,13 +21,14 @@ const SignUpoptions = [
 ];
 
 export default function SignUp({ navigation }) {
-    const [appear, disappear] = useState(false);
+   
     const [phone, setPhone] = useState("");
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmpassword, setConfirmPassword] = useState("");
+    const [isVender, notVendor] = useState(false);
 
 
     const { signUp } = React.useContext(AuthContext);
@@ -42,7 +43,7 @@ export default function SignUp({ navigation }) {
             return
         }
 
-        signUp({ fullName, email, password, phone});
+        signUp({ fullName, email, password, phone, isVender});
 
     }
    
@@ -75,7 +76,7 @@ export default function SignUp({ navigation }) {
                         <SwitchSelector
                             options={SignUpoptions}
                             initial={0}
-                            onPress={() => disappear(!appear)}
+                            onPress={() => notVendor(!isVender)}
                             buttonColor='#FEAD44'
                         />
                     </View>
@@ -93,7 +94,7 @@ export default function SignUp({ navigation }) {
 
                         <TextInput style={styles.textInput2} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
 
-                        {appear ? (
+                        {isVender ? (
                             <TextInput
                             style={styles.textInput2}
                             placeholder='Phone Number'
