@@ -102,7 +102,7 @@ export default function App() {
                     await firebase
                         .auth()
 
-                        .signInWithEmailAndPassword(data.email, data.password)
+                        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
                         .then(data => {
                             userToken = data.user.uid
                         }).catch(error => {
@@ -127,7 +127,7 @@ export default function App() {
                 let reference;
                 try {
 
-                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
+                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim())
                     .then(data => {
                         userToken = data.user.uid
                     }).catch(error => {
