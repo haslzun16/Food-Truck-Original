@@ -50,9 +50,6 @@ export default function SignUp({ navigation }) {
 
 
 
-
-
-
     return (
         <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
             <View>

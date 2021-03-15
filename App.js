@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import SignIn from './src/Screens/SignIn'
 import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
-import BottomNavigation from './BottomNavigation'
+import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
 //import { decode, encode } from 'base-64'
 import * as firebase from 'firebase';
@@ -48,6 +48,7 @@ export default function App() {
                         ...prevState,
                         isSignout: false,
                         userToken: action.token,
+                        isLoading: false
                     };
                 case 'SIGN_OUT':
                     return {
@@ -65,25 +66,25 @@ export default function App() {
         }
     );
 
-    React.useEffect(() => {
-        // Fetch the token from storage then navigate to our appropriate place
-        const bootstrapAsync = async () => {
-            let userToken;
+    // React.useEffect(() => {
+    //     // Fetch the token from storage then navigate to our appropriate place
+    //     const bootstrapAsync = async () => {
+    //         let userToken;
 
-            try {
-                userToken = await firebase.auth().currentUser.getIdTokenResult();
-            } catch (err) {
-                Alert.alert("Restoring token failed");
-            }
+    //         try {
+    //             userToken = await firebase.auth().currentUser.getIdTokenResult();
+    //         } catch (err) {
+    //             Alert.alert("Restoring token failed");
+    //         }
 
-            // After restoring token, we may need to validate it in production apps
+    //         // After restoring token, we may need to validate it in production apps
 
-            // This will switch to the App screen or Auth screen and this loading
-            // screen will be unmounted and thrown away.
-            dispatch({ type: 'RESTORE_TOKEN', token: userToken });
-        };
-        bootstrapAsync();
-    }, []);
+    //         // This will switch to the App screen or Auth screen and this loading
+    //         // screen will be unmounted and thrown away.
+    //         dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+    //     };
+    //     bootstrapAsync();
+    // }, []);
 
     const authContext = React.useMemo(
         () => ({
@@ -147,7 +148,10 @@ firebase.auth().onAuthStateChanged((user) => {
             <NavigationContainer>
                 <Stack.Navigator>
                     {state.isLoading ? (
+                        <>
                         <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
+                        <Stack.Screen name ="SignIn" component = {SignIn} options = {{ headerShown: false }}/>
+                        </>
                     ) : state.userToken == null ? (
                         <>
                                 <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
