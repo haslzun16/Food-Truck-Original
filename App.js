@@ -48,7 +48,7 @@ export default function App() {
                         ...prevState,
                         isSignout: false,
                         userToken: action.token,
-                        isLoading: false
+                        isLoading: false,
                     };
                 case 'SIGN_OUT':
                     return {
@@ -56,6 +56,10 @@ export default function App() {
                         isSignout: true,
                         userToken: null,
                     };
+                case 'SKIP':
+                    return{
+                        isLoading: false,
+                    }
 
             }
         },
@@ -93,44 +97,67 @@ export default function App() {
                 // We will also need to handle errors if sign in failed
                 // After getting token, we need to persist the token using `AsyncStorage`
                 let userToken;
+                
                 try {
                     await firebase
                         .auth()
-                        .signInWithEmailAndPassword(data.email, data.password)
-                        .then((userCredential) => {
-                            //signed in 
-                            userToken = firebase.auth().currentUser.getIdToken();
 
+                        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
+                        .then(data => {
+                            userToken = data.user.uid
+                        }).catch(error => {
+                            console.log(error);
+                        });
 
-                            console.log(userToken);
-                        })
 
 
                 } catch (err) {
                     Alert.alert("There is something wrong!", err.message);
                 }
+                
+
+               console.log("I am Here Look Here " + userToken)
 
                 dispatch({ type: 'SIGN_IN', token: userToken });
             },
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
+            skip:() => dispatch({ type: 'SKIP' }),
             signUp: async data => {
                 let userToken;
+                let reference;
                 try {
-                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password);
-                    const currentUser = firebase.auth().currentUser;
 
-                    const db = firebase.firestore();
-                    db.collection("users")
-                        .doc(currentUser.uid)
-                        .set({
-                            email: currentUser.email,
-                            firstName: data.fullName,
-                        });
-                    userToken = firebase.auth().currentUser.getIdToken();
-                    console.log(userToken);
+                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim())
+                    .then(data => {
+                        userToken = data.user.uid
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                    
+
                 } catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }
+                try{
+                    if(data.isVender == true){
+                        reference = 'vender/'
+                    }
+                    else{
+                        reference = 'users/'
+                    }
+                    await firebase
+                    .database()
+                    .ref(reference + userToken)
+                    .set({
+                        userId: userToken,
+                        Fullname: data.fullName,
+                        phone: data.phone
+                    });
+                }catch (err) {
+                    Alert.alert("There is something wrong!!!!", err.message);
+                }
+                
+
                 dispatch({ type: 'SIGN_IN', token: userToken });
             }
             
@@ -139,28 +166,29 @@ export default function App() {
     );
 
 
-firebase.auth().onAuthStateChanged((user) => {
-            console.log(user);
-})
+//firebase.auth().onAuthStateChanged((user) => {
+           //console.log(user);
+//})
 
     return (
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
                 <Stack.Navigator>
-                    {state.isLoading ? (
-                        <>
+                    { state.userToken == null ? (
+                        state.isLoading ? (
+                        
                         <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name ="SignIn" component = {SignIn} options = {{ headerShown: false }}/>
-                        </>
-                    ) : state.userToken == null ? (
-                        <>
-                                <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                                <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
-                        </>
+                        
+                        ) :(
+                            <>
+                            <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                            <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+                            </>
+                    )
                         ) : (
                                 <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
                             )}
-                    <Stack.Screen name="Account" component={Account} options={{ headerShown: false }} />
+                    
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>
