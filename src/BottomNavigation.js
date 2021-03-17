@@ -10,11 +10,11 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Home from './src/Screens/Homee';
-import Map from './src/Screens/Map';
-import Events from './src/Screens/Events';
-import Orders from './src/Screens/Orders';
-import MyPage from './src/Screens/MyPage';
+import Home from './Screens/Homee';
+import Map from './Screens/Map';
+import Events from './Screens/Events';
+import Orders from './Screens/Orders';
+import MyPage from './Screens/MyPage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
