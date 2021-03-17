@@ -7,6 +7,10 @@ import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
 import BottomNavigation from './BottomNavigation'
 import Account from './src/Screens/Account'
+import FoodTruckDetails from './src/Screens/FoodTruckDetails';
+import EditMyPage from './src/Screens/EditMyPage';
+
+
 //import { decode, encode } from 'base-64'
 import * as firebase from 'firebase';
 import apiKeys from './src/firebase/config';
@@ -100,7 +104,6 @@ export default function App() {
                             //signed in 
                             userToken = firebase.auth().currentUser.getIdToken();
 
-
                             console.log(userToken);
                         })
 
@@ -138,9 +141,9 @@ export default function App() {
     );
 
 
-firebase.auth().onAuthStateChanged((user) => {
+/*firebase.auth().onAuthStateChanged((user) => {
             console.log(user);
-})
+})*/
 
     return (
         <AuthContext.Provider value={authContext}>
@@ -157,6 +160,8 @@ firebase.auth().onAuthStateChanged((user) => {
                                 <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
                             )}
                     <Stack.Screen name="Account" component={Account} options={{ headerShown: false }} />
+                    <Stack.Screen name="FoodTruckDetails" component={FoodTruckDetails} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditMyPage" component={EditMyPage} options={{ headerShown: false }} />
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>

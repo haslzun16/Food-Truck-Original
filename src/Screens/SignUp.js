@@ -23,6 +23,7 @@ const SignUpoptions = [
 
 export default function SignUp({ navigation }) {
     const [appear, disappear] = useState(false);
+    const [phone, setPhone] = useState("");
 
 
     const [fullName, setFullName] = useState("");
@@ -38,12 +39,21 @@ export default function SignUp({ navigation }) {
     }
 
     const onRegisterPress = () => {
-        if (password !== confirmpassword) {
-            alert("Passwords don't match.")
-            return
+        if (!phone) {
+            if (password !== confirmpassword) {
+                alert("Passwords don't match.")
+               // return
+            }
+           // navigation.navigate('SignIn')
+            signUp({ fullName, email, password });
+            console.log(fullName, email, password)
         }
+        else {
+          //  navigation.navigate('BottomNavigation')
+            signUp({ fullName, email, password, phone });
+            console.log(phone)
 
-        signUp({ fullName, email, password });
+        }
 
     }
 
@@ -96,7 +106,9 @@ export default function SignUp({ navigation }) {
                         {appear ? (
                             <TextInput
                             style={styles.textInput2}
-                            placeholder='Phone Number'
+                                placeholder='Phone Number'
+                                value={phone}
+                                onChangeText={(text) => setPhone(text)}
                             />
                         ) : null
                         }
