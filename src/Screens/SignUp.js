@@ -12,8 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import SwitchSelector from 'react-native-switch-selector';
 import {AuthContext} from '../../App'
-import { firebase } from '../firebase/config'
-import { signIn } from '../../API/firebaseAPI';
+
 
 
 const SignUpoptions = [
@@ -22,14 +21,15 @@ const SignUpoptions = [
 ];
 
 export default function SignUp({ navigation }) {
-    const [appear, disappear] = useState(false);
-
+    
+    const [phone, setPhone] = useState("");
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmpassword, setConfirmPassword] = useState("");
-
+    const [isVender, notVendor] = useState(false);
+    const [FoodTruckName, setFoodTruckName] = useState("");
 
     const { signUp } = React.useContext(AuthContext);
 
@@ -43,9 +43,10 @@ export default function SignUp({ navigation }) {
             return
         }
 
-        signUp({ fullName, email, password });
+        signUp({ fullName, email, password, phone, isVender, FoodTruckName});
 
     }
+   
 
 
 
@@ -75,14 +76,14 @@ export default function SignUp({ navigation }) {
                         <SwitchSelector
                             options={SignUpoptions}
                             initial={0}
-                            onPress={() => disappear(!appear)}
+                            onPress={() => notVendor(!isVender)}
                             buttonColor='#FEAD44'
                         />
                     </View>
 
                     <View style={styles.tiButtons} >
                         <TextInput style={styles.textInput} placeholder="Full Name" value={fullName} onChangeText={(text) => setFullName(text)} />
-
+                        
                         {/* <TextInput
                             style={styles.textInput}
                             placeholder='Last Name'
@@ -93,23 +94,44 @@ export default function SignUp({ navigation }) {
 
                         <TextInput style={styles.textInput2} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
 
-                        {appear ? (
+                        {isVender ? (
+
+
+                                <>
                             <TextInput
                             style={styles.textInput2}
                             placeholder='Phone Number'
+                            value ={phone}
+                            onChangeText={(text) => setPhone(text)}
+                            />  
+                            <TextInput
+                            style={styles.textInput2}
+                            placeholder='FoodTruckName'
+                            value ={FoodTruckName}
+                            onChangeText={(text) => setFoodTruckName(text)}
                             />
+
+                            </>
                         ) : null
                         }
+                        
                         {/* </View>
 
                         <View style={styles.uInput2}> */}
+                        
+
+                        
+
+
+
+
 
                         <TextInput secureTextEntry={true}
                             style={styles.textInput2} placeholder="Password" value={password} onChangeText={(text) => setPassword(text)} />
 
 
                         <TextInput secureTextEntry={true}
-                            style={styles.textInput2} placeholder="Cofirm Password" value={confirmpassword} onChangeText={(text) => setConfirmPassword(text)} />
+                            style={styles.textInput2} placeholder="Confirm Password" value={confirmpassword} onChangeText={(text) => setConfirmPassword(text)} />
 
                         </View>
                 </View>
@@ -120,7 +142,7 @@ export default function SignUp({ navigation }) {
                         <TouchableOpacity
                             onPress={() => onRegisterPress()} style={styles.button}>
                         <Text style={styles.buttonText}>
-                        Sign up
+                        Sign Up`
                         </Text>
                         </TouchableOpacity>
                     </View>
