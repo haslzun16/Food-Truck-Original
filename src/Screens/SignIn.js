@@ -1,7 +1,8 @@
 /**
- * Sign Up Screen
+ * Sign In Screen
  *
- * Allows the user to sign up for a new account
+ * Second Screen user will see
+ * Allows the user to sign in or navigate to sign up screen
  *
  */
 
@@ -9,44 +10,40 @@
 import * as React from 'react';
 import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import SwitchSelector from 'react-native-switch-selector';
-import {AuthContext} from '../../App'
+//import { auth } from "../firebase";
+import { LogBox } from 'react-native';
+import { useEffect, useState } from 'react'
+LogBox.ignoreLogs(['Setting a timer']);
+import "firebase/firestore";
+import { Alert } from "react-native";
+import { AuthContext } from '../../App'
 
 
+export default function SignIn({ navigation }) {
 
-const SignUpoptions = [
-    { label: "Customer", value: "customer" },
-    { label: "Vendor", value: "vendor" }
-];
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
-export default function SignUp({ navigation }) {
-    
-    const [phone, setPhone] = useState("");
-
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmpassword, setConfirmPassword] = useState("");
-    const [isVender, notVendor] = useState(false);
-    const [FoodTruckName, setFoodTruckName] = useState("");
-
-    const { signUp } = React.useContext(AuthContext);
+    const { signIn } = React.useContext(AuthContext);
 
     const onFooterLinkPress = () => {
-        navigation.navigate('SignIn')
+        navigation.navigate('SignUp')
     }
 
-    const onRegisterPress = () => {
-        if (password !== confirmpassword) {
-            alert("Passwords don't match.")
-            return
+    const onLoginPress = () => {
+        if (!email) {
+            Alert.alert('Email field is required.');
         }
 
-        signUp({ fullName, email, password, phone, isVender, FoodTruckName});
+        if (!password) {
+            Alert.alert('Password field is required.');
+        } else {
+            signIn({ email, password });
+        }
 
-    }
-   
+    };
+
+
 
 
 
@@ -57,129 +54,86 @@ export default function SignUp({ navigation }) {
     return (
         <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
             <View>
+
                 <View style={styles.top}>
-                    <View style={styles.view}>
-                        {/* <Image
-                            style={{ width: 230, height: 120, alignItems: 'center', marginTop: 20 }}
-                            source={require('../assets/orange-food-truck.png')} 
-                            resizeMode ={'cover'}/>
-                            */}
-
-                        <Text style={styles.Text}> Create Account </Text>
+                    <View style={styles.view} >
+                    <Text style={styles.Text}> Food Truck Finder </Text>
+                    <Image
+                    style={{ width: 280, height: 146, alignItems: 'center', marginTop: 10 }}
+                    source={require('../../assets/orange-food-truck.png')}
+                    resizeMode={'cover'} />
                     </View>
                 </View>
 
-                <View style={styles.middle}>
-
-                    <View style={styles.tiButtons2} >
-                        {/* Toggle Switch: When clicked show or hide phone number input */}
-                        <SwitchSelector
-                            options={SignUpoptions}
-                            initial={0}
-                            onPress={() => notVendor(!isVender)}
-                            buttonColor='#FEAD44'
-                        />
-                    </View>
-
+            <View style={styles.middle}>
                     <View style={styles.tiButtons} >
-                        <TextInput style={styles.textInput} placeholder="Full Name" value={fullName} onChangeText={(text) => setFullName(text)} />
-                        
-                        {/* <TextInput
-                            style={styles.textInput}
-                            placeholder='Last Name'
-                        /> 
-                    </View> */}
+            
 
-                        {/*  <View style={styles.uInput}> */}
-
-                        <TextInput style={styles.textInput2} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
-
-                        {isVender ? (
-
-
-                                <>
-                            <TextInput
-                            style={styles.textInput2}
-                            placeholder='Phone Number'
-                            value ={phone}
-                            onChangeText={(text) => setPhone(text)}
-                            />  
-                            <TextInput
-                            style={styles.textInput2}
-                            placeholder='FoodTruckName'
-                            value ={FoodTruckName}
-                            onChangeText={(text) => setFoodTruckName(text)}
-                            />
-
-                            </>
-                        ) : null
-                        }
-                        
-                        {/* </View>
-
-                        <View style={styles.uInput2}> */}
-                        
-
-                        
-
-
-
-
+                        <TextInput style={styles.textInput} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
 
                         <TextInput secureTextEntry={true}
-                            style={styles.textInput2} placeholder="Password" value={password} onChangeText={(text) => setPassword(text)} />
+                    style={styles.textInput} placeholder="Password" value={password} onChangeText={(text) => setPassword(text)} secureTextEntry />
 
-
-                        <TextInput secureTextEntry={true}
-                            style={styles.textInput2} placeholder="Confirm Password" value={confirmpassword} onChangeText={(text) => setConfirmPassword(text)} />
-
-                        </View>
-                </View>
-
-                <View style={styles.bottomV}>
-                    <View style={styles.signUp} >
-                        {/* If input is correct when button is clicked go to Sign In Screen */}
-                        <TouchableOpacity
-                            onPress={() => onRegisterPress()} style={styles.button}>
-                        <Text style={styles.buttonText}>
-                        Sign Up`
-                        </Text>
-                        </TouchableOpacity>
-                    </View>
-                    {/* When clicked go back to the sign in page */}
-                    <View style={styles.bottomText}>
-                        <Text style={styles.bottomText3}>Already have an account?</Text>
-                        <Text style={styles.bottomText2}
-                            onPress={onFooterLinkPress}
-                        > Sign In </Text>
-                    </View>
+ 
+                    
+                    <Text
+                    style={styles.forgotPass}>
+                    Forgot Password?
+                    </Text>   
                 </View>
             </View>
-        </LinearGradient>
+
+            <View style={styles.bottomV}>
+                    <View style={styles.view2} >
+                        {/* If correct credentials go to the homepage via bottom navigation */}
+                        <TouchableOpacity
+                            onPress={() => onLoginPress()} style={styles.button}>
+                        <Text style={styles.buttonText}
+                        >
+                        Sign In
+                    </Text>
+                    </TouchableOpacity>
+                </View>
+                    {/* When clicked go to the sign up screen and replace */}
+                <View style={styles.bottomText}>
+                    <Text style={styles.bottomText3}>Don't have an account?</Text>
+                        <Text style={styles.bottomText2}
+                            onPress={onFooterLinkPress}
+                    > Sign Up </Text>
+                </View>
+            </View>
+            </View>
+            </LinearGradient>
+            
     );
 };
 
+//Added too many styles that are not in use. Will fix later
 const styles = StyleSheet.create({
     body: {
         flex: 1,
         backgroundColor: '#2193b0',
     },
-    view: {
-        alignItems: 'center',
-        paddingTop: 20,
-        
-    },
     top: {
-        height: '15%',
-      //  backgroundColor: '#fff'
+        height:'38%',
     },
     middle: {
-     //   backgroundColor: "#000",
-        height: '55%',
+       // backgroundColor: "#000",
+        height: '32%',
     },
     bottomV: {
         height: '30%',
-       //  backgroundColor: '#000',
+       // backgroundColor: '#fff',
+    },
+    view: {
+        marginTop: 'auto',
+        alignItems: 'center',
+        padding: 10,
+    },
+    view2: {
+        marginTop: 0,
+        alignItems: 'center',
+        padding: 10,
     },
     button: {
         width: 200,
@@ -189,27 +143,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#FEAD44',
     },
     tiButtons: {
-        marginTop: 0,
+        marginTop: 50,
         alignItems: 'center',
-      //  flexDirection: "row"
-    },
-    uInput: {
-        marginTop: 0,
-        alignItems: 'center',
-        flexDirection: "row"
-    },
-    uInput2: {
-        marginTop: 0,
-        alignItems: 'center',
-        flexDirection: "row"
-    },
-    tiButtons2: {
-      //  flexDirection: "row",
-        marginTop: 20,
-        alignItems: 'center',
-        width: '95%',
-        paddingHorizontal: 20,
-        marginLeft: 10
     },
     textInput: {
         borderWidth: 1,
@@ -218,36 +153,31 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         padding: 8,
         paddingHorizontal: 20,
-        marginTop: 40,
-        width: '85%'
-    },
-    textInput2: {
-        borderWidth: 1,
-        backgroundColor: '#fff',
-        borderColor: '#fff',
-        borderRadius: 30,
-        padding: 8,
-        paddingHorizontal: 20,
-        marginTop: 20,
-        width: '85%'
+        margin: 10,
+        width: '90%'
     },
     Text: {
         fontSize: 36,
         textAlign: 'center',
         color: '#fff',
-        marginTop: 0,
+        marginTop: 20,
     },
+
+    forgotPass: {
+        paddingLeft: 30,
+        textAlign: 'left',
+        alignSelf: 'stretch',
+        
+        color: '#fff',
+    },
+
     buttonText: {
         position: 'absolute',
-        paddingLeft: 50,
+        paddingLeft: 60,
         fontSize: 18,
         textAlign: 'center',
         margin: 15,
         color: '#FFFFFF',
-    },
-    signUp: {
-        alignItems: "center",
-        paddingTop: 20,
     },
     bottomText: {
         flex: 1,
@@ -274,7 +204,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         fontSize: 14,
         flexDirection: 'row',
-        paddingLeft: 20,
+        paddingLeft: 0,
         paddingBottom: 20,
         marginTop: 'auto',
         color: '#fff',
