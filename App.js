@@ -7,6 +7,11 @@ import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
 import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
+import FoodTruckDetails from './src/Screens/FoodTruckDetails';
+import EditMyPage from './src/Screens/EditMyPage';
+
+
+
 //import { decode, encode } from 'base-64'
 import * as firebase from 'firebase';
 import apiKeys from './src/firebase/config';
@@ -102,6 +107,10 @@ export default function App() {
                     await firebase
                         .auth()
 
+<<<<<<< HEAD
+                            console.log(userToken);
+                        })
+=======
                         .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
                         .then(data => {
                             userToken = data.user.uid
@@ -109,6 +118,7 @@ export default function App() {
                             console.log(error);
                         });
 
+>>>>>>> main
 
 
                 } catch (err) {
@@ -166,9 +176,15 @@ export default function App() {
     );
 
 
+<<<<<<< HEAD
+/*firebase.auth().onAuthStateChanged((user) => {
+            console.log(user);
+})*/
+=======
 //firebase.auth().onAuthStateChanged((user) => {
            //console.log(user);
 //})
+>>>>>>> main
 
     return (
         <AuthContext.Provider value={authContext}>
@@ -188,7 +204,13 @@ export default function App() {
                         ) : (
                                 <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
                             )}
+<<<<<<< HEAD
+                    <Stack.Screen name="Account" component={Account} options={{ headerShown: false }} />
+                    <Stack.Screen name="FoodTruckDetails" component={FoodTruckDetails} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditMyPage" component={EditMyPage} options={{ headerShown: false }} />
+=======
                     
+>>>>>>> main
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>
