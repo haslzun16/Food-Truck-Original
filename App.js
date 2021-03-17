@@ -1,3 +1,15 @@
+
+/* You will need to install the following to make the app work:
+npm add @react-navigation/native && npm add @react-navigation/stack && 
+expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+npm install @react-navigation/native
+npm install @react-navigation/stack 
+npm install react-native-onboarding-swiper
+npm install react-native-switch-selector  
+npm install @react-navigation/bottom-tabs
+expo install firebase
+*/
+
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native'
@@ -11,6 +23,9 @@ import Account from './src/Screens/Account'
 import * as firebase from 'firebase';
 import apiKeys from './src/firebase/config';
 import { Alert, Text, View } from 'react-native';
+
+
+
 
 
 export const AuthContext = React.createContext();
@@ -48,8 +63,15 @@ export default function App() {
                         ...prevState,
                         isSignout: false,
                         userToken: action.token,
-                        isLoading: false,
+                        isLoading: false
+                        
                     };
+                case 'SET_UP':
+                    return {
+                        newVender: false
+                        
+                    };
+
                 case 'SIGN_OUT':
                     return {
                         ...prevState,
@@ -67,6 +89,7 @@ export default function App() {
             isLoading: true,
             isSignout: false,
             userToken: null,
+            newVender: true,
         }
     );
 
@@ -120,6 +143,7 @@ export default function App() {
 
                 dispatch({ type: 'SIGN_IN', token: userToken });
             },
+            setup: () => dispatch({ type: 'SET_UP' }),
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
             skip:() => dispatch({ type: 'SKIP' }),
             signUp: async data => {
@@ -186,7 +210,14 @@ export default function App() {
                             </>
                     )
                         ) : (
-                                <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
+                            state.newVender == true ? (
+                        
+                            <Stack.Screen name="SetUp" component={BottomNavigation} options={{ headerShown: false }} />
+                        
+                        ) :(
+                            <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
+                    )
+                                
                             )}
                     
                 </Stack.Navigator>
