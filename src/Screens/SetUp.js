@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image, TextInput } from 'react-native';
+import { Text, View, StyleSheet, Image, TextInput,TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import 'react-native-gesture-handler';
-
+import {AuthContext} from '../../App'
 
 //import { decode, encode } from 'base-64'
 
@@ -13,16 +13,14 @@ export default function SetUp({ navigation }) {
 const [FoodTruckName, setFoodTruckName] = useState("");
 const [FoodTruckLocation, setFoodTruckLocation] = useState("");
 const [FoodType, setFoodType] = useState("");
-const [LicensePlate , setLicensePlate] = useState('');
+const [ LicensePlate , setLicensePlate] = useState('');
+const { setUp } = React.useContext(AuthContext);
 
 // on register press change !!!
-const onRegisterPress = () => {
-    if (password !== confirmpassword) {
-        alert("Passwords don't match.")
-        return
-    }
+const onSetUpPress = () => {
+   
 
-    Setup({ FoodTruckLocation,FoodTruckName,FoodType,LicensePlate});
+    SetUp();
 
 }
 
@@ -52,7 +50,12 @@ const onRegisterPress = () => {
                         onChangeText={(text) => setFoodType(text)} />
                          <TextInput style={styles.textInput} placeholder="Enter your Food Truck License plate" value={LicensePlate} 
                         onChangeText={(text) => setLicensePlate(text)} />
-                               
+                               <TouchableOpacity
+                            onPress={() => onSetUpPress()} style={styles.button}>
+                        <Text style={styles.buttonText}>
+                        Sign Up`
+                        </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
     </LinearGradient>
@@ -77,6 +80,21 @@ const styles = StyleSheet.create({
     middle: {
      //   backgroundColor: "#000",
         height: '55%',
+    },
+    button: {
+        width: 200,
+        height: 60,
+        marginTop: 30,
+        borderRadius: 30,
+        backgroundColor: '#FEAD44',
+    },
+     buttonText: {
+        position: 'absolute',
+        paddingLeft: 50,
+        fontSize: 18,
+        textAlign: 'center',
+        margin: 15,
+        color: '#FFFFFF',
     },
     tiButtons: {
         marginTop: 0,
