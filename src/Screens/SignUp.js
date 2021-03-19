@@ -37,6 +37,8 @@ export default function SignUp({ navigation }) {
         navigation.navigate('SignIn')
     }
 
+
+
     const onRegisterPress = () => {
         if (password !== confirmpassword) {
             alert("Passwords don't match.")
@@ -154,6 +156,7 @@ export default function SignUp({ navigation }) {
                         > Sign In </Text>
                     </View>
                 </View>
+               
             </View>
         </LinearGradient>
     );
