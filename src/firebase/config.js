@@ -7,7 +7,7 @@ const firebaseConfig = {
   authDomain: "foodtruck-a92cc.firebaseapp.com",
   databaseURL: "https://foodtruck-a92cc-default-rtdb.firebaseio.com/",
   projectId: "foodtruck-a92cc",
-  storageBucket: "foodtruck-a92cc.appspot.com",
+  storageBucket: "gs://foodtruck-a92cc.appspot.com",
   messagingSenderId: "233124233438",
   appId: "1:233124233438:web:1cdfddc68195cf453cc24f",
   measurementId: "G-P5NE44M3M8"

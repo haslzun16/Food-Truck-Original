@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { FlatList, Button, View, Modal, Text, TextInput, Image, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import firebase from 'firebase';
+import * as firebase from 'firebase';
+
 
 import _ from 'lodash';
 
@@ -13,15 +14,27 @@ import Constants from 'expo-constants';
 import { FloatingAction } from "react-native-floating-action";
 
 import Swipeout from 'react-native-swipeout'
+import { AuthContext } from '../../App'
 
 
 
 const MyPage = ({ navigation, route }) => {
+	const [modalVisible, setModalVisible] = useState(false);
 
 
+	const [newName, setNewName] = useState(' ');
 
+	const [newPrice, setNewPrice] = useState(' ');
 
-	// const [image, setImage] = useState(null);
+	const [newDescription, setNewDescription] = useState(' ');
+
+	const [menus, setMenus] = useState([]);
+
+	const { getUserId } = React.useContext(AuthContext);
+
+	let userId = getUserId();
+
+	const [tempImage, setTempImage] = useState('');
 
 	useEffect(() => {
 		(async () => {
@@ -36,16 +49,19 @@ const MyPage = ({ navigation, route }) => {
 
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
 		});
 
-		console.log(result);
+
 
 		if (!result.cancelled) {
-			setNewImage(result.uri);
+			setTempImage(result.uri)
+
+
+
 		}
 	};
 
@@ -53,30 +69,13 @@ const MyPage = ({ navigation, route }) => {
 
 
 
-
-
-
-
-
-	const [modalVisible, setModalVisible] = useState(false);
-
-	const [newImage, setNewImage] = useState(' ');
-
-	const [newName, setNewName] = useState(' ');
-
-	const [newPrice, setNewPrice] = useState(' ');
-
-	const [newDescription, setNewDescription] = useState(' ');
-
-	const [menus, setMenus] = useState([]);
-
-
 	useEffect(() => {
 		getMenus();
+
 	}, []);
 
 	const getMenus = () => {
-		let menuRef = firebase.database().ref('/menus/');
+		let menuRef = firebase.database().ref('vender/' + userId + '/menu');
 
 		menuRef.on('value', snapshot => {
 			let val = snapshot.val();
@@ -84,18 +83,34 @@ const MyPage = ({ navigation, route }) => {
 			let valToArray = _.map(val, element => {
 				return { ...element };
 			});
+			// getting the actual url of the images
+			valToArray.forEach(item => {
+				//console.log(item)
+				item = retrieveImages(item);
+				//console.log('new item',item)
+			});
+			//console.log('new array',valToArray)
 			setMenus(valToArray);
+
 		});
+
 	};
 
-	const insertMenu = () => {
+	const insertMenu = async () => {
 		setModalVisible(false);
 
-		let menuRef = firebase.database().ref('/menus/');
+		let menuRef = firebase.database().ref('vender/' + userId + '/menu');
 
 		let createdMenu = menuRef.push();
+		let newUrl = "";
 
-		let menu = { id: createdMenu.key, image: newImage, name: newName, price: newPrice, description: newDescription };
+		uploadImageToStorage(tempImage, newName)
+
+
+
+		let menu = { id: createdMenu.key, image: tempImage, name: newName, price: newPrice, description: newDescription };
+
+
 
 		createdMenu
 			.set(menu)
@@ -103,13 +118,24 @@ const MyPage = ({ navigation, route }) => {
 				setNewName('');
 				setNewPrice('');
 				setNewDescription('');
-				setNewImage('');
+				setTempImage('');
 			})
 			.catch(err => console.log(err));
 	};
 
+	//method to upload image to database
+	const uploadImageToStorage = async (uri, imageName) => {
+		let response = await fetch(uri);
+		let blob = await response.blob();
+
+		let reference = firebase.storage().ref().child(userId + '/foodImages/' + imageName).put(blob);
+	};
+
+
+
 	const updateMenu = item => {
-		let menuRef = firebase.database().ref('/menus/' + item.id);
+
+		let menuRef = firebase.database().ref('vender/' + userId);
 
 		menuRef
 			.update({ done: !item.done })
@@ -118,7 +144,8 @@ const MyPage = ({ navigation, route }) => {
 	};
 
 	const deleteMenu = item => {
-		let menuRef = firebase.database().ref('/menus/' + item.id);
+		console.log("im am here" + item)
+		let menuRef = firebase.database().ref('vender/' + userId + '/menu/' + item.id);
 
 		menuRef
 			.remove()
@@ -126,35 +153,41 @@ const MyPage = ({ navigation, route }) => {
 			.catch();
 	};
 
+	//this method retrieves the image from firebase
+	const retrieveImages = (item) => {
+		let image = "";
+		let imageRef = firebase.storage().ref(userId + '/foodImages/' + item.name);
+		imageRef
+			.getDownloadURL()
+			.then((url) => {
+				image = url;
+				//from url you can fetched the uploaded image easily
+
+				item.image = image
+				//console.log('retrive method',item)
+
+			})
+			.catch((e) => console.log('getting downloadURL of image error => ', e));
+		//console.log('retrive method',item)
+		//console.log('retrive item',item)
+		return item
+	}
+
+
+	//url
 
 
 
+	const foodTruckData = [
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 1 },
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 2 },
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 3 },
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 4 },
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 5 },
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 6 },
+		{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 7 },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const foodTruckData = [
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 1 },
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 2 },
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 3 },
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 4 },
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 5 },
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 6 },
-	{ source: require('../../assets/FoodMenu/VANILLA-CUPCAKES.jpg'), name: "Vanilla Cupcake", description: 'Delicious Vanilla cupcake with sprinkles', food: 'Bakery', price: '$1.50', id: 7 },
-
-]
+	]
 
 	const [foodTrucks, setFoodTrucks] = React.useState(foodTruckData)
 
@@ -170,29 +203,29 @@ const foodTruckData = [
 
 			<Modal visible={modalVisible}>
 				<View style={styles.modal}>
-						<Button title="Pick an image from camera roll" onPress={pickImage} />
-					{newImage && <Image source={{ uri: newImage }} style={{ width: 200, height: 200 }} />}   
+					<Button title="Pick an image from camera roll" onPress={pickImage} />
+					<Image source={{ uri: tempImage }} style={{ width: 200, height: 200 }} />
 
 					<TextInput
 						placeholder="Food Name"
 						style={styles.textInput}
-						
+
 						onChangeText={text => setNewName(text)}
 					/>
 					<TextInput
 						placeholder="Food Price"
 						style={styles.textInput}
-						
+
 						onChangeText={text => setNewPrice(text)}
 					/>
 					<TextInput
 						placeholder="Food Description"
 						style={styles.textInput}
-						
+
 						onChangeText={text => setNewDescription(text)}
 					/>
-					<View style={{flexDirection: 'row', }}>
-						
+					<View style={{ flexDirection: 'row', }}>
+
 						<View style={styles.view2} >
 							{/* If correct credentials go to the homepage via bottom navigation */}
 							<TouchableOpacity
@@ -226,11 +259,11 @@ const foodTruckData = [
 					//	resizeMode="contain"
 					style={styles.TopImage
 					} />
-				
-				
+
+
 			</View>
 
-			
+
 			<View style={styles.Mid}>
 
 				<Text style={styles.FoodTruckName} > Amoroso's Bakery </Text>
@@ -250,8 +283,8 @@ const foodTruckData = [
 
 					<TouchableOpacity
 						style={{
-							  backgroundColor: '#F5AF19',
-						   // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
+							backgroundColor: '#F5AF19',
+							// backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
 							borderRadius: 200,
 							alignItems: 'center',
 							justifyContent: 'center',
@@ -269,10 +302,11 @@ const foodTruckData = [
 								alignSelf: 'center',
 								marginTop: 30,
 								width: '50%',
-								height: '50%'}} size={26} Account >
+								height: '50%'
+							}} size={26} Account >
 
 						</MaterialCommunityIcons>
-					   
+
 						<Text
 							style={{
 								position: "relative",
@@ -288,42 +322,42 @@ const foodTruckData = [
 
 
 					<View style={{ alignSelf: 'center' }}>
-				<TouchableOpacity
-					style={{
-						backgroundColor: '#F5AF19',
-						// backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
-						borderRadius: 200,
-						alignItems: 'center',
-						justifyContent: 'center',
-						height: 50,
-						width: 50,
-						margin: 10,
-					}}
-					onPress={() => setModalVisible(true)}
-				>
+						<TouchableOpacity
+							style={{
+								backgroundColor: '#F5AF19',
+								// backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
+								borderRadius: 200,
+								alignItems: 'center',
+								justifyContent: 'center',
+								height: 50,
+								width: 50,
+								margin: 10,
+							}}
+							onPress={() => setModalVisible(true)}
+						>
 
-					<MaterialCommunityIcons name="silverware"
-						style={{
-							alignSelf: 'center',
-							marginTop: 30,
-							width: '50%',
-							height: '50%'
-						}} size={26} Account >
+							<MaterialCommunityIcons name="silverware"
+								style={{
+									alignSelf: 'center',
+									marginTop: 30,
+									width: '50%',
+									height: '50%'
+								}} size={26} Account >
 
-					</MaterialCommunityIcons>
+							</MaterialCommunityIcons>
 
-					<Text
-						style={{
-							position: "relative",
-							marginTop: 12,
-							color: "black",
-							fontSize: 9
-						}}>
-						Add Food
+							<Text
+								style={{
+									position: "relative",
+									marginTop: 12,
+									color: "black",
+									fontSize: 9
+								}}>
+								Add Food
 						</Text>
 
-				</TouchableOpacity>
-			</View>
+						</TouchableOpacity>
+					</View>
 
 
 					<TouchableOpacity
@@ -335,7 +369,7 @@ const foodTruckData = [
 							justifyContent: 'center',
 							height: 50,
 							width: 50,
-						//	margin: 10,
+							//	margin: 10,
 						}}
 
 					// onPress={() => onSelectCategory(item)}
@@ -365,7 +399,7 @@ const foodTruckData = [
 					</TouchableOpacity>
 
 				</View>
-				
+
 
 			</View>
 			<View style={{ height: 1, backgroundColor: '#F5AF19' }} />
@@ -389,8 +423,8 @@ const foodTruckData = [
 
 								<View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#F5F5F5', marginTop: 10, borderRadius: 20 }}>
 
-									{/* Food Truck Image */}
-									<Image source={item.image} style={{ width: 100, height: 100, margin: 5, borderRadius: 5 }}></Image>
+									{/* Food Truck items Image */}
+									<Image source={{ uri: item.image }} style={{ width: 100, height: 100, margin: 5, borderRadius: 5 }}></Image>
 
 									<View style={{ flex: 1, flexDirection: 'column', height: 100 }}>
 
@@ -422,7 +456,7 @@ const foodTruckData = [
 						</View>
 					)}
 				/>
-				
+
 			</View>
 
 		</View >
@@ -464,7 +498,7 @@ const styles = StyleSheet.create({
 		//backgroundColor: 'blue'
 	},
 
-	 flatListItem2: {
+	flatListItem2: {
 		color: 'black',
 		paddingLeft: 0,
 		fontSize: 20,
