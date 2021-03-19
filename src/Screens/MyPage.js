@@ -170,8 +170,8 @@ const foodTruckData = [
 
 			<Modal visible={modalVisible}>
 				<View style={styles.modal}>
-					{/*	<Button title="Pick an image from camera roll" onPress={pickImage} />
-					{newImage && <Image source={{ uri: newImage }} style={{ width: 200, height: 200 }} />}   */}
+						<Button title="Pick an image from camera roll" onPress={pickImage} />
+					{newImage && <Image source={{ uri: newImage }} style={{ width: 200, height: 200 }} />}   
 
 					<TextInput
 						placeholder="Food Name"
