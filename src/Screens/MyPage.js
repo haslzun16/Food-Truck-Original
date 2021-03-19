@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { FlatList, Button, View, Modal, Text, TextInput, Image, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import firebase from 'firebase';
+import * as firebase from 'firebase';
+
 
 import _ from 'lodash';
 
@@ -13,14 +14,26 @@ import Constants from 'expo-constants';
 import { FloatingAction } from "react-native-floating-action";
 
 import Swipeout from 'react-native-swipeout'
+import {AuthContext} from '../../App'
 
 
 
 const MyPage = ({ navigation, route }) => {
+	const [modalVisible, setModalVisible] = useState(false);
 
+	const [newImage, setNewImage] = useState(' ');
 
+	const [newName, setNewName] = useState(' ');
 
+	const [newPrice, setNewPrice] = useState(' ');
 
+	const [newDescription, setNewDescription] = useState(' ');
+
+	const [menus, setMenus] = useState([]);
+
+	const { getUserId } = React.useContext(AuthContext);
+
+	let userId = getUserId();
 	// const [image, setImage] = useState(null);
 
 	useEffect(() => {
@@ -36,39 +49,23 @@ const MyPage = ({ navigation, route }) => {
 
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
 		});
 
-		console.log(result);
+		
 
 		if (!result.cancelled) {
 			setNewImage(result.uri);
+			
+			
 		}
 	};
 
+	
 
-
-
-
-
-
-
-
-
-	const [modalVisible, setModalVisible] = useState(false);
-
-	const [newImage, setNewImage] = useState(' ');
-
-	const [newName, setNewName] = useState(' ');
-
-	const [newPrice, setNewPrice] = useState(' ');
-
-	const [newDescription, setNewDescription] = useState(' ');
-
-	const [menus, setMenus] = useState([]);
 
 
 	useEffect(() => {
@@ -76,7 +73,7 @@ const MyPage = ({ navigation, route }) => {
 	}, []);
 
 	const getMenus = () => {
-		let menuRef = firebase.database().ref('/menus/');
+		let menuRef = firebase.database().ref('vender/' + userId +'/menu');
 
 		menuRef.on('value', snapshot => {
 			let val = snapshot.val();
@@ -91,11 +88,13 @@ const MyPage = ({ navigation, route }) => {
 	const insertMenu = () => {
 		setModalVisible(false);
 
-		let menuRef = firebase.database().ref('/menus/');
+		let menuRef = firebase.database().ref('vender/' + userId +'/menu');
 
 		let createdMenu = menuRef.push();
 
 		let menu = { id: createdMenu.key, image: newImage, name: newName, price: newPrice, description: newDescription };
+		
+		uploadImageToStorage(newImage,newName)
 
 		createdMenu
 			.set(menu)
@@ -108,8 +107,19 @@ const MyPage = ({ navigation, route }) => {
 			.catch(err => console.log(err));
 	};
 
+	//method to upload image to database
+	const uploadImageToStorage = async(uri, imageName) => {
+		let response = await fetch(uri);
+		let blob = await response.blob();
+
+		let reference = firebase.storage().ref().child(userId+'/foodImages/'+ imageName).put(blob);   
+	};
+	
+	
+
 	const updateMenu = item => {
-		let menuRef = firebase.database().ref('/menus/' + item.id);
+		
+		let menuRef = firebase.database().ref('vender/' + userId);
 
 		menuRef
 			.update({ done: !item.done })
@@ -118,27 +128,27 @@ const MyPage = ({ navigation, route }) => {
 	};
 
 	const deleteMenu = item => {
-		let menuRef = firebase.database().ref('/menus/' + item.id);
-
+		console.log("im am here" + item)
+		let menuRef = firebase.database().ref('vender/' + userId +'/menu/' + item.id);
+		
 		menuRef
 			.remove()
 			.then()
 			.catch();
 	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
+//this method retrieves the image from firebase
+	const retrieveImages = (imageName) =>{
+		let imageRef = firebase.storage().ref(userId +'/foodImages/'+ imageName);
+		imageRef
+		.getDownloadURL()
+		.then((url) => {
+			//from url you can fetched the uploaded image easily
+			console.log(url)
+			return url
+		})
+		.catch((e) => console.log('getting downloadURL of image error => ', e));
+	}
 
 
 
@@ -170,8 +180,8 @@ const foodTruckData = [
 
 			<Modal visible={modalVisible}>
 				<View style={styles.modal}>
-					{/*	<Button title="Pick an image from camera roll" onPress={pickImage} />
-					{newImage && <Image source={{ uri: newImage }} style={{ width: 200, height: 200 }} />}   */}
+						<Button title="Pick an image from camera roll" onPress={pickImage} />
+					 <Image source={{ uri: newImage }} style={{ width: 200, height: 200 }} />  
 
 					<TextInput
 						placeholder="Food Name"
@@ -389,8 +399,8 @@ const foodTruckData = [
 
 								<View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#F5F5F5', marginTop: 10, borderRadius: 20 }}>
 
-									{/* Food Truck Image */}
-									<Image source={item.image} style={{ width: 100, height: 100, margin: 5, borderRadius: 5 }}></Image>
+									{/* Food Truck items Image */}
+									<Image source={{uri: `${retrieveImages(item.name)}`}} style={{ width: 100, height: 100, margin: 5, borderRadius: 5 }}></Image>
 
 									<View style={{ flex: 1, flexDirection: 'column', height: 100 }}>
 

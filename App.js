@@ -8,6 +8,9 @@ npm install react-native-onboarding-swiper
 npm install react-native-switch-selector  
 npm install @react-navigation/bottom-tabs
 expo install firebase
+npm install expo-image-picker
+npm install expo-constants
+npm install react-native-floating-action
 */
 
 import 'react-native-gesture-handler';
@@ -21,6 +24,7 @@ import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
 import FoodTruckDetails from './src/Screens/FoodTruckDetails';
 import EditMyPage from './src/Screens/EditMyPage';
+import { useState} from 'react';
 
 
 
@@ -49,6 +53,8 @@ function SplashScreen() {
 const Stack = createStackNavigator();
 
 export default function App() {
+    const [userId, setUserId] = useState('')
+
     if (!firebase.apps.length) {
         console.log('Connected with Firebase')
         firebase.initializeApp(apiKeys.firebaseConfig);
@@ -69,6 +75,15 @@ export default function App() {
                         isSignout: false,
                         userToken: action.token,
                         isLoading: false
+                        
+                    };
+                case 'SIGN_UP':
+                    return {
+                        ...prevState,
+                        isSignout: false,
+                        userToken: action.token,
+                        isLoading: false,
+                        newVender: true
                         
                     };
                 case 'SET_UP':
@@ -124,7 +139,7 @@ export default function App() {
                 // In a production app, we need to send some data (usually username, password) to server and get a token
                 // We will also need to handle errors if sign in failed
                 // After getting token, we need to persist the token using `AsyncStorage`
-                let userToken;
+                
                 
                 try {
                     await firebase
@@ -133,7 +148,7 @@ export default function App() {
 
                         .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
                         .then(data => {
-                            userToken = data.user.uid
+                            setUserId(data.user.uid)
                         }).catch(error => {
                             console.log(error);
                         });
@@ -146,9 +161,9 @@ export default function App() {
                 }
                 
 
-               console.log("I am Here Look Here " + userToken)
+               console.log("I am Here Look Here " + userId)
 
-                dispatch({ type: 'SIGN_IN', token: userToken });
+                dispatch({ type: 'SIGN_IN', token: userId });
             },
             setup: () => dispatch({ type: 'SET_UP' }),
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
@@ -189,8 +204,10 @@ export default function App() {
                 }
                 
 
-                dispatch({ type: 'SIGN_IN', token: userToken });
-            }
+                dispatch({ type: 'SIGN_UP', token: userToken });
+            },
+            getUserId:() =>  {return userId}
+
             
         })
     
@@ -219,7 +236,7 @@ export default function App() {
                             </>
                     )
                         ) : (
-                            state.newVender == true ? (
+                            state.newVender == false ? (
                         
                             <Stack.Screen name="SetUp" component={BottomNavigation} options={{ headerShown: false }} />
                         
