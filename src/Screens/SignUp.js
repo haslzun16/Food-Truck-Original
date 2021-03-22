@@ -29,7 +29,7 @@ export default function SignUp({ navigation }) {
     const [password, setPassword] = useState("");
     const [confirmpassword, setConfirmPassword] = useState("");
     const [isVender, notVendor] = useState(false);
-
+    const [FoodTruckName, setFoodTruckName] = useState("");
 
     const { signUp } = React.useContext(AuthContext);
 
@@ -43,7 +43,7 @@ export default function SignUp({ navigation }) {
             return
         }
 
-        signUp({ fullName, email, password, phone, isVender});
+        signUp({ fullName, email, password, phone, isVender, FoodTruckName});
 
     }
    
@@ -79,6 +79,7 @@ export default function SignUp({ navigation }) {
                     </View>
 
                     <View style={styles.tiButtons} >
+                        
                         <TextInput style={styles.textInput} placeholder="Full Name" value={fullName} onChangeText={(text) => setFullName(text)} />
 
                         {/* <TextInput
@@ -90,7 +91,6 @@ export default function SignUp({ navigation }) {
                         {/*  <View style={styles.uInput}> */}
 
                         <TextInput style={styles.textInput2} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
-
                         {isVender ? (
                             <TextInput
                             style={styles.textInput2}
@@ -98,8 +98,21 @@ export default function SignUp({ navigation }) {
                             value ={phone}
                             onChangeText={(text) => setPhone(text)}
                             />
+                            
                         ) : null
                         }
+
+                        {isVender ? (
+                            <TextInput
+                            style={styles.textInput2}
+                            placeholder='Food Truck Name'
+                            value ={FoodTruckName}
+                            onChangeText={(text) => setFoodTruckName(text)}
+                            />
+                            
+                        ) : null
+                        }
+
                         {/* </View>
 
                         <View style={styles.uInput2}> */}

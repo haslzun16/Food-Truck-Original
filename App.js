@@ -151,7 +151,9 @@ export default function App() {
                     .set({
                         userId: userToken,
                         Fullname: data.fullName,
-                        phone: data.phone
+                        phone: data.phone,
+                        FoodTruckName: data.FoodTruckName
+
                     });
                 }catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
