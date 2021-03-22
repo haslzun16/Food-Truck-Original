@@ -21,7 +21,7 @@ const SignUpoptions = [
 ];
 
 export default function SignUp({ navigation }) {
-   
+    
     const [phone, setPhone] = useState("");
 
     const [fullName, setFullName] = useState("");
@@ -37,6 +37,8 @@ export default function SignUp({ navigation }) {
         navigation.navigate('SignIn')
     }
 
+
+
     const onRegisterPress = () => {
         if (password !== confirmpassword) {
             alert("Passwords don't match.")
@@ -47,6 +49,9 @@ export default function SignUp({ navigation }) {
 
     }
    
+
+
+
 
 
 
@@ -79,9 +84,8 @@ export default function SignUp({ navigation }) {
                     </View>
 
                     <View style={styles.tiButtons} >
-                        
                         <TextInput style={styles.textInput} placeholder="Full Name" value={fullName} onChangeText={(text) => setFullName(text)} />
-
+                        
                         {/* <TextInput
                             style={styles.textInput}
                             placeholder='Last Name'
@@ -91,38 +95,45 @@ export default function SignUp({ navigation }) {
                         {/*  <View style={styles.uInput}> */}
 
                         <TextInput style={styles.textInput2} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
+
                         {isVender ? (
+
+
+                                <>
                             <TextInput
                             style={styles.textInput2}
                             placeholder='Phone Number'
                             value ={phone}
                             onChangeText={(text) => setPhone(text)}
-                            />
-                            
-                        ) : null
-                        }
-
-                        {isVender ? (
+                            />  
                             <TextInput
                             style={styles.textInput2}
-                            placeholder='Food Truck Name'
+                            placeholder='FoodTruckName'
                             value ={FoodTruckName}
                             onChangeText={(text) => setFoodTruckName(text)}
                             />
-                            
+
+                            </>
                         ) : null
                         }
-
+                        
                         {/* </View>
 
                         <View style={styles.uInput2}> */}
+                        
+
+                        
+
+
+
+
 
                         <TextInput secureTextEntry={true}
                             style={styles.textInput2} placeholder="Password" value={password} onChangeText={(text) => setPassword(text)} />
 
 
                         <TextInput secureTextEntry={true}
-                            style={styles.textInput2} placeholder="Cofirm Password" value={confirmpassword} onChangeText={(text) => setConfirmPassword(text)} />
+                            style={styles.textInput2} placeholder="Confirm Password" value={confirmpassword} onChangeText={(text) => setConfirmPassword(text)} />
 
                         </View>
                 </View>
@@ -133,7 +144,7 @@ export default function SignUp({ navigation }) {
                         <TouchableOpacity
                             onPress={() => onRegisterPress()} style={styles.button}>
                         <Text style={styles.buttonText}>
-                        Sign up
+                        Sign Up`
                         </Text>
                         </TouchableOpacity>
                     </View>
@@ -145,6 +156,7 @@ export default function SignUp({ navigation }) {
                         > Sign In </Text>
                     </View>
                 </View>
+               
             </View>
         </LinearGradient>
     );

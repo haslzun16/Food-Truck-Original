@@ -67,6 +67,7 @@ export default function SignIn({ navigation }) {
 
             <View style={styles.middle}>
                     <View style={styles.tiButtons} >
+            
 
                         <TextInput style={styles.textInput} placeholder="Email" value={email} onChangeText={(text) => setEmail(text)} />
 

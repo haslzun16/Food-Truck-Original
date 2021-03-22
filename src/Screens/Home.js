@@ -25,6 +25,12 @@ const Home = ({ navigation }) => {
     const logout = () => {
         signOut();
     }
+    const getinfo = () => {
+        var ref = db.ref("dinosaurs");
+ref.orderByChild("dimensions/height").on("child_added", function(snapshot) {
+  console.log(snapshot.key + " was " + snapshot.val().height + " meters tall");
+});
+    }
 
     return (
       <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>

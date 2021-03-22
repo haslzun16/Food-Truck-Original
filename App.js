@@ -7,6 +7,7 @@ import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
 import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
+import SetUp from './src/Screens/SetUp'
 //import { decode, encode } from 'base-64'
 import * as firebase from 'firebase';
 import apiKeys from './src/firebase/config';
@@ -50,6 +51,23 @@ export default function App() {
                         userToken: action.token,
                         isLoading: false,
                     };
+                    case 'SIGN_UP':
+                    return {
+                        ...prevState,
+                        isSignout: false,
+                        newVendor: true,
+                        userToken: action.token,
+                        isLoading: false,
+                    };
+                
+                    case 'SETUP':
+                        return{
+                            ...PrevState,
+                            newVendor: false
+                      
+                        };
+
+                        
                 case 'SIGN_OUT':
                     return {
                         ...prevState,
@@ -67,6 +85,8 @@ export default function App() {
             isLoading: true,
             isSignout: false,
             userToken: null,
+            newVendor: false
+           
         }
     );
 
@@ -102,7 +122,7 @@ export default function App() {
                     await firebase
                         .auth()
 
-                        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
+                        .signInWithEmailAndPassword(data.email, data.password)
                         .then(data => {
                             userToken = data.user.uid
                         }).catch(error => {
@@ -120,14 +140,17 @@ export default function App() {
 
                 dispatch({ type: 'SIGN_IN', token: userToken });
             },
+            SetUp: () => dispatch({ type: 'SET_UP' }),
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
             skip:() => dispatch({ type: 'SKIP' }),
+           
             signUp: async data => {
                 let userToken;
                 let reference;
+                console.log(userToken)
                 try {
 
-                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim())
+                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
                     .then(data => {
                         userToken = data.user.uid
                     }).catch(error => {
@@ -152,20 +175,28 @@ export default function App() {
                         userId: userToken,
                         Fullname: data.fullName,
                         phone: data.phone,
-                        FoodTruckName: data.FoodTruckName
+                        FoodTruckName: data.FoodTruckName,
+                        
+                       // FoodType: data.FoodType
+                       // FoodTruckLocation: data.FoodTruckLocation
 
                     });
                 }catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }
+
+                
                 
 
-                dispatch({ type: 'SIGN_IN', token: userToken });
+                dispatch({ type: 'SIGN_UP', token: userToken });
             }
             
         })
     
     );
+   
+
+    
 
 
 //firebase.auth().onAuthStateChanged((user) => {
@@ -175,21 +206,34 @@ export default function App() {
     return (
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
-                <Stack.Navigator>
+               <Stack.Navigator>
                     { state.userToken == null ? (
-                        state.isLoading ? (
+                        state.isLoading ? 
+                        (
                         
                         <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
                         
-                        ) :(
+                         
+                        ):(
                             <>
                             <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
                             <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
                             </>
                     )
-                        ) : (
-                                <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
-                            )}
+
+                         
+                        ):(
+                            state.newVendor==true ? (
+                        
+                        
+                                <Stack.Screen name="SetUp" component={SetUp} options={{ headerShown: false }} /> 
+                        
+                        
+                        ):(
+                           <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
+                    )
+                            )
+                            }
                     
                 </Stack.Navigator>
             </NavigationContainer>
