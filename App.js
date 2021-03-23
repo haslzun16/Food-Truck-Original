@@ -187,19 +187,34 @@ export default function App() {
         Alert.alert("There is something wrong!!!!", err.message);
       }
       try {
+        //for venders only
         if (data.isVender == true) {
           reference = "vender/";
-        } else {
-          reference = "users/";
-        }
-        await firebase
+
+          await firebase
           .database()
           .ref(reference + userToken)
           .set({
             userId: userToken,
             Fullname: data.fullName,
             phone: data.phone,
+            isSetUp: false,
           });
+          //for users 
+        } else {
+          reference = "users/";
+
+          await firebase
+          .database()
+          .ref(reference + userToken)
+          .set({
+            userId: userToken,
+            Fullname: data.fullName,
+            phone: data.phone,
+            isSetUp: true,
+          });
+        }
+       
       } catch (err) {
         Alert.alert("There is something wrong!!!!", err.message);
       }
