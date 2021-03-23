@@ -25,17 +25,7 @@ const SignUpoptions = [
 ];
 
 export default function SignUp({ navigation }) {
-    
-    const [phone, setPhone] = useState("");
-
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmpassword, setConfirmPassword] = useState("");
-    const [isVender, notVendor] = useState(false);
-    const [FoodTruckName, setFoodTruckName] = useState("");
-
-    const { signUp } = React.useContext(AuthContext);
+  const [phone, setPhone] = useState("");
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -118,13 +108,6 @@ export default function SignUp({ navigation }) {
             {/* </View>
 
                         <View style={styles.uInput2}> */}
-                        
-
-                        
-
-
-
-
 
             <TextInput
               secureTextEntry={true}
