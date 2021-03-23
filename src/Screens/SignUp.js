@@ -37,15 +37,13 @@ export default function SignUp({ navigation }) {
         navigation.navigate('SignIn')
     }
 
-
-
     const onRegisterPress = () => {
         if (password !== confirmpassword) {
             alert("Passwords don't match.")
             return
         }
 
-        signUp({ fullName, email, password, phone, isVender, FoodTruckName});
+        signUp({ fullName, email, password, phone, isVender});
 
     }
    
@@ -84,6 +82,7 @@ export default function SignUp({ navigation }) {
                     </View>
 
                     <View style={styles.tiButtons} >
+                        
                         <TextInput style={styles.textInput} placeholder="Full Name" value={fullName} onChangeText={(text) => setFullName(text)} />
                         
                         {/* <TextInput
@@ -106,12 +105,7 @@ export default function SignUp({ navigation }) {
                             value ={phone}
                             onChangeText={(text) => setPhone(text)}
                             />  
-                            <TextInput
-                            style={styles.textInput2}
-                            placeholder='FoodTruckName'
-                            value ={FoodTruckName}
-                            onChangeText={(text) => setFoodTruckName(text)}
-                            />
+                            
 
                             </>
                         ) : null
@@ -144,7 +138,7 @@ export default function SignUp({ navigation }) {
                         <TouchableOpacity
                             onPress={() => onRegisterPress()} style={styles.button}>
                         <Text style={styles.buttonText}>
-                        Sign Up`
+                        Sign Up
                         </Text>
                         </TouchableOpacity>
                     </View>

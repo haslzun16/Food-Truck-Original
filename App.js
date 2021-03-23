@@ -12,7 +12,7 @@ import SetUp from './src/Screens/SetUp'
 import * as firebase from 'firebase';
 import apiKeys from './src/firebase/config';
 import { Alert, Text, View } from 'react-native';
-
+import { useState } from 'react';
 
 export const AuthContext = React.createContext();
 
@@ -29,7 +29,9 @@ function SplashScreen() {
 
 const Stack = createStackNavigator();
 
+
 export default function App() {
+    const [userId, setUserId] = useState("");  
     if (!firebase.apps.length) {
         console.log('Connected with Firebase')
         firebase.initializeApp(apiKeys.firebaseConfig);
@@ -62,9 +64,10 @@ export default function App() {
                 
                     case 'SETUP':
                         return{
-                            ...PrevState,
-                            newVendor: false
-                      
+                            ...prevState,
+                            newVendor: false,
+                            isSignout: false,
+                            isLoading: false,
                         };
 
                         
@@ -124,7 +127,9 @@ export default function App() {
 
                         .signInWithEmailAndPassword(data.email, data.password)
                         .then(data => {
-                            userToken = data.user.uid
+                            let user = firebase.auth().currentUser.providerData;
+                            console.log('this is data',user)
+                            setUserId(user);
                         }).catch(error => {
                             console.log(error);
                         });
@@ -136,11 +141,22 @@ export default function App() {
                 }
                 
 
-               console.log("I am Here Look Here " + userToken)
+               console.log("I am Here Look Here " + userId)
 
-                dispatch({ type: 'SIGN_IN', token: userToken });
+                dispatch({ type: 'SIGN_IN', token: userId });
             },
-            SetUp: () => dispatch({ type: 'SET_UP' }),
+            setUp: (data) => {
+                firebase
+                    .database()
+                    .ref("vender/" + userId)
+                    .update({
+                        FoodTruckName: data.FoodTruckName, 
+                        FoodTruckLocation: data.FoodTruckLocation,
+                        FoodType: data.FoodType,
+                        LicensePlate: data.LicensePlate
+
+                    });
+                dispatch({ type: 'SET_UP'})},
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
             skip:() => dispatch({ type: 'SKIP' }),
            
@@ -153,6 +169,7 @@ export default function App() {
                     await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
                     .then(data => {
                         userToken = data.user.uid
+                        setUserId(userToken)
                     }).catch(error => {
                         console.log(error);
                     });
@@ -175,7 +192,7 @@ export default function App() {
                         userId: userToken,
                         Fullname: data.fullName,
                         phone: data.phone,
-                        FoodTruckName: data.FoodTruckName,
+                        
                         
                        // FoodType: data.FoodType
                        // FoodTruckLocation: data.FoodTruckLocation
