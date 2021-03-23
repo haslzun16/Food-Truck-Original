@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     bottomV: {
         height: '30%',
        // backgroundColor: '#fff',
+
     },
     view: {
         marginTop: 'auto',
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: '#FEAD44',
     },
+
     tiButtons: {
         marginTop: 50,
         alignItems: 'center',

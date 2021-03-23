@@ -20,14 +20,15 @@
         "supportsTablet": true
       },
       "android": {
+        "softwareKeyboardLayoutMode": "pan",
         "package": "com.mapTest.iosTest",
         "adaptiveIcon": {
           "foregroundImage": "./assets/adaptive-icon.png",
           "backgroundColor": "#FFFFFF"
         },
         "config": {
-          "googleMaps": { "apiKey": "AIzaSyC3ziNo48lch1EkiofWJCvvRhQXqY-CedQ" }   
-       }
+          "googleMaps": { "apiKey": "AIzaSyC3ziNo48lch1EkiofWJCvvRhQXqY-CedQ" }
+        }
       },
       "web": {
         "favicon": "./assets/favicon.png"

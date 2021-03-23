@@ -1,3 +1,18 @@
+
+/* You will need to install the following to make the app work:
+npm add @react-navigation/native && npm add @react-navigation/stack && 
+expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+npm install @react-navigation/native
+npm install @react-navigation/stack 
+npm install react-native-onboarding-swiper
+npm install react-native-switch-selector  
+npm install @react-navigation/bottom-tabs
+expo install firebase
+npm install expo-image-picker
+npm install expo-constants
+npm install react-native-floating-action
+*/
+
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native'
@@ -7,12 +22,20 @@ import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
 import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
-import SetUp from './src/Screens/SetUp'
+import FoodTruckDetails from './src/Screens/FoodTruckDetails';
+import EditMyPage from './src/Screens/EditMyPage';
+import { useState} from 'react';
+
+
+
 //import { decode, encode } from 'base-64'
 import * as firebase from 'firebase';
 import apiKeys from './src/firebase/config';
 import { Alert, Text, View } from 'react-native';
-import { useState } from 'react';
+
+
+
+
 
 export const AuthContext = React.createContext();
 
@@ -29,9 +52,9 @@ function SplashScreen() {
 
 const Stack = createStackNavigator();
 
-
 export default function App() {
-    const [userId, setUserId] = useState("");  
+    const [userId, setUserId] = useState('')
+
     if (!firebase.apps.length) {
         console.log('Connected with Firebase')
         firebase.initializeApp(apiKeys.firebaseConfig);
@@ -51,26 +74,24 @@ export default function App() {
                         ...prevState,
                         isSignout: false,
                         userToken: action.token,
-                        isLoading: false,
+                        isLoading: false
+                        
                     };
-                    case 'SIGN_UP':
+                case 'SIGN_UP':
                     return {
                         ...prevState,
                         isSignout: false,
-                        newVendor: true,
                         userToken: action.token,
                         isLoading: false,
-                    };
-                
-                    case 'SETUP':
-                        return{
-                            ...prevState,
-                            newVendor: false,
-                            isSignout: false,
-                            isLoading: false,
-                        };
-
+                        newVender: true
                         
+                    };
+                case 'SET_UP':
+                    return {
+                        newVender: false
+                        
+                    };
+
                 case 'SIGN_OUT':
                     return {
                         ...prevState,
@@ -88,8 +109,7 @@ export default function App() {
             isLoading: true,
             isSignout: false,
             userToken: null,
-            newVendor: false
-           
+            newVender: true,
         }
     );
 
@@ -119,20 +139,20 @@ export default function App() {
                 // In a production app, we need to send some data (usually username, password) to server and get a token
                 // We will also need to handle errors if sign in failed
                 // After getting token, we need to persist the token using `AsyncStorage`
-                let userToken;
+                
                 
                 try {
                     await firebase
                         .auth()
 
-                        .signInWithEmailAndPassword(data.email, data.password)
+
+                        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
                         .then(data => {
-                            let user = firebase.auth().currentUser.providerData;
-                            console.log('this is data',user)
-                            setUserId(user);
+                            setUserId(data.user.uid)
                         }).catch(error => {
                             console.log(error);
                         });
+
 
 
 
@@ -145,31 +165,17 @@ export default function App() {
 
                 dispatch({ type: 'SIGN_IN', token: userId });
             },
-            setUp: (data) => {
-                firebase
-                    .database()
-                    .ref("vender/" + userId)
-                    .update({
-                        FoodTruckName: data.FoodTruckName, 
-                        FoodTruckLocation: data.FoodTruckLocation,
-                        FoodType: data.FoodType,
-                        LicensePlate: data.LicensePlate
-
-                    });
-                dispatch({ type: 'SET_UP'})},
+            setup: () => dispatch({ type: 'SET_UP' }),
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
             skip:() => dispatch({ type: 'SKIP' }),
-           
             signUp: async data => {
                 let userToken;
                 let reference;
-                console.log(userToken)
                 try {
 
-                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
+                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim())
                     .then(data => {
                         userToken = data.user.uid
-                        setUserId(userToken)
                     }).catch(error => {
                         console.log(error);
                     });
@@ -191,67 +197,59 @@ export default function App() {
                     .set({
                         userId: userToken,
                         Fullname: data.fullName,
-                        phone: data.phone,
-                        
-                        
-                       // FoodType: data.FoodType
-                       // FoodTruckLocation: data.FoodTruckLocation
-
+                        phone: data.phone
                     });
                 }catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }
-
-                
                 
 
                 dispatch({ type: 'SIGN_UP', token: userToken });
-            }
+            },
+            getUserId:() =>  {return userId}
+
             
         })
     
     );
-   
-
-    
 
 
-//firebase.auth().onAuthStateChanged((user) => {
-           //console.log(user);
-//})
+
+/*firebase.auth().onAuthStateChanged((user) => {
+            console.log(user);
+})*/
+
 
     return (
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
-               <Stack.Navigator>
+                <Stack.Navigator>
                     { state.userToken == null ? (
-                        state.isLoading ? 
-                        (
+                        state.isLoading ? (
                         
                         <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
                         
-                         
-                        ):(
+                        ) :(
                             <>
                             <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
                             <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
                             </>
                     )
-
-                         
-                        ):(
-                            state.newVendor==true ? (
+                        ) : (
+                            state.newVender == false ? (
                         
+                            <Stack.Screen name="SetUp" component={BottomNavigation} options={{ headerShown: false }} />
                         
-                                <Stack.Screen name="SetUp" component={SetUp} options={{ headerShown: false }} /> 
-                        
-                        
-                        ):(
-                           <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
+                        ) :(
+                            <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
                     )
-                            )
-                            }
-                    
+                                
+                            )}
+
+                    <Stack.Screen name="Account" component={Account} options={{ headerShown: false }} />
+                    <Stack.Screen name="FoodTruckDetails" component={FoodTruckDetails} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditMyPage" component={EditMyPage} options={{ headerShown: false }} />
+
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>
