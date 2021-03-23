@@ -24,9 +24,6 @@ const onSetUpPress = () => {
     setUp({FoodTruckName, FoodTruckLocation, FoodType, LicensePlate});
 
 }
-
-
-
   return (
    <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
                 <View style={styles.top}>

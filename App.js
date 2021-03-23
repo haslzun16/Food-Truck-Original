@@ -22,6 +22,7 @@ import SignUp from './src/Screens/SignUp'
 import OnBoardingScreen from './src/Screens/OnboardingScreen'
 import BottomNavigation from './src/BottomNavigation'
 import Account from './src/Screens/Account'
+import SetUp from './src/Screens/SetUp'
 import FoodTruckDetails from './src/Screens/FoodTruckDetails';
 import EditMyPage from './src/Screens/EditMyPage';
 import { useState} from 'react';
@@ -51,6 +52,7 @@ function SplashScreen() {
 // if (!global.atob) { global.atob = decode }
 
 const Stack = createStackNavigator();
+
 
 export default function App() {
     const [userId, setUserId] = useState('')
@@ -91,7 +93,6 @@ export default function App() {
                         newVender: false
                         
                     };
-
                 case 'SIGN_OUT':
                     return {
                         ...prevState,
@@ -165,17 +166,31 @@ export default function App() {
 
                 dispatch({ type: 'SIGN_IN', token: userId });
             },
-            setup: () => dispatch({ type: 'SET_UP' }),
+            setUp: (data) => {
+                firebase
+                    .database()
+                    .ref("vender/" + userId)
+                    .update({
+                        FoodTruckName: data.FoodTruckName, 
+                        FoodTruckLocation: data.FoodTruckLocation,
+                        FoodType: data.FoodType,
+                        LicensePlate: data.LicensePlate
+
+                    });
+                dispatch({ type: 'SET_UP'})},
             signOut: () => dispatch({ type: 'SIGN_OUT' }),
             skip:() => dispatch({ type: 'SKIP' }),
+           
             signUp: async data => {
                 let userToken;
                 let reference;
+                console.log(userToken)
                 try {
 
-                    await firebase.auth().createUserWithEmailAndPassword(data.email.trim(), data.password.trim())
+                    await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
                     .then(data => {
                         userToken = data.user.uid
+                        setUserId(userToken)
                     }).catch(error => {
                         console.log(error);
                     });
@@ -197,11 +212,18 @@ export default function App() {
                     .set({
                         userId: userToken,
                         Fullname: data.fullName,
-                        phone: data.phone
+                        phone: data.phone,
+                        
+                        
+                       // FoodType: data.FoodType
+                       // FoodTruckLocation: data.FoodTruckLocation
+
                     });
                 }catch (err) {
                     Alert.alert("There is something wrong!!!!", err.message);
                 }
+
+                
                 
 
                 dispatch({ type: 'SIGN_UP', token: userToken });
@@ -212,6 +234,9 @@ export default function App() {
         })
     
     );
+   
+
+    
 
 
 
@@ -223,13 +248,15 @@ export default function App() {
     return (
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
-                <Stack.Navigator>
+               <Stack.Navigator>
                     { state.userToken == null ? (
-                        state.isLoading ? (
+                        state.isLoading ? 
+                        (
                         
                         <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
                         
-                        ) :(
+                         
+                        ):(
                             <>
                             <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
                             <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />

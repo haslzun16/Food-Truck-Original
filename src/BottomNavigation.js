@@ -19,7 +19,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 
-
 const Tab = createBottomTabNavigator();
 
 
