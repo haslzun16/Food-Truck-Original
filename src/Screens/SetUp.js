@@ -4,10 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import 'react-native-gesture-handler';
 import {AuthContext} from '../../App'
-
+import * as firebase from "firebase";
 //import { decode, encode } from 'base-64'
-
-
 
 export default function SetUp({ navigation }) {
 const [FoodTruckName, setFoodTruckName] = useState("");
@@ -16,12 +14,14 @@ const [FoodType, setFoodType] = useState("");
 const [ LicensePlate , setLicensePlate] = useState('');
 
 const { setUp } = React.useContext(AuthContext);
-
+const { getUserId } = React.useContext(AuthContext);
 // on register press change !!!
 const onSetUpPress = () => {
-   
-
+    
+    let userId = getUserId();
+    firebase.database().ref("vender/" + userId ).update({isSetUp:true});
     setUp({FoodTruckName, FoodTruckLocation, FoodType, LicensePlate});
+    navigation.navigate("BottomNavigation");
 
 }
   return (
