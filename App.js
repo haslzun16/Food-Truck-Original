@@ -23,6 +23,7 @@ import BottomNavigation from "./src/BottomNavigation";
 import Account from "./src/Screens/Account";
 import FoodTruckDetails from "./src/Screens/FoodTruckDetails";
 import EditMyPage from "./src/Screens/EditMyPage";
+import Loading from "./src/Screens/Loading";
 import { useState } from "react";
 
 //import { decode, encode } from 'base-64'
@@ -79,7 +80,10 @@ export default function App() {
           };
         case "SET_UP":
           return {
+            ...prevState,
             newVender: false,
+            isSignout: false,
+            isLoading: false,
           };
 
         case "SIGN_OUT":
@@ -148,15 +152,16 @@ export default function App() {
 
       dispatch({ type: "SIGN_IN", token: user });
     },
-    setup: (data) => {
+    setUp: (data) => {
 
       firebase
           .database()
-          .ref("venders/" + userId)
-          .set({
-            
-            
-            
+          .ref("vender/" + userId)
+          .update({
+            FoodTruckName: data.FoodTruckName, 
+            FoodTruckLocation: data.FoodTruckLocation,
+            FoodType: data.FoodType,
+            LicensePlate: data.LicensePlate
           });
 
 
@@ -256,18 +261,13 @@ export default function App() {
                 />
               </>
             )
-          ) : state.newVender == false ? (
-            <Stack.Screen
-              name="SetUp"
-              component={BottomNavigation}
-              options={{ headerShown: false }}
-            />
           ) : (
             <Stack.Screen
-              name="BottomNavigation"
-              component={BottomNavigation}
-              options={{ headerShown: false }}
-            />
+                  name="Loading"
+                  component={Loading}
+                  options={{ headerShown: false }}
+                />
+           
           )}
 
           <Stack.Screen

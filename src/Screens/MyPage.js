@@ -20,11 +20,10 @@ import * as firebase from "firebase";
 import _ from "lodash";
 
 import * as ImagePicker from "expo-image-picker";
-import Constants from "expo-constants";
 
-import { FloatingAction } from "react-native-floating-action";
 
-import Swipeout from "react-native-swipeout";
+
+
 import { AuthContext } from "../../App";
 
 const MyPage = ({ navigation, route }) => {
@@ -107,6 +106,7 @@ const MyPage = ({ navigation, route }) => {
   }, []);
 
   const getMenus = () => {
+    
     let menuRef = firebase.database().ref("vender/" + userId + "/menu");
 
     menuRef.on("value", (snapshot) => {
