@@ -1,88 +1,88 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image, TextInput, TouchableOpacity, ListViewComponent } from 'react-native';
+import { Text, View, StyleSheet, Image, TextInput,TouchableOpacity, ListViewComponent } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import 'react-native-gesture-handler';
-import { AuthContext } from '../../App'
+import {AuthContext} from '../../App'
 import * as firebase from "firebase";
 //import { decode, encode } from 'base-64'
 
 export default function SetUp({ navigation }) {
-    const [FoodTruckName, setFoodTruckName] = useState("");
-    const [FoodTruckLocation, setFoodTruckLocation] = useState("");
-    const [FoodType, setFoodType] = useState("");
-    const [LicensePlate, setLicensePlate] = useState('');
+const [FoodTruckName, setFoodTruckName] = useState("");
+const [FoodTruckLocation, setFoodTruckLocation] = useState("");
+const [FoodType, setFoodType] = useState("");
+const [ LicensePlate , setLicensePlate] = useState('');
 
-    const { setUp } = React.useContext(AuthContext);
-    const { getUserId } = React.useContext(AuthContext);
-    // on register press change !!!
-    const onSetUpPress = () => {
+const { setUp } = React.useContext(AuthContext);
+const { getUserId } = React.useContext(AuthContext);
+// on register press change !!!
+const onSetUpPress = () => {
+    
+    let userId = getUserId();
+    firebase.database().ref("vender/" + userId ).update({isSetUp:true});
+    setUp({FoodTruckName, FoodTruckLocation, FoodType, LicensePlate});
+    navigation.navigate("BottomNavigation");
 
-        let userId = getUserId();
-        firebase.database().ref("vender/" + userId).update({ isSetUp: true });
-        setUp({ FoodTruckName, FoodTruckLocation, FoodType, LicensePlate });
-        navigation.navigate("BottomNavigation");
-
-    }
-    return (
-        <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
-            <View style={styles.top}>
-                <View style={styles.view}>
-                    {/* <Image
+}
+  return (
+   <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
+                <View style={styles.top}>
+                    <View style={styles.view}>
+                        {/* <Image
                             style={{ width: 230, height: 120, alignItems: 'center', marginTop: 20 }}
                             source={require('../assets/orange-food-truck.png')} 
                             resizeMode ={'cover'}/>
                             */}
 
-                    <Text style={styles.Text}> Set Up Your Account </Text>
+                        <Text style={styles.Text}> Set Up Your Account </Text>
+                    </View>
                 </View>
-            </View>
 
-            <View style={styles.middle}>
-                <View style={styles.tiButtons} >
-                    <TextInput style={styles.textInput} placeholder="Enter your food trucks name" value={FoodTruckName}
+                <View style={styles.middle}>
+                    <View style={styles.tiButtons} >
+                        <TextInput style={styles.textInput} placeholder="Enter your food trucks name" value={FoodTruckName} 
                         onChangeText={(text) => setFoodTruckName(text)} />
 
-                    <TextInput style={styles.textInput} placeholder="Enter your food trucks location" value={FoodTruckLocation}
+                        <TextInput style={styles.textInput} placeholder="Enter your food trucks location" value={FoodTruckLocation} 
                         onChangeText={(text) => setFoodTruckLocation(text)} />
 
-                    <TextInput style={styles.textInput} placeholder="Enter your food type" value={FoodType}
+                        <TextInput style={styles.textInput} placeholder="Enter your food type" value={FoodType} 
                         onChangeText={(text) => setFoodType(text)} />
 
-                    <TextInput style={styles.textInput} placeholder="Enter your Food Truck License plate" value={LicensePlate}
+                         <TextInput style={styles.textInput} placeholder="Enter your Food Truck License plate" value={LicensePlate} 
                         onChangeText={(text) => setLicensePlate(text)} />
 
-                    <TouchableOpacity
+                        <TouchableOpacity
                         onPress={() => onSetUpPress()} style={styles.button}>
                         <Text style={styles.buttonText}>
-                            Finish Set Up
+                        Finish Set Up
                         </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
 
+                    </View>
                 </View>
-            </View>
 
-        </LinearGradient>
-    );
+    </LinearGradient>
+  );
 }
 
 
 const styles = StyleSheet.create({
-    body: {
+   body: {
         flex: 1,
         backgroundColor: '#2193b0',
     },
     view: {
         alignItems: 'center',
         paddingTop: 20,
-
+        
     },
     top: {
         height: '15%',
-        //  backgroundColor: '#fff'
+      //  backgroundColor: '#fff'
     },
     middle: {
-        //   backgroundColor: "#000",
+     //   backgroundColor: "#000",
         height: '55%',
     },
     button: {
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: '#FEAD44',
     },
-    buttonText: {
+     buttonText: {
         position: 'absolute',
         paddingLeft: 50,
         fontSize: 18,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     tiButtons: {
         marginTop: 0,
         alignItems: 'center',
-        //  flexDirection: "row"
+      //  flexDirection: "row"
     },
     textInput: {
         borderWidth: 1,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         width: '85%'
     },
-    Text: {
+     Text: {
         fontSize: 36,
         textAlign: 'center',
         color: '#fff',
