@@ -23,6 +23,7 @@ import BottomNavigation from "./src/BottomNavigation";
 import Account from "./src/Screens/Account";
 import FoodTruckDetails from "./src/Screens/FoodTruckDetails";
 import EditMyPage from "./src/Screens/EditMyPage";
+import Loading from "./src/Screens/Loading";
 import { useState } from "react";
 
 //import { decode, encode } from 'base-64'
@@ -79,7 +80,10 @@ export default function App() {
           };
         case "SET_UP":
           return {
+            ...prevState,
             newVender: false,
+            isSignout: false,
+            isLoading: false,
           };
 
         case "SIGN_OUT":
@@ -127,7 +131,7 @@ export default function App() {
       // In a production app, we need to send some data (usually username, password) to server and get a token
       // We will also need to handle errors if sign in failed
       // After getting token, we need to persist the token using `AsyncStorage`
-      let user ="";
+      let user = "";
       try {
         await firebase
           .auth()
@@ -135,8 +139,8 @@ export default function App() {
           .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
           .then((data) => {
             user = data.user.uid
-            
-            
+
+
           })
           .catch((error) => {
             console.log(error);
@@ -151,13 +155,14 @@ export default function App() {
     setup: (data) => {
 
       firebase
-          .database()
-          .ref("venders/" + userId)
-          .set({
-            
-            
-            
-          });
+        .database()
+        .ref("vender/" + userId)
+        .update({
+          FoodTruckName: data.FoodTruckName,
+          FoodTruckLocation: data.FoodTruckLocation,
+          FoodType: data.FoodType,
+          LicensePlate: data.LicensePlate
+        });
 
 
       dispatch({ type: "SET_UP" })
@@ -176,9 +181,9 @@ export default function App() {
           )
           .then((data) => {
             userToken = data.user.uid
-            console.log('this is usertoken',userToken)
+            console.log('this is usertoken', userToken)
             setUserId(userToken)
-            
+
           })
           .catch((error) => {
             console.log(error);
@@ -192,29 +197,29 @@ export default function App() {
           reference = "vender/";
 
           await firebase
-          .database()
-          .ref(reference + userToken)
-          .set({
-            userId: userToken,
-            Fullname: data.fullName,
-            phone: data.phone,
-            isSetUp: false,
-          });
+            .database()
+            .ref(reference + userToken)
+            .set({
+              userId: userToken,
+              Fullname: data.fullName,
+              phone: data.phone,
+              isSetUp: false,
+            });
           //for users 
         } else {
           reference = "users/";
 
           await firebase
-          .database()
-          .ref(reference + userToken)
-          .set({
-            userId: userToken,
-            Fullname: data.fullName,
-            phone: data.phone,
-            isSetUp: true,
-          });
+            .database()
+            .ref(reference + userToken)
+            .set({
+              userId: userToken,
+              Fullname: data.fullName,
+              phone: data.phone,
+              isSetUp: true,
+            });
         }
-       
+
       } catch (err) {
         Alert.alert("There is something wrong!!!!", err.message);
       }
@@ -256,16 +261,10 @@ export default function App() {
                 />
               </>
             )
-          ) : state.newVender == false ? (
-            <Stack.Screen
-              name="SetUp"
-              component={BottomNavigation}
-              options={{ headerShown: false }}
-            />
           ) : (
             <Stack.Screen
-              name="BottomNavigation"
-              component={BottomNavigation}
+              name="Loading"
+              component={Loading}
               options={{ headerShown: false }}
             />
           )}
