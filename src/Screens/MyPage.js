@@ -21,9 +21,6 @@ import _ from "lodash";
 
 import * as ImagePicker from "expo-image-picker";
 
-
-
-
 import { AuthContext } from "../../App";
 
 const MyPage = ({ navigation, route }) => {
@@ -111,12 +108,16 @@ const MyPage = ({ navigation, route }) => {
 
     menuRef.on("value", (snapshot) => {
       let val = snapshot.val();
-
+      
       let valToArray = _.map(val, (element) => {
+        
         return { ...element };
       });
       
-	  setMenus(valToArray);
+      
+    setMenus(valToArray);
+    
+    
 
     });
   };
