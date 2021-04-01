@@ -8,6 +8,9 @@ import {
   FlatList,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import * as firebase from "firebase";
+import _ from "lodash";
+
 
 //I changed the linear background to darkish white and the top view to orange
 
@@ -132,6 +135,28 @@ const Home = ({ navigation }) => {
   const [categories, setCategories] = React.useState(categoryData);
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [foodTrucks, setFoodTrucks] = React.useState(foodTruckData);
+  const [venders, setVenders] = React.useState([]);
+
+  React.useEffect(() => {
+    getVenders();
+  }, []);
+
+  const getVenders = () => {
+    
+    let menuRef = firebase.database().ref("vender/");
+
+    menuRef.on("value", (snapshot) => {
+      let val = snapshot.val();
+
+      let valToArray = _.map(val, (element) => {
+        return { ...element };
+      });
+      console.log(valToArray)
+      
+      setVenders(valToArray);
+
+    });
+  };
 
   function onSelectCategory(category) {
     //filter restaurant
