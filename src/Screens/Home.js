@@ -8,7 +8,7 @@
  */
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FlatList,
   Button,
@@ -55,80 +55,38 @@ const Home = ({ navigation }) => {
     },
   ]);
 
-  const [image, setImage] = useState([
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck1.jpg"),
-      name: "Amoroso's Bakery",
-      time: "10am - 6pm",
-      food: "Bakery",
-      distance: "1.5 mi",
-      id: "1",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck2.jpg"),
-      name: "Tacos Hermanos",
-      time: "4pm - 11pm",
-      food: "Tacos",
-      distance: "1.3 mi",
-      id: "2",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck3.png"),
-      name: "Sliders",
-      time: "11am - 9pm",
-      food: "Burgers",
-      distance: "1.8 mi",
-      id: "3",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck4.jpg"),
-      name: "PH Burger",
-      time: "11am - 7pm",
-      food: "Burgers",
-      distance: "0.5 mi",
-      id: "4",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck5.jpg"),
-      name: "Tuk Truk",
-      time: "8am - 5pm",
-      food: "Chicken",
-      distance: "1.4 mi",
-      id: "5",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck6.jpg"),
-      name: "Ruthies",
-      time: "2pm - 10pm",
-      food: "Drinks, Burgers",
-      distance: "2.2 mi",
-      id: "6",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck7.jpg"),
-      name: "Big Blue",
-      time: "1pm - 11pm",
-      food: "Hotdogs, Burgers",
-      distance: "1.9 mi",
-      id: "7",
-    },
-    {
-      source: require("../../assets/FoodTrucks/FoodTruck8.jpg"),
-      name: "Sweet Burrito",
-      time: "3pm - 9pm",
-      food: "Burritos",
-      distance: "1.1 mi",
-      id: "8",
-    },
-  ]);
+  const [venders, setVenders] = useState([]);
 
-  /* const logout = () => {
+  useEffect(() => {
+    getVenders();
+  }, []);
+
+  const getVenders = () => {
+    
+    let menuRef = firebase.database().ref("vender/");
+
+    menuRef.on("value", (snapshot) => {
+      let val = snapshot.val();
+
+      let valToArray = _.map(val, (element) => {
+        return { ...element };
+      });
+      
+      
+      setVenders(valToArray);
+
+      console.log(venders[0].FullName)
+
+    });
+  };
+
+   const logout = () => {
         auth
             .signOut()
             .then(() => console.log("User signed out"))
         navigation.replace('SignIn');
 
-    }*/
+    }
 
   return (
     <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.body}>
@@ -236,7 +194,7 @@ const Home = ({ navigation }) => {
           numColumns={1}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
-          data={image}
+          data={venders}
           renderItem={({ item }) => (
             <View>
               <TouchableOpacity

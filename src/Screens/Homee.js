@@ -13,6 +13,9 @@ import {
     ImageBackground,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import * as firebase from "firebase";
+import _ from "lodash";
+
 
 import { AuthContext } from "../../App";
 
@@ -104,6 +107,28 @@ const Home = ({ navigation }) => {
   ];
 
   const [foodTrucks, setFoodTrucks] = React.useState(foodTruckData);
+  const [venders, setVenders] = React.useState([]);
+
+  React.useEffect(() => {
+    getVenders();
+  }, []);
+
+  const getVenders = () => {
+    
+    let menuRef = firebase.database().ref("vender/");
+
+    menuRef.on("value", (snapshot) => {
+      let val = snapshot.val();
+
+      let valToArray = _.map(val, (element) => {
+        return { ...element };
+      });
+      console.log(valToArray)
+      
+      setVenders(valToArray);
+
+    });
+  };
 
   const [search, setSearch] = React.useState('');
 
