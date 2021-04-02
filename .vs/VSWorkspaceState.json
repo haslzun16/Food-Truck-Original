@@ -1,6 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\API",
+    "\\assets",
+    "\\src",
+    "\\src\\firebase",
+    "\\src\\Screens"
   ],
+  "SelectedNode": "\\src\\Screens\\Account.js",
   "PreviewInSolutionExplorer": false
 }

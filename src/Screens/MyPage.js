@@ -24,7 +24,10 @@ import * as ImagePicker from "expo-image-picker";
 import { AuthContext } from "../../App";
 
 const MyPage = ({ navigation, route }) => {
+
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [modalVisible2, setModalVisible2] = useState(false);
 
   const [locationVisible, setLocationVisible] = useState(false);
 
@@ -40,11 +43,9 @@ const MyPage = ({ navigation, route }) => {
 
   const { getUserId } = React.useContext(AuthContext);
 
-  let userId = getUserId();
-
   const [tempImage, setTempImage] = useState("");
 
-
+  let userId = getUserId();
 
   useEffect(() => {
     (async () => {
@@ -172,22 +173,30 @@ const MyPage = ({ navigation, route }) => {
       });
   };
 
-  const updateMenu = (item) => {
-    let menuRef = firebase.database().ref("vender/" + userId);
+    const updateMenu = (item) => {
+       // setModalVisible2(false);
 
-    menuRef
-      .update({ done: !item.done })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  };
+        setModalVisible2(true);
 
 
-  const deleteMenu = (item) => {
-    console.log("im am here" + item);
+        console.log(item.name)
+        let menuRef = firebase.database().ref("vender/" + userId + "/menu/" + item.id);
+
+        menuRef
+            .update({ name: newName, price: newPrice, description: newDescription })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+
+        setModalVisible2(false);
+    };
+
+
+    const deleteMenu = (item) => {
+
     let menuRef = firebase
       .database()
       .ref("vender/" + userId + "/menu/" + item.id);
-
+        console.log("YOOOOOOOOOOOOOOOOOOOO  " + menuRef);
       //deleting the item
       menuRef.remove().then(() => {
         // File deleted successfully
@@ -211,79 +220,128 @@ const MyPage = ({ navigation, route }) => {
         // Uh-oh, an error occurred!
         console.log('an error occurred!')
       });
-
-
-   
   };
-
-  
-
-
-
-  const foodTruckData = [
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 1,
-    },
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 2,
-    },
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 3,
-    },
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 4,
-    },
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 5,
-    },
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 6,
-    },
-    {
-      source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
-      name: "Vanilla Cupcake",
-      description: "Delicious Vanilla cupcake with sprinkles",
-      food: "Bakery",
-      price: "$1.50",
-      id: 7,
-    },
-  ];
-
-  const [foodTrucks, setFoodTrucks] = React.useState(foodTruckData);
 
   const editPageNavigation = () => {
     navigation.navigate("EditMyPage");
-  };
+    };
+
+    //keyExtractor = item => item.id; // item.whateverUniqueIdentifierYouHave
+    const keyExtractor = (item, index) => index.toString();
+
+
+    const renderItem = ({ item, index }) => {
+        return (
+           <View>
+                <Modal visible={modalVisible2}>
+                    <View style={styles.modal}>
+                        <Button title="Pick an image from camera roll" onPress={pickImage} />
+                        <Image source={{ uri: tempImage ? tempImage : null }} style={{ width: 200, height: 200 }} />
+
+                        <TextInput
+                            placeholder="Food Name"
+                            style={styles.textInput}
+                            onChangeText={text => setNewName(text)}
+                            defaultValue={item.name}
+                           // editable={true}
+                        />
+
+                        <TextInput
+                            keyboardType="numeric"
+                            placeholder="Food Price"
+                            style={styles.textInput}
+                            onChangeText={text => setNewPrice(text)}
+                            defaultValue={item.price}
+                           // editable={true}
+                        />
+
+                        <TextInput
+                            placeholder="Food Description"
+                            style={styles.textInput}
+                            onChangeText={text => setNewDescription(text)}
+                            defaultValue={item.description}
+                           // editable={true}
+                        />
+
+                        <View style={{ flexDirection: 'row', }}>
+
+                            <View style={styles.view2} >
+                                {/* Closes the Modal */}
+                                <TouchableOpacity
+                                    onPress={() => setModalVisible2(false)} style={styles.button}>
+                                    <Text style={styles.buttonText}>
+                                        Cancel
+								    </Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.view2} >
+                                {/* Updates the menu */}
+                                <TouchableOpacity
+                                    onPress={() => updateMenu(item)} style={styles.button}>
+
+                                    <Text style={styles.buttonText}>
+                                        Confirm
+								    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                <View>
+                    {/*When clicked go to Open the Modal  */}
+                    <TouchableOpacity
+                          onPress={() => { setModalVisible2(true), console.log(item.name) }}
+                        //onPress={() => { updateMenu(item) }}
+
+                        onLongPress={() => deleteMenu(item)}
+                    >
+                        <View
+                            style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                backgroundColor: "#F5F5F5",
+                                marginTop: 10,
+                                borderRadius: 20,
+                            }}
+                        >
+                            {/* Food Image */}
+                            <Image
+                                source={{ uri: item.image }}
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    margin: 5,
+                                    borderRadius: 5,
+                                }}
+                            ></Image>
+
+                            <View
+                                style={{ flex: 1, flexDirection: "column", height: 100 }}
+                            >
+                                {/* Food Name */}
+                                <Text style={styles.flatListItem2}>{item.name}</Text>
+
+                                <View style={{ flexDirection: "row" }}></View>
+
+                                {/* Food Price */}
+                                <Text style={styles.flatListItem3}>{item.price}</Text>
+
+                                {/* Food Description */}
+                                <Text style={styles.flatListItem3}>{item.description}</Text>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+
+                    {/* Line that separates Food */}
+
+                    <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
+                </View>
+
+           </View>
+        );
+    };
 
   return (
     <View style={{ flex: 1 }}>
@@ -300,19 +358,22 @@ const MyPage = ({ navigation, route }) => {
             style={styles.textInput}
             onChangeText={(text) => setNewName(text)}
           />
+
           <TextInput
             placeholder="Food Price"
             style={styles.textInput}
             onChangeText={(text) => setNewPrice(text)}
           />
+
           <TextInput
             placeholder="Food Description"
             style={styles.textInput}
             onChangeText={(text) => setNewDescription(text)}
           />
+
           <View style={{ flexDirection: "row" }}>
             <View style={styles.view2}>
-              {/* If correct credentials go to the homepage via bottom navigation */}
+              {/* Close and Cancel the Modal */}
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 style={styles.button}
@@ -322,7 +383,7 @@ const MyPage = ({ navigation, route }) => {
             </View>
 
             <View style={styles.view2}>
-              {/* If correct credentials go to the homepage via bottom navigation */}
+              {/* Add Food Menu to the database */}
               <TouchableOpacity
                 onPress={() => uploadImageToStorage()}
                 style={styles.button}
@@ -332,7 +393,58 @@ const MyPage = ({ navigation, route }) => {
             </View>
           </View>
         </View>
-      </Modal>
+          </Modal>
+
+{/*          <Modal visible={modalVisible2}>
+              <View style={styles.modal}>
+                  <Button title="Pick an image from camera roll" onPress={pickImage} />
+                  <Image source={{ uri: tempImage ? tempImage : null }} style={{ width: 200, height: 200 }} />
+
+                  <TextInput
+                      placeholder="Food Name"
+                      style={styles.textInput}
+                      onChangeText={text => setNewName(text)}
+                      defaultValue={newName}
+                      editable={true}
+
+                  />
+                  <TextInput
+                      keyboardType="numeric"
+                      placeholder="Food Price"
+                      style={styles.textInput}
+                      onChangeText={text => setNewPrice(text)}
+                      defaultValue={newPrice}
+                      editable={true}
+                  />
+                  <TextInput
+                      placeholder="Food Description"
+                      style={styles.textInput}
+                      onChangeText={text => setNewDescription(text)}
+                      defaultValue={newDescription}
+                      editable={true}
+                  />
+                  <View style={{ flexDirection: 'row', }}>
+
+                      <View style={styles.view2} >
+                          <TouchableOpacity
+                              onPress={() => setModalVisible2(false)} style={styles.button}>
+                              <Text style={styles.buttonText}>
+                                  Cancel
+								</Text>
+                          </TouchableOpacity>
+                      </View>
+
+                      <View style={styles.view2} >
+                          <TouchableOpacity
+                              onPress={() => updateMenu(item)} style={styles.button}>
+                              <Text style={styles.buttonText}>
+                                  Confirm
+								</Text>
+                          </TouchableOpacity>
+                      </View>
+                  </View>
+              </View>
+          </Modal> */}
 
       <Modal visible={locationVisible}>
         <View style={styles.modal}>
@@ -391,14 +503,12 @@ const MyPage = ({ navigation, route }) => {
           <TouchableOpacity
             style={{
               backgroundColor: "#F5AF19",
-              // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
               borderRadius: 200,
               alignItems: "center",
               justifyContent: "center",
               height: 50,
               width: 50,
               margin: 0,
-              //marginRight: '50%'
             }}
             onPress={editPageNavigation}
           >
@@ -430,7 +540,6 @@ const MyPage = ({ navigation, route }) => {
             <TouchableOpacity
               style={{
                 backgroundColor: "#F5AF19",
-                // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
                 borderRadius: 200,
                 alignItems: "center",
                 justifyContent: "center",
@@ -469,7 +578,6 @@ const MyPage = ({ navigation, route }) => {
             <TouchableOpacity
               style={{
                 backgroundColor: "#F5AF19",
-                // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
                 borderRadius: 200,
                 alignItems: "center",
                 justifyContent: "center",
@@ -507,16 +615,12 @@ const MyPage = ({ navigation, route }) => {
           <TouchableOpacity
             style={{
               backgroundColor: "#F5AF19",
-              // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
               borderRadius: 200,
               alignItems: "center",
               justifyContent: "center",
               height: 50,
               width: 50,
-              //	margin: 10,
             }}
-
-            // onPress={() => onSelectCategory(item)}
           >
             <MaterialCommunityIcons
               name="calendar-clock"
@@ -547,59 +651,12 @@ const MyPage = ({ navigation, route }) => {
 
       <View style={styles.Bottom}>
         <FlatList
-          numColumns={1}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => `${item.id}`}
-          data={menus}
-          renderItem={({ item }) => (
-            <View>
-              {/*When clicked go to Food Truck Details  */}
-              <TouchableOpacity
-                onPress={() => updateMenu(item)}
-                onLongPress={() => deleteMenu(item)}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    backgroundColor: "#F5F5F5",
-                    marginTop: 10,
-                    borderRadius: 20,
-                  }}
-                >
-                  {/* Food Truck items Image */}
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      margin: 5,
-                      borderRadius: 5,
-                    }}
-                  ></Image>
-
-                  <View
-                    style={{ flex: 1, flexDirection: "column", height: 100 }}
-                  >
-                    {/* Food Truck Name */}
-                    <Text style={styles.flatListItem2}>{item.name}</Text>
-
-                    <View style={{ flexDirection: "row" }}></View>
-
-                    {/* Food Truck Time */}
-                    <Text style={styles.flatListItem3}>{item.price}</Text>
-
-                    {/* Food Truck Distance */}
-                    <Text style={styles.flatListItem3}>{item.description}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-
-              {/* Line that separates Food Trucks */}
-
-              <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
-            </View>
-          )}
+                  numColumns={1}
+                  showsVerticalScrollIndicator={false}
+                  //keyExtractor={(item) => item.id.toString()}
+                  keyExtractor={keyExtractor}
+                  data={menus}
+                  renderItem={renderItem}
         />
       </View>
     </View>
@@ -621,7 +678,6 @@ const styles = StyleSheet.create({
   Mid: {
     height: "30%",
     width: "100%",
-    //backgroundColor: 'yellow'
   },
 
   FoodTruckName: {
@@ -637,7 +693,6 @@ const styles = StyleSheet.create({
   Bottom: {
     height: "40%",
     width: "100%",
-    //backgroundColor: 'blue'
   },
 
   flatListItem2: {
@@ -650,7 +705,6 @@ const styles = StyleSheet.create({
     color: "black",
     paddingRight: 20,
     marginTop: 5,
-    // marginLeft: 20,
     fontSize: 14,
     justifyContent: "flex-end",
     flexDirection: "row",
@@ -660,7 +714,6 @@ const styles = StyleSheet.create({
   flatListItem: {
     color: "black",
     marginTop: "auto",
-    //  padding: 0,
     fontSize: 16,
     textAlign: "center",
     marginRight: "auto",
@@ -693,6 +746,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
+
   button: {
     width: 100,
     height: 40,
@@ -700,6 +754,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#FEAD44",
   },
+
   buttonLocation: {
     width: 100,
     height: 40,
@@ -709,8 +764,6 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    //position: 'absolute',
-    //paddingLeft: 60,
     fontSize: 18,
     textAlign: "center",
     margin: 5,
