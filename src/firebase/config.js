@@ -12,16 +12,6 @@ const firebaseConfig = {
   appId: "1:233124233438:web:1cdfddc68195cf453cc24f",
   measurementId: "G-P5NE44M3M8"
 };
-
-/*const firebaseConfig = {
-    apiKey: "AIzaSyDqIsb2XprSdwtpWtOLm8eE06KR7M2eHjw",
-    authDomain: "practice-database-df325.firebaseapp.com",
-    projectId: "practice-database-df325",
-    storageBucket: "practice-database-df325.appspot.com",
-    messagingSenderId: "176386787905",
-    appId: "1:176386787905:web:7af3545230d23f10ad14c0",
-    measurementId: "G-EMMV6FLGVE"
-};*/
   
   
 
