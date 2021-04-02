@@ -16,8 +16,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as firebase from "firebase";
 import _ from "lodash";
 
-
 import { AuthContext } from "../../App";
+
 
 
 
@@ -469,4 +469,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
