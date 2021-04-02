@@ -13,7 +13,7 @@ import Home from "./Screens/Homee";
 import Map from "./Screens/Map";
 import Events from "./Screens/Events";
 import Orders from "./Screens/Orders";
-import MyPage from "./Screens/MyPage";
+import MyPage from "./Screens/EditMyPage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
