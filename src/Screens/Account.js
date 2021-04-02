@@ -20,7 +20,6 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Component } from "react";
-
 import { AuthContext } from "../../App";
 
 import _ from "lodash";
@@ -41,10 +40,6 @@ const Account = () => {
             console.error(e)
         }
     }
-
-
-    52
-
 
 
     const [users, setUsers] = useState([]);
@@ -170,9 +165,12 @@ const Account = () => {
 
                 <View style={styles.view2}>
 
-                    <TouchableOpacity style={styles.button} onPress={logOut}>
-        <Text style={styles.buttonText}>Sign out </Text>
-      </TouchableOpacity>
+ <TouchableOpacity
+                onPress={() => signout() }
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Sign Out</Text>
+              </TouchableOpacity>
 
                     {/* If correct credentials go to the homepage via bottom navigation */}
                     <TouchableOpacity
@@ -185,6 +183,7 @@ const Account = () => {
 
             </View>
         </View>
+
     );
 
 };

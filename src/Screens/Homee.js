@@ -108,6 +108,7 @@ const Home = ({ navigation }) => {
   const [foodTrucks, setFoodTrucks] = React.useState(foodTruckData);
   const [venders, setVenders] = React.useState([]);
 
+
   React.useEffect(() => {
     getVenders();
   }, []);
@@ -133,8 +134,9 @@ const Home = ({ navigation }) => {
 
   const [filterFoodTrucks, setFilterFoodTrucks] = React.useState(foodTruckData);
 
-
   const [menus, setMenus] = React.useState([]);
+
+  const {signOut}= React.useContext(AuthContext);
 
   //const [filterFoodTrucks, setFilterFoodTrucks] = React.useState([]);
 
@@ -164,6 +166,10 @@ const Home = ({ navigation }) => {
         });
     };
 
+    const signout = () => {
+     signOut()
+          
+  }
 
 
 
@@ -248,6 +254,7 @@ const Home = ({ navigation }) => {
               resizeMode={"cover"}
             />
           </TouchableOpacity>
+          
         </View>
 
         {/* This will be the search bar*/}
@@ -264,6 +271,15 @@ const Home = ({ navigation }) => {
                       value={search}
 
            />
+           <View style={styles.view2}>
+              {/* If correct credentials go to the homepage via bottom navigation */}
+              <TouchableOpacity
+                onPress={() => signout() }
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Sign Out</Text>
+              </TouchableOpacity>
+            </View>
 
         </View>
 
