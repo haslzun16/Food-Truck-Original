@@ -132,23 +132,28 @@ export default function App() {
       // We will also need to handle errors if sign in failed
       // After getting token, we need to persist the token using `AsyncStorage`
       let user ="";
-      try {
+      let access = false;
         await firebase
           .auth()
 
           .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
           .then((data) => {
             user = data.user.uid
-            
+            access = true;
             
           })
           .catch((error) => {
-            console.log(error);
+            Alert.alert("Wrong email or password!", error.message);
+            access = false;
+            
           });
-      } catch (err) {
-        Alert.alert("There is something wrong!", err.message);
+      
+      if(access == false){
+       
+        return
       }
       setUserId(user);
+
 
       dispatch({ type: "SIGN_IN", token: user });
     },
