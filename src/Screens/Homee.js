@@ -19,9 +19,9 @@ import _ from "lodash";
 
 import { AuthContext } from "../../App";
 
-import _ from "lodash";
 
-import * as firebase from "firebase";
+
+
 
 
 //I changed the linear background to darkish white and the top view to orange
