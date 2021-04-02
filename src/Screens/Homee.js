@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   View,
@@ -11,9 +10,6 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import * as firebase from "firebase";
 import _ from "lodash";
-import { AuthContext } from "../../App";
-
-
 
 
 //I changed the linear background to darkish white and the top view to orange
@@ -466,4 +462,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
