@@ -134,56 +134,45 @@ const Home = ({ navigation }) => {
 
   const [filterFoodTrucks, setFilterFoodTrucks] = React.useState(foodTruckData);
 
-  const [menus, setMenus] = React.useState([]);
-
-  const {signOut}= React.useContext(AuthContext);
+  const [findFoodTrucks, setFindFoodTrucks] = React.useState([]);
 
   //const [filterFoodTrucks, setFilterFoodTrucks] = React.useState([]);
 
-  //  const [masterDataSource, setMasterDataSource] = React.useState([]);
-
+  const [masterDataSource, setMasterDataSource] = React.useState([]);
 
   const { getUserId } = React.useContext(AuthContext);
 
-    let userId = getUserId();
+  let userId = getUserId();
 
-    useEffect(() => {
-        getMenus();
-    }, []);
+  const { signOut } = React.useContext(AuthContext);
 
-    const getMenus = () => {
-        let menuRef = firebase.database().ref("vender/");
+  const signout = () => {
+   signOut()  
+  }
 
-        menuRef.on("value", (snapshot) => {
+  useEffect(() => {
+      getFoodTrucks();
+  }, []);
+
+    const getFoodTrucks = () => {
+        let foodTruckRef = firebase.database().ref("vender/");
+
+        foodTruckRef.on("value", (snapshot) => {
             let val = snapshot.val();
 
             let valToArray = _.map(val, (element) => {
                 return { ...element };
             });
 
-            setMenus(valToArray);
+            setFindFoodTrucks(valToArray);
+            setMasterDataSource(valToArray);
 
         });
     };
 
-    const signout = () => {
-     signOut()
-          
-  }
-
-
-
-
-
-
-
-
-/*    const searchFilterFunction = (text) => {
-        // Check if searched text is not blank
+    //Firebase Search
+    const searchFilterFunction = (text) => {
         if (text) {
-            // Inserted text is not blank
-            // Filter the masterDataSource
-            // Update FilteredDataSource
             const newData = masterDataSource.filter(function (item) {
                 const itemData = item.FoodTruckName
                     ? item.FoodTruckName.toUpperCase()
@@ -191,21 +180,17 @@ const Home = ({ navigation }) => {
                 const textData = text.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             });
-            setMenus(newData);
+            setFindFoodTrucks(newData);
             setSearch(text);
         } else {
-            // Inserted text is blank
-            // Update FilteredDataSource with masterDataSource
-            setMenus(masterDataSource);
+            setFindFoodTrucks(masterDataSource);
             setSearch(text);
         }
-    };*/
+    };
 
+    //Dummy Data Search
 
-
-
-
-    const searchFilterFunction = (text) => {
+/*    const searchFilterFunction = (text) => {
         if (text) {
             const newData = filterFoodTrucks.filter(function (item) {
                 const itemData = item.name
@@ -220,10 +205,7 @@ const Home = ({ navigation }) => {
             setFoodTrucks(filterFoodTrucks);
             setSearch(text);
         }
-    };
-
-
-
+    };*/
 
   return (
     <LinearGradient colors={["#F5F5F5", "#F5F5F5"]} style={styles.body}>
@@ -263,14 +245,12 @@ const Home = ({ navigation }) => {
 
                   <TextInput
                       style={styles.textInputStyle}
-                      //value={search}
                       placeholder="Search Food Trucks"
-                      //onChangeText={updateSearch()}
                       onChangeText={(text) => searchFilterFunction(text)}
                       onClear={(text) => searchFilterFunction('')}
                       value={search}
+                  />
 
-           />
            <View style={styles.view2}>
               {/* If correct credentials go to the homepage via bottom navigation */}
               <TouchableOpacity
@@ -292,16 +272,16 @@ const Home = ({ navigation }) => {
         <FlatList
           numColumns={1}
           showsVerticalScrollIndicator={false}
-                  keyExtractor={(item) => `${item.id}`}
-                 // keyExtractor={(item, index) => index.toString()}
-                  //data={menus}
-                  data={foodTrucks}
+                 // keyExtractor={(item) => `${item.id}`}
+                  keyExtractor={(item, index) => index.toString()}
+                  data={findFoodTrucks}
+                 // data={foodTrucks}
           renderItem={({ item }) => (
             <View>
               {/*When clicked go to Food Truck Details */}
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("FoodTruckDetails", {
+                  navigation.navigate("EditMyPage", {
                     item,
                   })
                 }
@@ -318,7 +298,7 @@ const Home = ({ navigation }) => {
                     padding: 5,
                     borderRadius: 12,
                     //        backgroundColor: 'red',
-                    backgroundColor: "rgba(255, 255, 255, 0.8",
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
                     //   shadowOffset: {
                     //       width: 0,
                     //       height: 10
@@ -329,7 +309,7 @@ const Home = ({ navigation }) => {
                     shadowOffset: { width: 0, height: 20 },
                     shadowColor: "black",
                     shadowOpacity: 1,
-                    elevation: 4,
+                    elevation: 2,
                     // background color must be set
                     //  backgroundColor: "#0000" // invisible color
                   }}
@@ -349,24 +329,24 @@ const Home = ({ navigation }) => {
                     style={{ flex: 1, flexDirection: "column", height: 100 }}
                   >
                               {/*Food Truck Name */}
-                              {/* <Text style={styles.flatListItem2}>{item.FoodTruckName}</Text>  */}
-                              <Text style={styles.flatListItem2}>{item.name}</Text>
+                               <Text style={styles.flatListItem2}>{item.FoodTruckName}</Text>  
+                              {/*  <Text style={styles.flatListItem2}>{item.name}</Text>  */}
 
                     <View style={{ flexDirection: "row" }}>
                       {/*Food Truck Category */}
                           <View style={{ flexDirection: "row" }}>
-                                      {/*   <Text style={styles.flatListItem3}>{item.FoodType}</Text> */}
-                                      <Text style={styles.flatListItem3}>{item.food}</Text>
+                                         <Text style={styles.flatListItem3}>{item.FoodType}</Text> 
+                                      {/*  <Text style={styles.flatListItem3}>{item.food}</Text> */}
                                   </View>
                     </View>
 
                     {/*Food Truck Time */}
-                              {/* <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
-                              <Text style={styles.flatListItem3}>{item.time}</Text>
+                               <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> 
+                              {/* <Text style={styles.flatListItem3}>{item.time}</Text>  */}
 
                               {/*Food Truck Distance */}
-                              {/* <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
-                              <Text style={styles.flatListItem3}>{item.distance}</Text>
+                               <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> 
+                              {/* <Text style={styles.flatListItem3}>{item.distance}</Text>  */}
                   </View>
                 </View>
               </TouchableOpacity>

@@ -13,27 +13,21 @@ import Home from "./Screens/Homee";
 import Map from "./Screens/Map";
 import Events from "./Screens/Events";
 import Orders from "./Screens/Orders";
-import MyPage from "./Screens/Flatlist";
+import MyPage from "./Screens/EditMyPage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
-class BottomNavigation extends Component {
+class BottomNavigationTwo extends Component {
   render() {
     return (
       <Tab.Navigator
         tabBarOptions={{
           style: {
-            // height: '9%',
-            // backgroundColor: this.tabIndex == 4 ? "#fff" : "transparent",
             backgroundColor: "#FFF",
-            //position: 'absolute',
-            //bottom: 0,
-            // elevation: 0
           },
           activeTintColor: "#FEAD44",
           inactiveTintColor: "#FC5976",
-          // showLabel: false,
         }}
       >
         {/* First Tab and Screen */}
@@ -92,7 +86,7 @@ class BottomNavigation extends Component {
                         ),
                     }} /> */}
         {/* My Page Screen */}
-        <Tab.Screen
+            {/* <Tab.Screen
           name="MyPage"
           component={MyPage}
           options={{
@@ -102,10 +96,10 @@ class BottomNavigation extends Component {
               <MaterialCommunityIcons name="truck" color={color} size={26} />
             ),
           }}
-        />
+        /> */}
       </Tab.Navigator>
     );
   }
 }
 
-export default BottomNavigation;
+export default BottomNavigationTwo;

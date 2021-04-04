@@ -44,7 +44,7 @@ const FoodTruckDetails = ({ navigation, route }) => {
       <Image style={styles.ftPic} source={route.params.item.source} />
 
       <View style={{}}>
-        <Text style={styles.ftName}>{route.params.item.name}</Text>
+        <Text style={styles.ftName}>{route.params.item.FoodTruckName}</Text>
       </View>
     </View>
   );

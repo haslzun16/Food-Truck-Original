@@ -362,7 +362,7 @@ console.log(venders)
                                 style={{ flex: 1, flexDirection: "column", height: 100 }}
                             >
                                 {/* Food Name */}
-                                <Text style={styles.flatListItem2}>{item.name}</Text>
+                                <Text style={styles.flatListItem2}>{route.params.item.name}</Text>
 
                                 <View style={{ flexDirection: "row" }}></View>
 
@@ -521,11 +521,10 @@ console.log(venders)
             </View>
          <View style={styles.Mid}>
                 {/*  <Text style={styles.FoodTruckName}> Amoroso's Bakery </Text>  */}
-                   <Text style={styles.FoodTruckName}> {venders.FoodTruckName} </Text>  
+                <Text style={styles.FoodTruckName}> {route.params.item.FoodTruckName} </Text>  
 
                 <Text style={styles.Location}>
-                    {" "}
-          1400 Spring Garden St, Greensboro NC 27412{" "}
+                    {route.params.item.FoodTruckLocation}
                 </Text>
                                 <View 
                     style={{
@@ -701,8 +700,9 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     Mid: {
-        height: "30%",
+        height: "20%",
         width: "100%",
+       // backgroundColor: 'red'
     },
 
     FoodTruckName: {
@@ -710,11 +710,11 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     Location: {
-        fontSize: 14,
+        fontSize: 20,
         alignSelf: "center",
     },
     Bottom: {
-        height: "40%",
+        height: "50%",
         width: "100%",
     },
 
