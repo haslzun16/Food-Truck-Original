@@ -1,31 +1,29 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image, TextInput,TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Image, TextInput,TouchableOpacity, ListViewComponent } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import 'react-native-gesture-handler';
 import {AuthContext} from '../../App'
-
+import * as firebase from "firebase";
 //import { decode, encode } from 'base-64'
-
-
 
 export default function SetUp({ navigation }) {
 const [FoodTruckName, setFoodTruckName] = useState("");
 const [FoodTruckLocation, setFoodTruckLocation] = useState("");
 const [FoodType, setFoodType] = useState("");
 const [ LicensePlate , setLicensePlate] = useState('');
-const { setUp } = React.useContext(AuthContext);
 
+const { setUp } = React.useContext(AuthContext);
+const { getUserId } = React.useContext(AuthContext);
 // on register press change !!!
 const onSetUpPress = () => {
-   
-
-    SetUp();
+    
+    let userId = getUserId();
+    firebase.database().ref("vender/" + userId ).update({isSetUp:true});
+    setUp({FoodTruckName, FoodTruckLocation, FoodType, LicensePlate});
+    navigation.navigate("BottomNavigation");
 
 }
-
-
-
   return (
    <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
                 <View style={styles.top}>
@@ -44,20 +42,26 @@ const onSetUpPress = () => {
                     <View style={styles.tiButtons} >
                         <TextInput style={styles.textInput} placeholder="Enter your food trucks name" value={FoodTruckName} 
                         onChangeText={(text) => setFoodTruckName(text)} />
+
                         <TextInput style={styles.textInput} placeholder="Enter your food trucks location" value={FoodTruckLocation} 
                         onChangeText={(text) => setFoodTruckLocation(text)} />
+
                         <TextInput style={styles.textInput} placeholder="Enter your food type" value={FoodType} 
                         onChangeText={(text) => setFoodType(text)} />
+
                          <TextInput style={styles.textInput} placeholder="Enter your Food Truck License plate" value={LicensePlate} 
                         onChangeText={(text) => setLicensePlate(text)} />
-                               <TouchableOpacity
-                            onPress={() => onSetUpPress()} style={styles.button}>
+
+                        <TouchableOpacity
+                        onPress={() => onSetUpPress()} style={styles.button}>
                         <Text style={styles.buttonText}>
-                        Sign Up`
+                        Finish Set Up
                         </Text>
                         </TouchableOpacity>
+
                     </View>
                 </View>
+
     </LinearGradient>
   );
 }
