@@ -62,7 +62,7 @@ const Home = ({ navigation }) => {
   }, []);
 
   const getVenders = () => {
-    
+
     let menuRef = firebase.database().ref("vender/");
 
     menuRef.on("value", (snapshot) => {
@@ -71,22 +71,22 @@ const Home = ({ navigation }) => {
       let valToArray = _.map(val, (element) => {
         return { ...element };
       });
-      
-      
+
+
       setVenders(valToArray);
 
-      console.log(venders[0].FullName)
+      //console.log(venders[0].FullName)
 
     });
   };
 
-   const logout = () => {
-        auth
-            .signOut()
-            .then(() => console.log("User signed out"))
-        navigation.replace('SignIn');
+  const logout = () => {
+    auth
+      .signOut()
+      .then(() => console.log("User signed out"))
+    navigation.replace('SignIn');
 
-    }
+  }
 
   return (
     <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.body}>
