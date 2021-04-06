@@ -13,46 +13,99 @@ import {
   TextInput,
   Image,
   StyleSheet,
-  TouchableOpacity,
+  TouchableOpacity,FlatList
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Component } from "react";
+import { useState, useEffect } from "react";
+import * as firebase from "firebase";
+import { AuthContext } from "../../App";
+import _ from "lodash";
 
-class Events extends Component {
-    render() {
-        return (
-            <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
+const Events = () => {
+    const [announcements, setAnnouncements] = useState([]);
+    const { getUserId } = React.useContext(AuthContext);
+    let userId = getUserId();
+
+    useEffect(() => {
+        getAnnouncements();
+      }, []);
+    
+      const getAnnouncements = () => {
+        
+        let announcementRef = firebase.database().ref("vender/" + userId + "/announcements");
+    
+        announcementRef.on("value", (snapshot) => {
+          let val = snapshot.val();
+    
+          let valToArray = _.map(val, (element) => {
+            return { ...element };
+          });
+          
+          setAnnouncements(valToArray);
+    
+        });
+      };
+    return (
+        <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
         <View style={styles.MainView} >
             <View style={styles.Top} >
-
                 <View style={{
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
-                   
                     }}>
                 <Text style={styles.headerText}> Events </Text>
                 </View>
             </View>
 
-            <View style={styles.content}>
-               <Text style = {{fontSize: 30,}}>event 1 </Text> 
-               <Text style = {{fontSize: 30,}}>event 2 </Text>
-               <Text style = {{fontSize: 30,}}>event 3 </Text>
-               <Text style = {{fontSize: 30,}}>event 4 </Text>
-               <Text style = {{fontSize: 30,}}>event 5 </Text>
-               <Text style = {{fontSize: 30,}}>event 6 </Text>
-               <Text style = {{fontSize: 30,}}>event 7 </Text>
-               <Text style = {{fontSize: 30,}}>event 8 </Text>
+            <View style={styles.Bottom}>
+            <FlatList
+          numColumns={1}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => `${item.id}`}
+          data={announcements}
+          renderItem={({ item }) => (
+            <View>
+              
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    backgroundColor: "#F5F5F5",
+                    marginTop: 10,
+                    borderRadius: 20,
+                  }}
+                >
+                  
 
+                  <View
+                    style={{ flex: 1, flexDirection: "column", height: 100 }}
+                  >
+                    {/* Food Truck Name */}
+                    <Text style={styles.flatListItem2}>{item.announcement}</Text>
+
+                    <View style={{ flexDirection: "row" }}></View>
+
+                    {/* Food Truck Time
+                    <Text style={styles.flatListItem3}>{item.price}</Text>
+
+                    {/* Food Truck Distance */}
+                    {/* <Text style={styles.flatListItem3}>{item.description}</Text> */} 
+                  </View>
+                </View>
+             
+
+              {/* Line that separates Food Trucks */}
+
+              <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
             </View>
-
+          )}
+        />
             </View>
-
+        </View>
       </LinearGradient>
         );
-    }
-}
+};
 
 const styles = StyleSheet.create({
     body: {
@@ -78,7 +131,7 @@ const styles = StyleSheet.create({
     },
     headerText:{
         color: 'black',
-        marginTop: 40,
+        marginTop: 20,
         fontSize: 28,
         
     },
@@ -88,7 +141,17 @@ const styles = StyleSheet.create({
        flexDirection: 'column',
        justifyContent: 'space-around',
        alignItems: 'center'
-    }
+    },
+    Bottom: {
+        height: "40%",
+        width: "100%",
+        //backgroundColor: 'blue'
+      },
+      flatListItem2: {
+        color: "black",
+        paddingLeft: 0,
+        fontSize: 20,
+      },
 });
 
 export default Events;

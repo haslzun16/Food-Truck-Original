@@ -31,6 +31,9 @@ const MyPage = ({ navigation, route }) => {
 
   const [locationVisible, setLocationVisible] = useState(false);
 
+  const [announcementVisible, setAnnouncementVisible] = useState(false);
+  const [NewAnnouncement, setNewAnnouncement] = useState(" ");
+
   const [newLocation, setLocation] = useState(null);
 
   const [newName, setNewName] = useState(" ");
@@ -88,7 +91,25 @@ const MyPage = ({ navigation, route }) => {
     .catch((err) => console.log(err));
     
   }
- 
+  //store the vendor announcements
+  const storeAnnouncement = () => {
+    setAnnouncementVisible(false);
+    let announcementRef = firebase.database().ref("vender/" + userId + "/announcements");
+    let createdAnnouncemnt = announcementRef.push();
+    
+    let announcement = {
+      id: createdAnnouncemnt.key,
+      announcement: NewAnnouncement
+    };
+  
+    createdAnnouncemnt
+      .set(announcement)
+      .then((res) => {
+        setNewAnnouncement("");
+      })
+      .catch((err) => console.log(err));
+  };
+  
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -210,15 +231,9 @@ const MyPage = ({ navigation, route }) => {
         // Uh-oh, an error occurred!
         console.log('an error occurred!')
       });
-
-
-   
   };
 
   
-
-
-
   const foodTruckData = [
     {
       source: require("../../assets/FoodMenu/VANILLA-CUPCAKES.jpg"),
@@ -361,6 +376,39 @@ const MyPage = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+      </Modal>
+
+      <Modal visible={announcementVisible}>
+        <View style={styles.modal}>
+          <Text>Post an announcement for customers!</Text>
+          <TextInput
+            placeholder="Enter Your Annoucement"
+            style={styles.textInput}
+            onChangeText={(text) => setNewAnnouncement(text)}
+          />
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={styles.view2}>
+              {/* If correct credentials go to the homepage via bottom navigation */}
+              <TouchableOpacity
+                onPress={() => setAnnouncementVisible(false)}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.view2}>
+              {/* If correct credentials go to the homepage via bottom navigation */}
+              <TouchableOpacity
+                onPress={() => storeAnnouncement()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Post!</Text>
+              </TouchableOpacity>
+            </View>
+        </View>
         </View>
       </Modal>
 
@@ -515,7 +563,7 @@ const MyPage = ({ navigation, route }) => {
               //	margin: 10,
             }}
 
-            // onPress={() => onSelectCategory(item)}
+            onPress={() => setAnnouncementVisible(true)}
           >
             <MaterialCommunityIcons
               name="calendar-clock"
@@ -537,7 +585,7 @@ const MyPage = ({ navigation, route }) => {
                 fontSize: 9,
               }}
             >
-              Schedule
+              Post Announcement
             </Text>
           </TouchableOpacity>
         </View>
