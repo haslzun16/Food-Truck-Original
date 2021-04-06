@@ -40,7 +40,7 @@ export default function SignUp({ navigation }) {
   };
 
   const onRegisterPress = () => {
-    if(password.length < 6){
+    if (password.length < 6) {
       alert("Password is too short.")
       return;
     }

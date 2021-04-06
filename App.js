@@ -131,25 +131,25 @@ export default function App() {
       // In a production app, we need to send some data (usually username, password) to server and get a token
       // We will also need to handle errors if sign in failed
       // After getting token, we need to persist the token using `AsyncStorage`
-      let user ="";
+      let user = "";
       let access = false;
-        await firebase
-          .auth()
+      await firebase
+        .auth()
 
-          .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
-          .then((data) => {
-            user = data.user.uid
-            access = true;
-            
-          })
-          .catch((error) => {
-            Alert.alert("Wrong email or password!", error.message);
-            access = false;
-            
-          });
-      
-      if(access == false){
-       
+        .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
+        .then((data) => {
+          user = data.user.uid
+          access = true;
+
+        })
+        .catch((error) => {
+          Alert.alert("Wrong email or password!", error.message);
+          access = false;
+
+        });
+
+      if (access == false) {
+
         return
       }
       setUserId(user);
@@ -160,14 +160,14 @@ export default function App() {
     setUp: (data) => {
 
       firebase
-          .database()
-          .ref("vender/" + userId)
-          .update({
-            FoodTruckName: data.FoodTruckName, 
-            FoodTruckLocation: data.FoodTruckLocation,
-            FoodType: data.FoodType,
-            LicensePlate: data.LicensePlate
-          });
+        .database()
+        .ref("vender/" + userId)
+        .update({
+          FoodTruckName: data.FoodTruckName,
+          FoodTruckLocation: data.FoodTruckLocation,
+          FoodType: data.FoodType,
+          LicensePlate: data.LicensePlate
+        });
 
 
       dispatch({ type: "SET_UP" })
@@ -186,9 +186,9 @@ export default function App() {
           )
           .then((data) => {
             userToken = data.user.uid
-            console.log('this is usertoken',userToken)
+            console.log('this is usertoken', userToken)
             setUserId(userToken)
-            
+
           })
           .catch((error) => {
             console.log(error);
@@ -202,29 +202,29 @@ export default function App() {
           reference = "vender/";
 
           await firebase
-          .database()
-          .ref(reference + userToken)
-          .set({
-            userId: userToken,
-            Fullname: data.fullName,
-            phone: data.phone,
-            isSetUp: false,
-          });
+            .database()
+            .ref(reference + userToken)
+            .set({
+              userId: userToken,
+              Fullname: data.fullName,
+              phone: data.phone,
+              isSetUp: false,
+            });
           //for users 
         } else {
           reference = "users/";
 
           await firebase
-          .database()
-          .ref(reference + userToken)
-          .set({
-            userId: userToken,
-            Fullname: data.fullName,
-            phone: data.phone,
-            isSetUp: true,
-          });
+            .database()
+            .ref(reference + userToken)
+            .set({
+              userId: userToken,
+              Fullname: data.fullName,
+              phone: data.phone,
+              isSetUp: true,
+            });
         }
-       
+
       } catch (err) {
         Alert.alert("There is something wrong!!!!", err.message);
       }
@@ -268,11 +268,11 @@ export default function App() {
             )
           ) : (
             <Stack.Screen
-                  name="Loading"
-                  component={Loading}
-                  options={{ headerShown: false }}
-                />
-           
+              name="Loading"
+              component={Loading}
+              options={{ headerShown: false }}
+            />
+
           )}
 
           <Stack.Screen
