@@ -1,0 +1,38 @@
+{
+    "expo": {
+      "name": "iosTest",
+      "icon": "./assets/icon.png",
+      "version": "1.0.0",
+      "slug": "iosTest",
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
+      "updates": {
+        "fallbackToCacheTimeout": 0
+      },
+      "assetBundlePatterns": [
+        "**/*"
+      ],
+      "ios": {
+        "bundleIdentifier": "com.mapTest.iosTest",
+        "supportsTablet": true
+      },
+      "android": {
+        "softwareKeyboardLayoutMode": "pan",
+        "package": "com.mapTest.iosTest",
+        "adaptiveIcon": {
+          "foregroundImage": "./assets/adaptive-icon.png",
+          "backgroundColor": "#FFFFFF"
+        },
+        "config": {
+          "googleMaps": { "apiKey": "AIzaSyC3ziNo48lch1EkiofWJCvvRhQXqY-CedQ" }
+        }
+      },
+      "web": {
+        "favicon": "./assets/favicon.png"
+      }
+    }
+  }
+  
