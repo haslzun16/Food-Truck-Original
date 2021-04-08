@@ -11,8 +11,34 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+// import * as firebase from "firebase";
+// import _ from "lodash";
 
 const FoodTruckDetails = ({ navigation, route }) => {
+  // const [vender, setVender] = useState([]);
+
+  //uncomment this out when you are ready to get the data from user
+  // useEffect(() => {
+  //   getVenders();
+  // }, []);
+
+  //gets the venders data from the firebase
+  // const getVenders = () => {
+
+  //   let menuRef = firebase.database().ref("vender/" + vender);
+
+  //   menuRef.on("value", (snapshot) => {
+  //     let val = snapshot.val();
+
+  //     let valToArray = _.map(val, (element) => {
+  //       return { ...element };
+  //     });
+  //     console.log(valToArray)
+
+  //     setVender(valToArray);
+
+  //   });
+  // };
   return (
     <View style={{ flex: 1, height: "30%" }}>
       <Image style={styles.ftPic} source={route.params.item.source} />
