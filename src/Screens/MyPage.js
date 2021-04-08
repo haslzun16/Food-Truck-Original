@@ -94,6 +94,7 @@ const MyPage = ({ navigation, route }) => {
   //store the vendor announcements
   const storeAnnouncement = () => {
     setAnnouncementVisible(false);
+    console.log(userId)
     let announcementRef = firebase.database().ref("vender/" + userId + "/announcements");
     let createdAnnouncemnt = announcementRef.push();
     

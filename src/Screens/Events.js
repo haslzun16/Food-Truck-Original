@@ -79,7 +79,7 @@ const Events = () => {
                   
 
                   <View
-                    style={{ flex: 1, flexDirection: "column", height: 100 }}
+                    style={{ flex: 1, flexDirection: "column", height: 50 }}
                   >
                     {/* Food Truck Name */}
                     <Text style={styles.flatListItem2}>{item.announcement}</Text>
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     MainView: {
         flex:1,
         alignContent: 'center',
+        height: 100
     },
 
     Top: {
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
        alignItems: 'center'
     },
     Bottom: {
-        height: "40%",
+        height: "90%",
         width: "100%",
         //backgroundColor: 'blue'
       },
