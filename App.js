@@ -19,11 +19,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SignIn from "./src/Screens/SignIn";
 import SignUp from "./src/Screens/SignUp";
 import OnBoardingScreen from "./src/Screens/OnboardingScreen";
-import BottomNavigation from "./src/BottomNavigation";
 import Account from "./src/Screens/Account";
 import FoodTruckDetails from "./src/Screens/FoodTruckDetails";
 import EditMyPage from "./src/Screens/EditMyPage";
 import Loading from "./src/Screens/Loading";
+import BottomNavigation from "./src/BottomNavigation";
+import SetUp from "./src/Screens/SetUp";
+
 import { useState } from "react";
 
 //import { decode, encode } from 'base-64'
@@ -40,9 +42,6 @@ function SplashScreen() {
     </View>
   );
 }
-
-// if (!global.btoa) {  global.btoa = encode }
-// if (!global.atob) { global.atob = decode }
 
 const Stack = createStackNavigator();
 
@@ -222,6 +221,7 @@ export default function App() {
             Fullname: data.fullName,
             phone: data.phone,
             isSetUp: true,
+            user: true,
           });
         }
        
@@ -267,12 +267,23 @@ export default function App() {
               </>
             )
           ) : (
+            <>
             <Stack.Screen
                   name="Loading"
                   component={Loading}
                   options={{ headerShown: false }}
                 />
-           
+                <Stack.Screen
+                 name="SetUp"
+                 component={SetUp}
+                 options={{ headerShown: false }}
+               />
+               <Stack.Screen
+                 name="BottomNavigation"
+                 component={BottomNavigation}
+                 options={{headerShown: false }}
+               />
+            </>
           )}
 
           <Stack.Screen

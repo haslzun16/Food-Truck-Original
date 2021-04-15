@@ -70,7 +70,7 @@ const MyPage = ({ navigation, route }) => {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      console.log('location',newLocation.coords.latitude);
+      console.log(newLocation);
   };
   //storing location to data base
   const storeLocation = () => {
@@ -83,7 +83,7 @@ const MyPage = ({ navigation, route }) => {
         longitude: newLocation.coords.longitude,
       })
     .catch((err) => console.log(err));
-    
+    // vendors.location.lat
   }
  
   const pickImage = async () => {
