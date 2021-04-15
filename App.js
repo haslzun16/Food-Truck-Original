@@ -313,18 +313,17 @@ export default function App() {
                  name="BottomNavigation"
                  component={BottomNavigation}
                  options={{headerShown: false }}
-               />
-            </>
-          )}
-
-                    <Stack.Screen
+              />
+             <Stack.Screen
                         name="Account"
                         component={Account}
                         options={{ headerShown: false }}
-                    />
+             />
+            </>
+          )}
 
-                            </>
-                        )}
+
+
 
                     <Stack.Screen
                         name="FoodTruckDetails"
