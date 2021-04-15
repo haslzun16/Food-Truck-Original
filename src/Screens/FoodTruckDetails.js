@@ -17,14 +17,14 @@ import {
 const FoodTruckDetails = ({ navigation, route }) => {
   // const [vender, setVender] = useState([]);
 
-//uncomment this out when you are ready to get the data from user
+  //uncomment this out when you are ready to get the data from user
   // useEffect(() => {
   //   getVenders();
   // }, []);
 
   //gets the venders data from the firebase
   // const getVenders = () => {
-    
+
   //   let menuRef = firebase.database().ref("vender/" + vender);
 
   //   menuRef.on("value", (snapshot) => {
@@ -34,7 +34,7 @@ const FoodTruckDetails = ({ navigation, route }) => {
   //       return { ...element };
   //     });
   //     console.log(valToArray)
-      
+
   //     setVender(valToArray);
 
   //   });

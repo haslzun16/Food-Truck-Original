@@ -131,28 +131,23 @@ export default function App() {
       // We will also need to handle errors if sign in failed
       // After getting token, we need to persist the token using `AsyncStorage`
       let user ="";
-      let access = false;
+      try {
         await firebase
           .auth()
 
           .signInWithEmailAndPassword(data.email.trim(), data.password.trim())
           .then((data) => {
             user = data.user.uid
-            access = true;
+            
             
           })
           .catch((error) => {
-            Alert.alert("Wrong email or password!", error.message);
-            access = false;
-            
+            console.log(error);
           });
-      
-      if(access == false){
-       
-        return
+      } catch (err) {
+        Alert.alert("There is something wrong!", err.message);
       }
       setUserId(user);
-
 
       dispatch({ type: "SIGN_IN", token: user });
     },
@@ -165,7 +160,8 @@ export default function App() {
             FoodTruckName: data.FoodTruckName, 
             FoodTruckLocation: data.FoodTruckLocation,
             FoodType: data.FoodType,
-            LicensePlate: data.LicensePlate
+            LicensePlate: data.LicensePlate,
+            hours: data.hours
           });
 
 
