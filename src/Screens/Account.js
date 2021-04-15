@@ -8,165 +8,189 @@
  */
 
 import * as React from "react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import {
     Button,
     View,
     Text,
+    Modal,
     TextInput,
     Image,
     StyleSheet,
     TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Component } from "react";
 import { AuthContext } from "../../App";
 
 import _ from "lodash";
 
 import * as firebase from "firebase";
 
+const EditAccount = ({ navigation }) => {
 
-const Account = ({ navigation }) => {
-
-    const [newName, setNewName] = useState(" ");
-
-    const [newPhone, setNewPhone] = useState(" ");
-
+    const [setUp, assignSetUp] = useState();
     const { signOut } = React.useContext(AuthContext);
+    const { deleteAccount } = React.useContext(AuthContext);
+    const [users, setUsers] = useState([]);
+    const [cust, setCust] = useState([]);
+    const [vend, setVend] = useState([]);
+    const { getUserId } = React.useContext(AuthContext);
+
+    let userId = getUserId();
 
     const signout = () => {
         signOut()
         console.log("User Signed Out");
     }
 
-    const [users, setUsers] = useState([]);
-
     useEffect(() => {
-        getUsers();
+        navigateUser();
     }, []);
 
-    const { getUserId } = React.useContext(AuthContext);
+    useEffect(() => {
+        getCustomers();
+    }, []);
 
-    let userId = getUserId();
+    useEffect(() => {
+        getVendors();
+    }, []);
 
-    const getUsers = () => {
+    useEffect(() => {
+        test();
+    }, [users]);
 
-        let userRef = firebase.database().ref("vender/" + userId);
 
-        userRef.on('value', function (snapshot) {
-            setUsers(snapshot.val());
-
-            let val = snapshot.val();
-
-            let valToArray = _.map(val, (element) => {
-                return { ...element };
-            });
-            console.log(users)
-
+    const navigateUser = () => {
+        let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
+        isSetUpRef.on("value", (snapshot) => {
+            if (snapshot.exists()) {
+                assignSetUp(false)
+            }
+            else {
+                assignSetUp(true)
+            }
         });
     };
 
-    const updateMenu = () => {
 
-        const nameRef = firebase.database();
-        nameRef.ref("vender/" + userId)
-            .update({ Fullname: newName })
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
-
-        const phoneRef = firebase.database();
-        phoneRef.ref("vender/" + userId)
-            .update({ phone: newPhone })
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
-
+    //Get the customers
+    const getCustomers = () => {
+        let userRef = firebase.database().ref("users/" + userId);
+        userRef.on('value', function (snapshot) {
+            setCust(snapshot.val());
+        });
     };
 
-    /* componentDidMount() {
-         const { currentUser } = firebase.auth()
-         this.setState({ currentUser })
-     }*/
+    //Get the vendors
+    const getVendors = () => {
+        let userR = firebase.database().ref("vender/" + userId);
+        userR.on('value', function (snapshot) {
+            setVend(snapshot.val());
+        });
+    };
+
+
+    //Gets the info based on if the user is a customer or a vendor
+    const test = () => {
+        if (setUp == true) {
+            setUsers(vend);
+        } else {
+            setUsers(cust);
+        }
+        console.log("LOOKING");
+        console.log(users);
+    }
+
+
+    const deleteaccount = () => {
+        deleteAccount()
+
+        if (setUp == true) {
+            let accountRef = firebase
+                .database()
+                .ref("vender/" + userId);
+            //Deleting the user
+            accountRef.remove().then(() => {
+                // User deleted successfully
+                console.log('item deleted successfully')
+            }).catch((error) => {
+                // Uh-oh, an error occurred!
+                console.log('an error occurred!')
+            });
+        } else {
+            let accountRef = firebase
+                .database()
+                .ref("users/" + userId);
+            //Deleting the user
+            accountRef.remove().then(() => {
+                // User deleted successfully
+                console.log('item deleted successfully')
+            }).catch((error) => {
+                // Uh-oh, an error occurred!
+                console.log('an error occurred!')
+            });
+        } 
+        console.log("User Account Deleted");
+    }
 
     return (
-        <View style={styles.MainView}>
+        <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.MainView}>
+
             <View style={styles.MainView2}>
-                <Image
-                    style={styles.profilePic}
-                    source={require("../../assets/default.png")}
-                    resizeMode={"cover"}
-                />
+
+                    <Image
+                        style={styles.profilePic}
+                        source={{ uri: users.profileImage }}
+                    />
+
+                <Text
+                    style={styles.nameText}>
+                    {users.Fullname}
+                </Text>
+
 
             </View>
             <View>
 
-                <Text style={styles.text}>
-                    Name
-                </Text>
-
-                <TextInput
-                  //  placeholder="Name"
-                    style={styles.textInput}
-                    onChangeText={text => setNewName(text)}
-                    defaultValue={users.Fullname}
-                    // editable={true}
-                />
-
-                <Text style={styles.text}>
-                    Email
-                </Text>
-
-                <TextInput
-                    placeholder="Email"
-                    style={styles.textInput}
-                    //onChangeText={text => setNewPrice(text)}
-                    // defaultValue={item.price}
-                />
-
-                <Text style={styles.text}>
-                    Phone Number
-                </Text>
-
-                <TextInput
-                    keyboardType="numeric"
-                    //placeholder="Phone Number"
-                    style={styles.textInput}
-                    onChangeText={text => setNewPhone(text)}
-                    defaultValue={users.phone}
-                />
-
-                <Text style={styles.text}>
-                    Password
-                </Text>
-
-                <TextInput
-                    placeholder="Password"
-                    style={styles.textInput}
-                    secureTextEntry={true}
-                    //onChangeText={text => setNewDescription(text)}
-                    //defaultValue={item.description}
-                />
-
                 <View style={styles.view2}>
 
                     <TouchableOpacity
-                        onPress={() => signout()}
-                       // style={styles.button}
-                    >
-                        <Text >Sign Out</Text>
+                        style={styles.newButton}
+                        onPress={() => navigation.navigate("EditAccount")}>
+                        <Text style={styles.accountText}
+                        >Edit Profile</Text>
+                </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.newButton}>
+                        <Text style={styles.accountText}
+                        >Change Password</Text>
                     </TouchableOpacity>
 
-                    {/* If correct credentials go to the homepage via bottom navigation */}
                     <TouchableOpacity
-                        onPress={() => updateMenu()}
-                        style={styles.button}
-                    >
-                        <Text style={styles.buttonText}>Edit Profile</Text>
+                        style={styles.newButton}>
+                        <Text style={styles.accountText}
+                        >About</Text>
                     </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.newButton}
+                        onPress={() => signout()}
+                    >
+                        <Text style={styles.accountText}>Sign Out</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.newButton}
+                        onPress={() => deleteaccount()}
+                    >
+                        <Text style={styles.accountText}>Delete Account</Text>
+                    </TouchableOpacity>
+
                 </View>
 
             </View>
-        </View>
+        </LinearGradient>
 
     );
 
@@ -198,7 +222,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         marginLeft: '7%',
         margin: 0,
-     //   marginRight: 50,
+        color: 'white'
     },
 
     textInput: {
@@ -209,40 +233,96 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         padding: 8,
         paddingHorizontal: 20,
-        margin: 10,
+        marginTop: 'auto',
         width: "90%",
+    },
+
+    textInput2: {
+        alignSelf: 'center',
+        borderWidth: 1,
+        backgroundColor: "#fff",
+        borderColor: "#FEAD44",
+        borderRadius: 30,
+        padding: 10,
+        paddingHorizontal: 20,
+        marginTop: 'auto',
+        width: "90%",
+        color: 'black',
+        fontSize: 16
     },
 
     view2: {
         marginTop: 0,
         alignItems: "center",
         padding: 10,
+        height: '90%',
     },
 
     button: {
         width: 200,
-        height: 60,
+        height: 55,
         marginTop: 30,
         borderRadius: 30,
         backgroundColor: "#FEAD44",
         marginTop: "auto",
-        //flex: 1,
-       // justifyContent: "flex-end",
+        marginTop: 10
     },
 
     buttonText: {
         position: "absolute",
-        // paddingLeft: 60,
         fontSize: 18,
         textAlign: "center",
         margin: 15,
         color: "#FFFFFF",
         alignSelf: "center",
-        //marginTop: "auto",
-        //flex: 1,
-        //justifyContent: "flex-end",
     },
+
+    modal: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    modal2: {
+        height: '50%',
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    buttonModal: {
+        width: 100,
+        height: 40,
+        marginTop: 10,
+        borderRadius: 10,
+        backgroundColor: "#FEAD44",
+    },
+
+    buttonTextModal: {
+        fontSize: 18,
+        textAlign: "center",
+        margin: 5,
+        color: "#FFFFFF",
+    },
+
+    accountText: {
+        fontSize: 18,
+        color: "white",
+        margin: 5,
+    },
+
+    newButton: {
+        borderBottomColor: "#F5F5F5",
+        borderBottomWidth: 1,
+        width: '100%',
+        margin: '4%'
+    },
+
+    nameText: {
+        fontSize: 30,
+        color: 'white',
+        alignSelf: 'center',
+    }
 
 });
 
-export default Account;
+export default EditAccount;

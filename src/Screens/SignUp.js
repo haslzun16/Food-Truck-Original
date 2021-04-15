@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     padding: 8,
     paddingHorizontal: 20,
-    marginTop: 40,
+    marginTop: 20,
     width: "85%",
   },
   textInput2: {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     padding: 8,
     paddingHorizontal: 20,
-    marginTop: 20,
+    marginTop: 13,
     width: "85%",
   },
   Text: {
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     fontSize: 14,
     flexDirection: "row",
-    paddingLeft: 20,
+    paddingLeft: 0,
     paddingBottom: 20,
     marginTop: "auto",
     color: "#fff",

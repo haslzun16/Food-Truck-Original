@@ -17,27 +17,22 @@ import * as Location from "expo-location";
 import * as firebase from "firebase";
 import _ from "lodash";
 import * as ImagePicker from "expo-image-picker";
-import Constants from "expo-constants";
-import { FloatingAction } from "react-native-floating-action";
 import Swipeout from "react-native-swipeout";
 import { AuthContext } from "../../App";
 
-const MyPage = ({ navigation, route }) => {
+const Flatlist = ({ navigation, route }) => {
 
+    const [theID, setTheID] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
-
     const [modalVisible2, setModalVisible2] = useState(false);
-
     const [locationVisible, setLocationVisible] = useState(false);
-
     const [newLocation, setLocation] = useState(null);
     const [newName, setNewName] = useState(" ");
     const [newPrice, setNewPrice] = useState(" ");
     const [newDescription, setNewDescription] = useState(" ");
+    const [info, setInfo] = useState([]);
     const [menus, setMenus] = useState([]);
-
     const { getUserId } = React.useContext(AuthContext);
-
     const [tempImage, setTempImage] = useState("");
 
     let userId = getUserId();
@@ -90,9 +85,27 @@ const MyPage = ({ navigation, route }) => {
             setTempImage(result.uri);
         }
     };
+
+    useEffect(() => {
+        getInfo();
+    }, []);
+
+    const getInfo = () => {
+
+        let infoRef = firebase.database().ref("vender/" + userId);
+
+        infoRef.on('value', function (snapshot) {
+
+            setInfo(snapshot.val());
+
+        }); 
+
+    };
+
     useEffect(() => {
         getMenus();
     }, []);
+
     const getMenus = () => {
         let menuRef = firebase.database().ref("vender/" + userId + "/menu");
         menuRef.on("value", (snapshot) => {
@@ -103,7 +116,13 @@ const MyPage = ({ navigation, route }) => {
 
             setMenus(valToArray);
         });
+
+        //Sets the value of the field to properly update each individual field
+        setNewName(theID.name);
+        setNewPrice(theID.price);
+        setNewDescription(theID.description);
     };
+
     const insertMenu = (url) => {
         setModalVisible(false);
         let menuRef = firebase.database().ref("vender/" + userId + "/menu");
@@ -152,20 +171,25 @@ const MyPage = ({ navigation, route }) => {
     };
 
     const updateMenu = (item) => {
-        // setModalVisible2(false);
+         setModalVisible2(false);
 
-        setModalVisible2(true);
-
-
-        console.log(item.name)
-        let menuRef = firebase.database().ref("vender/" + userId + "/menu/" + item.id);
-
-        menuRef
-            .update({ name: newName, price: newPrice, description: newDescription })
+        const nameRef = firebase.database();
+        nameRef.ref("vender/" + userId + "/menu/" + item.id)
+            .update({ name: newName })
             .then(res => console.log(res))
             .catch(err => console.log(err));
 
-        setModalVisible2(false);
+        const priceRef = firebase.database();
+        priceRef.ref("vender/" + userId + "/menu/" + item.id)
+            .update({ price: newPrice })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+
+        const descriptionRef = firebase.database();
+        descriptionRef.ref("vender/" + userId + "/menu/" + item.id)
+            .update({ description: newDescription })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
     };
 
 
@@ -174,7 +198,6 @@ const MyPage = ({ navigation, route }) => {
         let menuRef = firebase
             .database()
             .ref("vender/" + userId + "/menu/" + item.id);
-        console.log("YOOOOOOOOOOOOOOOOOOOO  " + menuRef);
         //deleting the item
         menuRef.remove().then(() => {
             // File deleted successfully
@@ -200,89 +223,65 @@ const MyPage = ({ navigation, route }) => {
     };
 
     const editPageNavigation = () => {
-        navigation.navigate("EditMyPage");
+     //   navigation.navigate("EditMyPage");
     };
 
-    //keyExtractor = item => item.id; // item.whateverUniqueIdentifierYouHave
     const keyExtractor = (item, index) => index.toString();
 
-
     const renderItem = ({ item, index }) => {
+
+        var swipeoutRightBtns = [
+            {
+              backgroundColor: "#F5AF19",
+              onPress: () => {
+                  deleteMenu(item)
+              },
+                  text:'Delete'
+            }
+        ];
         return (
             <View>
-                <Modal visible={modalVisible2}>
-                    <View style={styles.modal}>
-                        <Button title="Pick an image from camera roll" onPress={pickImage} />
-                        <Image source={{ uri: tempImage ? tempImage : null }} style={{ width: 200, height: 200 }} />
-
-                        <TextInput
-                            placeholder="Food Name"
-                            style={styles.textInput}
-                            onChangeText={text => setNewName(text)}
-                            defaultValue={item.name}
-                        // editable={true}
-                        />
-
-                        <TextInput
-                            keyboardType="numeric"
-                            placeholder="Food Price"
-                            style={styles.textInput}
-                            onChangeText={text => setNewPrice(text)}
-                            defaultValue={item.price}
-                        // editable={true}
-                        />
-
-                        <TextInput
-                            placeholder="Food Description"
-                            style={styles.textInput}
-                            onChangeText={text => setNewDescription(text)}
-                            defaultValue={item.description}
-                        // editable={true}
-                        />
-
-                        <View style={{ flexDirection: 'row', }}>
-
-                            <View style={styles.view2} >
-                                {/* Closes the Modal */}
-                                <TouchableOpacity
-                                    onPress={() => setModalVisible2(false)} style={styles.button}>
-                                    <Text style={styles.buttonText}>
-                                        Cancel
-								    </Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={styles.view2} >
-                                {/* Updates the menu */}
-                                <TouchableOpacity
-                                    onPress={() => updateMenu(item)} style={styles.button}>
-
-                                    <Text style={styles.buttonText}>
-                                        Confirm
-								    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
-
+                <Swipeout right={swipeoutRightBtns}  backgroundColor="#fff">
                 <View>
                     {/*When clicked go to Open the Modal  */}
                     <TouchableOpacity
-                        onPress={() => { setModalVisible2(true), console.log(item.name) }}
-                        //onPress={() => { updateMenu(item) }}
-
-                        onLongPress={() => deleteMenu(item)}
+                        onPress={() => { setModalVisible2(true), setTheID(item), console.log(theID.name) }}
+                        //onLongPress={() => deleteMenu(item)}
                     >
                         <View
-                            style={{
+/*                            style={{
                                 flex: 1,
                                 flexDirection: "row",
                                 backgroundColor: "#F5F5F5",
                                 marginTop: 10,
                                 borderRadius: 20,
+                            }}*/
+
+
+                            style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                marginTop: 10,
+                                borderRadius: 20,
+                                marginBottom: 20,
+                                padding: 5,
+                                borderRadius: 12,
+                                //        backgroundColor: 'red',
+                             //   backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                //   shadowOffset: {
+                                //       width: 0,
+                                //       height: 10
+                                //   },
+                                //   shadowColor: "#000",
+                                //  shadowOpacity: 1,
+                                shadowRadius: 20,
+                                shadowOffset: { width: 0, height: 20 },
+                                shadowColor: "black",
+                                shadowOpacity: 1,
+                                elevation: 2,
                             }}
                         >
+
                             {/* Food Image */}
                             <Image
                                 source={{ uri: item.image }}
@@ -313,8 +312,10 @@ const MyPage = ({ navigation, route }) => {
 
                     {/* Line that separates Food */}
 
-                    <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
-                </View>
+                    {/*   <View style={{ height: 1, backgroundColor: "#F5AF19" }} />   */}
+               
+               </View>
+            </Swipeout>
 
             </View>
         );
@@ -322,11 +323,65 @@ const MyPage = ({ navigation, route }) => {
 
     return (
         <View style={{ flex: 1 }}>
+                <Modal visible={modalVisible2}>
+                    <View style={styles.modal}>
+                        <Button title="Pick an image from camera roll" onPress={pickImage} />
+                    <Image source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }} style={{ width: 200, height: 200 }} />
+
+                        <TextInput
+                            placeholder="Food Name"
+                            style={styles.textInput}
+                            onChangeText={text => setNewName(text)}
+                            defaultValue={theID.name}
+                        />
+
+                        <TextInput
+                            keyboardType="numeric"
+                            placeholder="Food Price"
+                            style={styles.textInput}
+                            onChangeText={text => setNewPrice(text)}
+                            defaultValue={theID.price}
+                        />
+
+                        <TextInput
+                            placeholder="Food Description"
+                            style={styles.textInput}
+                            onChangeText={text => setNewDescription(text)}
+                            defaultValue={theID.description}
+                        />
+
+                        <View style={{ flexDirection: 'row', }}>
+
+                            <View style={styles.view2} >
+                                {/* Closes the Modal */}
+                                <TouchableOpacity
+                                    onPress={() => setModalVisible2(false)} style={styles.button}>
+                                    <Text style={styles.buttonText}>
+                                        Cancel
+								    </Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.view2} >
+                                {/* Updates the menu */}
+                                <TouchableOpacity
+                                    onPress={() => updateMenu(theID)} style={styles.button}>
+
+                                    <Text style={styles.buttonText}>
+                                        Confirm
+								    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+ 
             <Modal visible={modalVisible}>
                 <View style={styles.modal}>
                     <Button title="Pick an image from camera roll" onPress={pickImage} />
                     <Image
-                        source={{ uri: tempImage }}
+                       // source={{ uri: tempImage }}
+                        source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }}
                         style={{ width: 200, height: 200 }}
                     />
                     <TextInput
@@ -336,6 +391,7 @@ const MyPage = ({ navigation, route }) => {
                     />
 
                     <TextInput
+                        keyboardType="numeric"
                         placeholder="Food Price"
                         style={styles.textInput}
                         onChangeText={(text) => setNewPrice(text)}
@@ -371,53 +427,6 @@ const MyPage = ({ navigation, route }) => {
                 </View>
             </Modal>
 
-            {/*          <Modal visible={modalVisible2}>
-              <View style={styles.modal}>
-                  <Button title="Pick an image from camera roll" onPress={pickImage} />
-                  <Image source={{ uri: tempImage ? tempImage : null }} style={{ width: 200, height: 200 }} />
-                  <TextInput
-                      placeholder="Food Name"
-                      style={styles.textInput}
-                      onChangeText={text => setNewName(text)}
-                      defaultValue={newName}
-                      editable={true}
-                  />
-                  <TextInput
-                      keyboardType="numeric"
-                      placeholder="Food Price"
-                      style={styles.textInput}
-                      onChangeText={text => setNewPrice(text)}
-                      defaultValue={newPrice}
-                      editable={true}
-                  />
-                  <TextInput
-                      placeholder="Food Description"
-                      style={styles.textInput}
-                      onChangeText={text => setNewDescription(text)}
-                      defaultValue={newDescription}
-                      editable={true}
-                  />
-                  <View style={{ flexDirection: 'row', }}>
-                      <View style={styles.view2} >
-                          <TouchableOpacity
-                              onPress={() => setModalVisible2(false)} style={styles.button}>
-                              <Text style={styles.buttonText}>
-                                  Cancel
-								</Text>
-                          </TouchableOpacity>
-                      </View>
-                      <View style={styles.view2} >
-                          <TouchableOpacity
-                              onPress={() => updateMenu(item)} style={styles.button}>
-                              <Text style={styles.buttonText}>
-                                  Confirm
-								</Text>
-                          </TouchableOpacity>
-                      </View>
-                  </View>
-              </View>
-          </Modal> */}
-
             <Modal visible={locationVisible}>
                 <View style={styles.modal}>
                     <Text>Your new location: {JSON.stringify(newLocation)}</Text>
@@ -450,15 +459,13 @@ const MyPage = ({ navigation, route }) => {
             <View style={styles.Top}>
                 <ImageBackground
                     source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
-                    //	resizeMode="contain"
                     style={styles.TopImage}
                 />
             </View>
             <View style={styles.Mid}>
-                <Text style={styles.FoodTruckName}> Amoroso's Bakery </Text>
+                <Text style={styles.FoodTruckName}> {info.FoodTruckName} </Text>
                 <Text style={styles.Location}>
-                    {" "}
-          1400 Spring Garden St, Greensboro NC 27412{" "}
+                    {info.FoodTruckLocation}
                 </Text>
                 <View
                     style={{
@@ -499,7 +506,7 @@ const MyPage = ({ navigation, route }) => {
                             }}
                         >
                             Edit Page
-            </Text>
+                        </Text>
                     </TouchableOpacity>
                     <View style={{ alignSelf: "center" }}>
                         <TouchableOpacity
@@ -534,7 +541,7 @@ const MyPage = ({ navigation, route }) => {
                                 }}
                             >
                                 Add Food
-              </Text>
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
@@ -571,7 +578,7 @@ const MyPage = ({ navigation, route }) => {
                                 }}
                             >
                                 Location Change
-              </Text>
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity
@@ -604,7 +611,7 @@ const MyPage = ({ navigation, route }) => {
                             }}
                         >
                             Schedule
-            </Text>
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -636,6 +643,7 @@ const styles = StyleSheet.create({
     Mid: {
         height: "30%",
         width: "100%",
+        backgroundColor: "white"
     },
 
     FoodTruckName: {
@@ -643,7 +651,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     Location: {
-        fontSize: 14,
+        fontSize: 20,
         alignSelf: "center",
     },
     Bottom: {
@@ -720,4 +728,4 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
     },
 });
-export default MyPage;
+export default Flatlist;
