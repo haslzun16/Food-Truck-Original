@@ -1,5 +1,5 @@
 import React from "react";
-import {useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   Button,
@@ -18,69 +18,59 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SetUp from "./SetUp";
 import BottomNavigation from "../BottomNavigation";
+import AnimatedLoader from "react-native-animated-loader";
+import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 
-function Loading(){
-    const [setUp , assignSetUp] = useState()
-    const Stack = createStackNavigator();
-    const { getUserId } = React.useContext(AuthContext);
-    let userId = getUserId();
+function Loading({ navigation }) {
+  // const [setUp, assignSetUp] = useState();
+  // const [visible, setVisible] = useState();
+  const Stack = createStackNavigator();
+  const { getUserId } = React.useContext(AuthContext);
+  let userId = getUserId();
 
-    useEffect(() => {
-        navigateUser();
-      }, []);
+  useEffect(() => {
+    navigateUser();
+  }, []);
 
-      const navigateUser = () => {
-    
-        let isSetUpRef = firebase.database().ref("vender/" + userId + "/isSetUp");
-    
-        isSetUpRef.on("value", (snapshot) => {
-          let val = snapshot.val();
-            console.log(val)
+  const navigateUser = () => {
+    let isSetUpRef = firebase.database().ref("vender/" + userId + "/isSetUp");
 
-          if(val == false){
-            assignSetUp(false)
-          }
-          else{
-            assignSetUp(true)
-          }
-        });
-      };
+    isSetUpRef.on("value", (snapshot) => {
+      let val = snapshot.val();
+      console.log(val);
 
-      return(
-        
-        <Stack.Navigator>
-           {setUp == true? (
-              <Stack.Screen
-                name="BottomNavigation"
-                component={BottomNavigation}
-                options={{ headerShown: false }}
-              />
-            ) : (
-              <> 
-                <Stack.Screen
-                  name="SetUp"
-                  component={SetUp}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="BottomNavigation"
-                  component={BottomNavigation}
-                  options={{ headerShown: false }}
-                />
-              </>
-            )}
-        </Stack.Navigator>
-        
-      );
-};
+      if (val == false) {
+        navigation.navigate("SetUp");
+      } else {
+        navigation.navigate("BottomNavigation")
+      }
+    });
+  };
+
+  return (
+    // <AnimatedLoader
+      
+    //   //overlayColor="rgba(255,255,255,0.75)"
+    //   source={require("../../assets/LoadingImage.json")}
+    //   animationStyle={styles.lottie}
+    //   speed={1}
+    // >
+    //   <Text>Doing something...</Text>
+    // </AnimatedLoader>
+    null
+  );
+}
 
 const styles = StyleSheet.create({
-    MainView: {
-      flex: 1,
-      alignContent: "center",
-      justifyContent: "center",
-    },
-  });
-  
-  export default Loading;
-  
+  MainView: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  lottie: {
+    width: 100,
+    height: 100,
+  },
+});
+
+export default Loading;

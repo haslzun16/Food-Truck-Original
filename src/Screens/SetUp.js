@@ -12,6 +12,7 @@ const [FoodTruckName, setFoodTruckName] = useState("");
 const [FoodTruckLocation, setFoodTruckLocation] = useState("");
 const [FoodType, setFoodType] = useState("");
 const [ LicensePlate , setLicensePlate] = useState('');
+const [ hours , setHours] = useState('');
 
 const { setUp } = React.useContext(AuthContext);
 const { getUserId } = React.useContext(AuthContext);
@@ -20,7 +21,7 @@ const onSetUpPress = () => {
     
     let userId = getUserId();
     firebase.database().ref("vender/" + userId ).update({isSetUp:true});
-    setUp({FoodTruckName, FoodTruckLocation, FoodType, LicensePlate});
+    setUp({FoodTruckName, FoodTruckLocation, FoodType, LicensePlate,hours});
     navigation.navigate("BottomNavigation");
 
 }
@@ -51,6 +52,9 @@ const onSetUpPress = () => {
 
                          <TextInput style={styles.textInput} placeholder="Enter your Food Truck License plate" value={LicensePlate} 
                         onChangeText={(text) => setLicensePlate(text)} />
+
+                        <TextInput style={styles.textInput} placeholder="Enter your hours of operations" value={hours} 
+                        onChangeText={(text) => setHours(text)} />
 
                         <TouchableOpacity
                         onPress={() => onSetUpPress()} style={styles.button}>
