@@ -35,8 +35,6 @@ import { Platform } from "react-native";
 import { Linking } from "react-native";
 import openMap from 'react-native-open-maps'; //https://www.npmjs.com/package/react-native-open-maps
 
-var stringTest;
-
 function Map() {
 
     //creating hook (locations is the variable, setlocations is assigning to locations)
@@ -80,8 +78,6 @@ function Map() {
             //console.log("arrrr3: " + JSON.stringify(tempArray, null, 2));
 
             console.log("arrrr3: " + JSON.stringify(tempArray, null, 2));
-            stringTest = ("Food Type: " + locations[0].FoodType + "\nPhone Number: " + locations[0].phone);
-
         });
     }
 
@@ -135,10 +131,12 @@ function Map() {
                     >
                         <Callout tooltip>
                             <View style={styles.bubble}>
-                                <Image
-                                    style={styles.image}
-                                    source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
-                                />
+                                <Text>
+                                    <Image
+                                        style={styles.image}
+                                        source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                                    />
+                                </Text>
                                 <Text style={styles.name}>{marker.FoodTruckName}</Text>
                                 <Text>Food Type: {marker.FoodType}</Text>
                                 <Text>Phone Number: {marker.phone}</Text>
