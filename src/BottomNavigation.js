@@ -9,32 +9,56 @@ import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Component } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import Home from "./Screens/Homee";
+import Home from "./Screens/Home";
 import Map from "./Screens/Map";
 import Events from "./Screens/Events";
-import Orders from "./Screens/Orders";
 import MyPage from "./Screens/MyPage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AuthContext } from "../App";
+import { useState, useEffect, useContext } from "react";
+import * as firebase from "firebase";
+
+const BottomNavigation = () => {
+
+    const [setUp, assignSetUp] = useState()
+    const { getUserId } = React.useContext(AuthContext);
+    let userId = getUserId();
+
+    useEffect(() => {
+        navigateUser();
+    }, []);
+
+    const navigateUser = () => {
+
+        let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
+        isSetUpRef.on("value", (snapshot) => {
+            if (snapshot.exists()) {
+                assignSetUp(false)
+            }
+            else {
+                assignSetUp(true)
+            }
+        });
+    };
 
 const Tab = createBottomTabNavigator();
-
-class BottomNavigation extends Component {
-  render() {
     return (
+ 
       <Tab.Navigator
         tabBarOptions={{
           style: {
-            // height: '9%',
-            // backgroundColor: this.tabIndex == 4 ? "#fff" : "transparent",
             backgroundColor: "#FFF",
-            //position: 'absolute',
-            //bottom: 0,
-            // elevation: 0
           },
           activeTintColor: "#FEAD44",
           inactiveTintColor: "#FC5976",
-          // showLabel: false,
-        }}
+            }}
+            screenOptions={({ route }) => ({
+                tabBarButton: ['MyPage'].includes(route.name) && setUp == false
+                    ? () => {
+                        return null;
+                    }
+                    : undefined,
+            })}
       >
         {/* First Tab and Screen */}
         <Tab.Screen
@@ -82,16 +106,6 @@ class BottomNavigation extends Component {
             ),
           }}
         />
-        {/* Last Tab and Screen */}
-        {/*  <Tab.Screen name="Orders" component={Orders} 
-                    options={{
-                        tabBarLabel: 'Orders',
-                        tabBarColor: '#009387',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialCommunityIcons name="cart-outline" color={color} size={26} />
-                        ),
-                    }} /> */}
-        {/* My Page Screen */}
         <Tab.Screen
           name="MyPage"
           component={MyPage}
@@ -105,7 +119,6 @@ class BottomNavigation extends Component {
         />
       </Tab.Navigator>
     );
-  }
 }
 
 export default BottomNavigation;

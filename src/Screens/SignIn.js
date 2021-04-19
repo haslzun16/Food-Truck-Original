@@ -55,7 +55,7 @@ export default function SignIn({ navigation }) {
             <Image
               style={{
                 width: 280,
-                height: 146,
+                height: 147,
                 alignItems: "center",
                 marginTop: 10,
               }}
