@@ -9,60 +9,200 @@
  * npm install -g react-native-cli
  * npm install react-native-maps
  * npm install @react-native-firebase/database
+ * npm install --save react-native-open-maps
  */
 
 //imports
-import React, { Component } from "react";
-import MapView, { Marker } from "react-native-maps";
+
+import MapView, { Marker, Callout } from "react-native-maps";
 import * as firebase from 'firebase';
-import { linear } from "react-native/Libraries/Animated/src/Easing";
+import React from "react";
+import { useState, useEffect } from "react";
+import _ from "lodash";
+import {
+    FlatList,
+    Button,
+    View,
+    Modal,
+    Text,
+    TextInput,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    ImageBackground,
+} from "react-native";
+import { Platform } from "react-native";
+import { Linking } from "react-native";
+import openMap from 'react-native-open-maps'; //https://www.npmjs.com/package/react-native-open-maps
 
-class Map extends Component {
+function Map() {
+
+    //creating hook (locations is the variable, setlocations is assigning to locations)
+    const [locations, setLocations] = useState([]);
 
 
-    /**
-     * The vendor is the only user that has a MyPage.
-     * There will be a update current location button that will get the users location(lat and long) and push it to the database.
-    */
+    //calls the getLocation() method
+    useEffect(() => {
+        getLocation();
+    }, []);
 
-    /*
-    * TODO
-    * Look at the database and go into the foodtruck location.
-    * populate the users map with food trucks(from the database) near them.
-    */
+    const getLocation = () => {
 
+        //goes in the database to the venders "tab"
+        let locationRef = firebase.database().ref("vender/");
 
-    render() {
-        var latitude = 0;
-        var longitude = 77.0365; //-79.72228;
+        //puts all the info from vendor tab into valToArray
+        locationRef.on("value", (snapshot) => {
+            let val = snapshot.val();
 
-        /*database()
-            .ref('vendor/1JRC2MPddCVrigMJoNOs2dCU3wL2/location')
-            .once('latitude')
-            .then(snapshot => {
-                latitude = snapshot.val();
-            });*/
+            //getting all the venders out of the database, if they do not have a location it inserts null into the array
+            var tempArray = _.map(val, (element) => {
+                if (element.location != undefined) {
+                    return { ...element };
+                }
+            })
 
-        return (
-            <MapView
-                style={{ flex: 1 }}
-                //shows users location
-                showsUserLocation={true}
-                //should follow the user if they move
-                followsUserLocation={true}
-                //button to zoom in on users current location
-                //there is a bug with this button where the button does not show up unless you rotate the phone 
-                showsMyLocationButton={true}
-            >
+            //deletes all the nulls out of the array so that the food trucks can be made into markers
+            for (var i = 0; i < tempArray.length; i++) {
+                if (tempArray[i] == null) {
+                    tempArray.splice(i, 1);
+                    i--;
+                }
+            }
 
-                <Marker
-                    coordinate={{ latitude, longitude }}
-                //image={require("../../assets/orange-food-truck.png")}
-                />
+            //sets location hook
+            setLocations(tempArray);
 
-            </MapView>
-        );
+            //prints JSON on venders
+            //console.log("arrrr2: " + JSON.stringify(locations, null, 2));
+            //console.log("arrrr3: " + JSON.stringify(tempArray, null, 2));
+
+            console.log("arrrr3: " + JSON.stringify(tempArray, null, 2));
+        });
     }
+
+    const dialCall = (number) => {
+
+        console.log("PHONE: " + number)
+        let phoneNumber = '';
+
+        if (Platform.OS === 'android') {
+            phoneNumber = 'tel:' + number;
+        }
+
+        else {
+            phoneNumber = 'telprompt:' + number;
+        }
+
+        Linking.openURL(phoneNumber);
+    };
+
+    const goToTruck = (lat, lon, name) => {
+        openMap({ latitude: lat, longitude: lon, end: lat + ", " + lon });
+    }
+
+
+    return (
+        <MapView
+            style={{ flex: 1 }}
+
+            //shows users location
+            showsUserLocation={true}
+
+            //should follow the user if they move
+            followsUserLocation={true}
+
+            //button to zoom in on users current location
+            //there is a bug with this button where the button does not show up unless you rotate the phone 
+            showsMyLocationButton={true}
+        >
+
+            {
+                locations.map((marker, i) => (
+                    <Marker
+                        key={i}
+                        coordinate={{
+                            latitude: marker.location.latitude,
+                            longitude: marker.location.longitude
+                        }}
+                        //use if you want the user to be able to call the truck when they click on it 
+                        //onCalloutPress={() => { dialCall(marker.phone) }}
+                        onCalloutPress={() => { goToTruck(marker.location.latitude, marker.location.longitude, marker.FoodTruckName) }}
+                    >
+                        <Callout tooltip>
+                            <View style={styles.bubble}>
+                                <Text>
+                                    <Image
+                                        style={styles.image}
+                                        source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                                    />
+                                </Text>
+                                <Text style={styles.name}>{marker.FoodTruckName}</Text>
+                                <Text>Food Type: {marker.FoodType}</Text>
+                                <Text>Phone Number: {marker.phone}</Text>
+                            </View>
+                            <View style={styles.arrowBorder} />
+                            <View styles={styles.arrow} />
+                        </Callout>
+                    </Marker>
+                ))
+            }
+
+
+
+        </MapView>
+    );
 }
 
+//mypage.js line 549
 export default Map;
+
+const styles = StyleSheet.create({
+    map: {
+        height: '100%'
+    },
+
+    bubble: {
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+        backgroundColor: '#fff',
+        borderRadius: 6,
+        borderColor: '#ccc',
+        borderWidth: 0.5,
+        padding: 15,
+        width: 200,
+    },
+
+    arrow: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#fff',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -32,
+    },
+
+    arrowBorder: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#fff',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -0.5,
+    },
+
+    name: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+
+    image: {
+        width: 120,
+        height: 80,
+    },
+
+    fixToText: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+})

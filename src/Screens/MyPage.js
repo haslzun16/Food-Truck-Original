@@ -27,7 +27,9 @@ const MyPage = ({ navigation, route }) => {
     const [modalVisible2, setModalVisible2] = useState(false);
     const [modalVisible3, setModalVisible3] = useState(false);
     const [locationVisible, setLocationVisible] = useState(false);
+    const [announcementVisible, setAnnouncementVisible] = useState(false);
     const [newLocation, setLocation] = useState(null);
+    const [NewAnnouncement, setNewAnnouncement] = useState(" ");
     const [newName, setNewName] = useState(" ");
     const [newPrice, setNewPrice] = useState(" ");
     const [newDescription, setNewDescription] = useState(" ");
@@ -74,6 +76,44 @@ const MyPage = ({ navigation, route }) => {
             .catch((err) => console.log(err));
 
     }
+
+    //store the vendor announcements
+  const storeAnnouncement = () => {
+    setAnnouncementVisible(false);
+    console.log(userId)
+    let announcementRef = firebase.database().ref("announcements/");
+    let createdAnnouncemnt = announcementRef.push();
+    
+    let announcement = {
+      id: createdAnnouncemnt.key,
+      announcement: NewAnnouncement,
+      userid: userId,
+      vendorname: getName(),
+      timestamp: Date.now(),
+      
+    };
+  
+    createdAnnouncemnt
+      .set(announcement)
+      .then((res) => {
+        setNewAnnouncement("");
+      })
+      .catch((err) => console.log(err));
+  };
+  
+  const getName = () => {
+    let name = "";
+    let menuRef = firebase.database().ref("vender/" + userId + "/FoodTruckName");
+    menuRef.on("value", (snapshot) => {
+
+        let val = snapshot.val();
+        name = val
+       
+    });
+
+    
+    return name
+};
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -541,6 +581,39 @@ const MyPage = ({ navigation, route }) => {
                 </View>
             </Modal>
 
+      <Modal visible={announcementVisible}>
+        <View style={styles.modal}>
+          <Text>Post an announcement for customers!</Text>
+          <TextInput
+            placeholder="Enter Your Annoucement"
+            style={styles.textInput}
+            onChangeText={(text) => setNewAnnouncement(text)}
+          />
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={styles.view2}>
+              {/* If correct credentials go to the homepage via bottom navigation */}
+              <TouchableOpacity
+                onPress={() => setAnnouncementVisible(false)}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.view2}>
+              {/* If correct credentials go to the homepage via bottom navigation */}
+              <TouchableOpacity
+                onPress={() => storeAnnouncement()}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Post!</Text>
+              </TouchableOpacity>
+            </View>
+        </View>
+        </View>
+      </Modal>
+
             <View style={styles.Top}>
 
 
@@ -676,38 +749,45 @@ const MyPage = ({ navigation, route }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: "#F5AF19",
-                            borderRadius: 200,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: 50,
-                            width: 50,
-                        }}
-                    >
-                        <MaterialCommunityIcons
-                            name="calendar-clock"
-                            style={{
-                                alignSelf: "center",
-                                marginTop: 30,
-                                width: "50%",
-                                height: "50%",
-                            }}
-                            size={26}
-                            Account
-                        ></MaterialCommunityIcons>
-                        <Text
-                            style={{
-                                position: "relative",
-                                marginTop: 12,
-                                color: "black",
-                                fontSize: 9,
-                            }}
-                        >
-                            Schedule
-                        </Text>
-                    </TouchableOpacity>
+         <TouchableOpacity
+            style={{
+              backgroundColor: "#F5AF19",
+              // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
+              borderRadius: 200,
+              alignItems: "center",
+              justifyContent: "center",
+              height: 50,
+              width: 50,
+              //	margin: 10,
+            }}
+
+            onPress={() => setAnnouncementVisible(true)}
+          >
+            <MaterialCommunityIcons
+              name="calendar-clock"
+              style={{
+                alignSelf: "center",
+                marginTop: 30,
+                width: "50%",
+                height: "50%",
+              }}
+              size={26}
+              Account
+            ></MaterialCommunityIcons>
+
+            <Text
+              style={{
+                position: "relative",
+                marginTop: 12,
+                color: "black",
+                fontSize: 9,
+                width: '160%',
+                marginLeft: 20
+              }}
+            >
+              Post Announcements
+            </Text>
+          </TouchableOpacity>
                 </View>
             </View>
             <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
