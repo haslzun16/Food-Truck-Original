@@ -14,7 +14,9 @@ npm install react-native-floating-action
 
 import "react-native-gesture-handler";
 import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+    NavigationContainer, DefaultTheme as NavigationDefaultTheme,
+    DarkTheme as NavigationDarkTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignIn from "./src/Screens/SignIn";
 import SignUp from "./src/Screens/SignUp";
@@ -33,6 +35,13 @@ import * as firebase from "firebase";
 import apiKeys from "./src/firebase/config";
 import { Alert, Text, View } from "react-native";
 
+import {
+    Provider as PaperProvider,
+    DefaultTheme as PaperDefaultTheme,
+    DarkTheme as PaperDarkTheme
+} from 'react-native-paper';
+
+
 export const AuthContext = React.createContext();
 
 function SplashScreen() {
@@ -46,6 +55,37 @@ function SplashScreen() {
 const Stack = createStackNavigator();
 
 export default function App() {
+
+    const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+    const CustomDefaultTheme = {
+        ...NavigationDefaultTheme,
+        ...PaperDefaultTheme,
+        colors: {
+            ...NavigationDefaultTheme.colors,
+            ...PaperDefaultTheme.colors,
+            background: '#ffffff',
+            text: '#333333',
+            border: '#F5F5F5',
+            line: '#000'
+        }
+    }
+
+    const CustomDarkTheme = {
+        ...NavigationDarkTheme,
+        ...PaperDarkTheme,
+        colors: {
+            ...NavigationDarkTheme.colors,
+            ...PaperDarkTheme.colors,
+            //background: '#333333',
+            background: '#000',
+            text: '#ffffff',
+            line: '#fff'
+        }
+    }
+
+    const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
+
     const [userId, setUserId] = useState("");
 
     if (!firebase.apps.length) {
@@ -200,6 +240,11 @@ export default function App() {
 
         },
 
+
+        toggleTheme: () => {
+            setIsDarkTheme(isDarkTheme => !isDarkTheme);
+        },
+
         signOut: () => dispatch({ type: "SIGN_OUT" }),
         skip: () => dispatch({ type: "SKIP" }),
         signUp: async (data) => {
@@ -237,6 +282,7 @@ export default function App() {
                             Fullname: data.fullName,
                             phone: data.phone,
                             isSetUp: false,
+                            foodTruckImage: "https://firebasestorage.googleapis.com/v0/b/foodtruck-a92cc.appspot.com/o/Default%20Food%20Truck%20Image%2Ffood-truck-default-image.jpg?alt=media&token=9de3da8e-07d4-445e-ac92-96f0dc476d4f",
                             profileImage: "https://firebasestorage.googleapis.com/v0/b/foodtruck-a92cc.appspot.com/o/Default%20Image%20Profile%2Fdefault.png?alt=media&token=518e4aab-614e-4e5b-870e-f4469cb51973",
                         });
                     //for users 
@@ -273,8 +319,9 @@ export default function App() {
   })*/
 
   return (
+    <PaperProvider theme={theme}>
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
+      <NavigationContainer theme={theme}>
         <Stack.Navigator>
           {state.userToken == null ? (
             state.isLoading ? (
@@ -304,7 +351,7 @@ export default function App() {
                   component={Loading}
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen
+               <Stack.Screen
                  name="SetUp"
                  component={SetUp}
                  options={{ headerShown: false }}
@@ -315,16 +362,17 @@ export default function App() {
                  options={{headerShown: false }}
               />
              <Stack.Screen
-                        name="Account"
-                        component={Account}
-                        options={{ headerShown: false }}
+                 name="Account"
+                 component={Account}
+                 options={{ headerShown: false }}
+             />
+             <Stack.Screen
+                name="EditAccount"
+                component={EditAccount}
+                options={{ headerShown: false }}
              />
             </>
           )}
-
-
-
-
                     <Stack.Screen
                         name="FoodTruckDetails"
                         component={FoodTruckDetails}
@@ -334,5 +382,6 @@ export default function App() {
                 </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>
+      </PaperProvider>
     );
 }

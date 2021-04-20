@@ -1,21 +1,89 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image, TextInput,TouchableOpacity, ListViewComponent } from 'react-native';
+import { Text, View, StyleSheet, Image, TextInput, TouchableOpacity, ListViewComponent, Modal, Button, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import 'react-native-gesture-handler';
 import {AuthContext} from '../../App'
 import * as firebase from "firebase";
 //import { decode, encode } from 'base-64'
+import * as ImagePicker from "expo-image-picker";
 
 export default function SetUp({ navigation }) {
 const [FoodTruckName, setFoodTruckName] = useState("");
 const [FoodTruckLocation, setFoodTruckLocation] = useState("");
 const [FoodType, setFoodType] = useState("");
 const [ LicensePlate , setLicensePlate] = useState('');
-const [ hours , setHours] = useState('');
+const [hours, setHours] = useState('');
+const [tempImage, setTempImage] = useState("");
+const [modalVisible, setModalVisible] = useState(false);
 
 const { setUp } = React.useContext(AuthContext);
 const { getUserId } = React.useContext(AuthContext);
+
+let userId = getUserId();
+
+
+
+
+
+
+
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        if (!result.cancelled) {
+            setTempImage(result.uri);
+        }
+    };
+
+
+    const insertFoodTruckImage = (url) => {
+        setModalVisible(false);
+ 
+            let foodTruckImageRef = firebase.database().ref("vender/" + userId);
+            let createdFoodTruckImage = foodTruckImageRef
+            let foodTruckImage = {
+                foodTruckImage: url,
+            };
+            createdFoodTruckImage
+                .update(foodTruckImage)
+                .then((res) => {
+                    setTempImage("");
+                })
+                .catch((err) => console.log(err));
+   
+    };
+
+    // T0-Do you need to add a loading screen because the uploading image kinda takes time to upload
+    //method to upload image to database then it downloads the image and sends the url to insertmenu method
+    const uploadImageToStorage = async () => {
+        let response = await fetch(tempImage);
+        let blob = await response.blob();
+
+        firebase
+            .storage()
+            .ref()
+            .child(userId + "/FoodTruckImage/" + FoodTruckName)
+            .put(blob).then((snapshot) => {
+                snapshot.ref.getDownloadURL()
+                    .then(url => {
+                        console.log(' * new url', url)
+                        insertFoodTruckImage(url);
+                    })
+            });
+    };
+
+
+
+
+
+
+
 // on register press change !!!
 const onSetUpPress = () => {
     
@@ -26,7 +94,40 @@ const onSetUpPress = () => {
 
 }
   return (
-   <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
+      <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
+
+          <Modal visible={modalVisible}>
+              <View style={styles.modal}>
+                  <Button title="Pick an image from camera roll" onPress={pickImage} />
+                  <Image
+                      source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }}
+                      style={{ width: 200, height: 200 }}
+                  />
+
+                  <View style={{ flexDirection: "row" }}>
+                      <View style={styles.view2}>
+                          {/* Close and Cancel the Modal */}
+                          <TouchableOpacity
+                              onPress={() => setModalVisible(false)}
+                              style={styles.buttonModal}
+                          >
+                              <Text style={styles.buttonTextModal}>Cancel</Text>
+                          </TouchableOpacity>
+                      </View>
+
+                      <View style={styles.view2}>
+                          {/* Add Profile Image to the database */}
+                          <TouchableOpacity
+                              onPress={() => uploadImageToStorage()}
+                              style={styles.buttonModal}
+                          >
+                              <Text style={styles.buttonTextModal}>Confirm</Text>
+                          </TouchableOpacity>
+                      </View>
+                  </View>
+              </View>
+          </Modal>
+
                 <View style={styles.top}>
                     <View style={styles.view}>
                         {/* <Image
@@ -36,11 +137,23 @@ const onSetUpPress = () => {
                             */}
 
                         <Text style={styles.Text}> Set Up Your Account </Text>
-                    </View>
+              </View>
+
+
+
                 </View>
 
                 <View style={styles.middle}>
                     <View style={styles.tiButtons} >
+
+                        <TouchableOpacity
+                            style={styles.ImageButton}
+                            onPress={() => setModalVisible(true)}>
+                            <Text
+                                style={{ textAlign: 'center', paddingTop: 15, }}>
+                                Add Image </Text>
+                        </TouchableOpacity>
+
                         <TextInput style={styles.textInput} placeholder="Enter your food trucks name" value={FoodTruckName} 
                         onChangeText={(text) => setFoodTruckName(text)} />
 
@@ -70,6 +183,7 @@ const onSetUpPress = () => {
   );
 }
 
+var width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
    body: {
@@ -111,13 +225,13 @@ const styles = StyleSheet.create({
     },
     textInput: {
         borderWidth: 1,
-        backgroundColor: '#fff',
-        borderColor: '#fff',
+        backgroundColor: "#fff",
+        borderColor: "#fff",
         borderRadius: 30,
         padding: 8,
         paddingHorizontal: 20,
-        marginTop: 30,
-        width: '85%'
+        marginTop: 13,
+        width: "85%",
     },
      Text: {
         fontSize: 36,
@@ -125,4 +239,57 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginTop: 0,
     },
+
+    modal: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    buttonModal: {
+        width: 100,
+        height: 40,
+        marginTop: 10,
+        borderRadius: 10,
+        backgroundColor: "#FEAD44",
+    },
+
+    buttonTextModal: {
+        fontSize: 18,
+        textAlign: "center",
+        margin: 5,
+        color: "#FFFFFF",
+    },
+
+    view2: {
+        marginTop: 0,
+        alignItems: "center",
+        padding: 10,
+    },
+
+    profilePic: {
+        height: "100%",
+        width: "100%",
+        backgroundColor: 'black',
+        borderColor: "#F5F5F5",
+    },
+
+    Top: {
+        height: "30%",
+        width: "100%",
+        backgroundColor: "black",
+    },
+    TopImage: {
+        height: "90%",
+        width: "80%",
+    },
+
+    ImageButton: {
+        width: 200,
+        height: 60,
+       // marginTop: 30,
+        borderRadius: 0,
+        backgroundColor: 'white',
+    }
+
 });

@@ -20,11 +20,12 @@ import * as ImagePicker from "expo-image-picker";
 import Swipeout from "react-native-swipeout";
 import { AuthContext } from "../../App";
 
-const Flatlist = ({ navigation, route }) => {
+const MyPage = ({ navigation, route }) => {
 
     const [theID, setTheID] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisible2, setModalVisible2] = useState(false);
+    const [modalVisible3, setModalVisible3] = useState(false);
     const [locationVisible, setLocationVisible] = useState(false);
     const [newLocation, setLocation] = useState(null);
     const [newName, setNewName] = useState(" ");
@@ -222,6 +223,50 @@ const Flatlist = ({ navigation, route }) => {
         });
     };
 
+
+    const insertFoodTruckImage = (url) => {
+        setModalVisible3(false);
+
+        let foodTruckImageRef = firebase.database().ref("vender/" + userId);
+        let createdFoodTruckImage = foodTruckImageRef
+        let foodTruckImage = {
+            foodTruckImage: url,
+        };
+        createdFoodTruckImage
+            .update(foodTruckImage)
+            .then((res) => {
+                setTempImage("");
+            })
+            .catch((err) => console.log(err));
+
+    };
+
+    // T0-Do you need to add a loading screen because the uploading image kinda takes time to upload
+    //method to upload image to database then it downloads the image and sends the url to insertmenu method
+    const uploadImageToStorage2 = async () => {
+        let response = await fetch(tempImage);
+        let blob = await response.blob();
+
+        firebase
+            .storage()
+            .ref()
+            .child(userId + "/FoodTruckImage/" + info.FoodTruckName)
+            .put(blob).then((snapshot) => {
+                snapshot.ref.getDownloadURL()
+                    .then(url => {
+                        console.log(' * new url', url)
+                        insertFoodTruckImage(url);
+                    })
+            });
+    };
+
+
+
+
+
+
+
+
     const editPageNavigation = () => {
      //   navigation.navigate("EditMyPage");
     };
@@ -323,6 +368,46 @@ const Flatlist = ({ navigation, route }) => {
 
     return (
         <View style={{ flex: 1 }}>
+
+
+
+
+            <Modal visible={modalVisible3}>
+                <View style={styles.modal}>
+                    <Button title="Pick an image from camera roll" onPress={pickImage} />
+                    <Image
+                        source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }}
+                        style={{ width: 200, height: 200 }}
+                    />
+
+                    <View style={{ flexDirection: "row" }}>
+                        <View style={styles.view2}>
+                            {/* Close and Cancel the Modal */}
+                            <TouchableOpacity
+                                onPress={() => setModalVisible3(false)}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.view2}>
+                            {/* Add Profile Image to the database */}
+                            <TouchableOpacity
+                                onPress={() => uploadImageToStorage2()}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Confirm</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+
+
+
+
                 <Modal visible={modalVisible2}>
                     <View style={styles.modal}>
                         <Button title="Pick an image from camera roll" onPress={pickImage} />
@@ -457,10 +542,20 @@ const Flatlist = ({ navigation, route }) => {
             </Modal>
 
             <View style={styles.Top}>
+
+
+
+                <TouchableOpacity
+                    onPress={() => setModalVisible3(true)}>
                 <ImageBackground
-                    source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                    // source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                    source={{ uri: info.foodTruckImage ? info.foodTruckImage : null }}
                     style={styles.TopImage}
                 />
+                </TouchableOpacity>
+
+
+
             </View>
             <View style={styles.Mid}>
                 <Text style={styles.FoodTruckName}> {info.FoodTruckName} </Text>
@@ -728,4 +823,4 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
     },
 });
-export default Flatlist;
+export default MyPage;
