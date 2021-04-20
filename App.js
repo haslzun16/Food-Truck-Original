@@ -179,7 +179,8 @@ export default function App() {
                     FoodTruckName: data.FoodTruckName,
                     FoodTruckLocation: data.FoodTruckLocation,
                     FoodType: data.FoodType,
-                    LicensePlate: data.LicensePlate
+                    LicensePlate: data.LicensePlate,
+                    hours: data.hours
                 });
 
 

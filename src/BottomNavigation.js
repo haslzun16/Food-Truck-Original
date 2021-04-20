@@ -95,7 +95,7 @@ const Tab = createBottomTabNavigator();
           name="Events"
           component={Events}
           options={{
-            tabBarLabel: "Events",
+            tabBarLabel: "Announcements",
             tabBarColor: "#009387",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
