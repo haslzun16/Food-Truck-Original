@@ -1,96 +1,150 @@
-/**
- * Home Screen
- *
- * First Screen the user will see when they sign in
- * Navigation to user account
- * Will display:
- *
- */
-
-import * as React from "react";
-import { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
-  FlatList,
-  Button,
-  View,
-  Text,
-  TextInput,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
+    FlatList,
+    Button,
+    View,
+    Modal,
+    Text,
+    TextInput,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    ImageBackground,
+    SafeAreaView
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Component } from "react";
-//import { auth } from "../firebase";
+import * as firebase from "firebase";
+import _ from "lodash";
+import { AuthContext } from "../../App";
 
 const Home = ({ navigation }) => {
-  const [categories, setCategories] = useState([
-    {
-      name: "Hamburger",
-      source: require("../../assets/Food/Hamburger.png"),
-      id: "1",
-    },
-    { name: "Taco", source: require("../../assets/Food/Taco.png"), id: "2" },
-    { name: "Pizza", source: require("../../assets/Food/Pizza.png"), id: "3" },
-    {
-      name: "Hot Dogs",
-      source: require("../../assets/Food/HotDog.png"),
-      id: "4",
-    },
-    {
-      name: "Nachos",
-      source: require("../../assets/Food/Nachos.png"),
-      id: "5",
-    },
-    { name: "Sushi", source: require("../../assets/Food/Sushi.png"), id: "6" },
-    {
-      name: "Vegan",
-      source: require("../../assets/Food/VeganFood.png"),
-      id: "7",
-    },
-    {
-      name: "Rice",
-      source: require("../../assets/Food/RiceBowl.png"),
-      id: "8",
-    },
-  ]);
 
-  const [venders, setVenders] = useState([]);
+  const [search, setSearch] = React.useState('');
+  const [findFoodTrucks, setFindFoodTrucks] = React.useState([]);
+  const [masterDataSource, setMasterDataSource] = React.useState([]);
+  const [setUp, assignSetUp] = useState();
+  const [users, setUsers] = useState([]);
+  const [cust, setCust] = useState([]);
+  const [vend, setVend] = useState([]);
+  const { getUserId } = React.useContext(AuthContext);
+
+    let userId = getUserId();
+
+    useEffect(() => {
+        navigateUser();
+    }, []);
+
+    useEffect(() => {
+        getCustomers();
+    }, []);
+
+    useEffect(() => {
+        getVendors();
+    }, []); 
+
+    useEffect(() => {
+
+        let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
+        isSetUpRef.on("value", (snapshot) => {
+            if (snapshot.exists()) {
+                assignSetUp(false)
+            }
+            else {
+                assignSetUp(true)
+            }
+        });
+         
+        const test = () => {
+            if (setUp == true) {
+                setUsers(vend);
+            } else {
+                setUsers(cust);
+            }
+
+        }
+        setUsers();
+        test();
+
+        if (users.profileImage == null) {
+            users.profileImage == require("../../assets/default.png");
+        }
+    }, [users]);
+
+    const navigateUser = () => {
+
+        let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
+        isSetUpRef.on("value", (snapshot) => {
+            if (snapshot.exists()) {
+                assignSetUp(false)
+            }
+            else {
+                assignSetUp(true)
+            }
+        });
+    };
+
+    const getCustomers = () => {
+        let userRef = firebase.database().ref("users/" + userId);
+        let val = '';
+            userRef.on('value', function (snapshot) {
+                let val = snapshot.val();
+                setCust(val);
+                setUsers(cust);
+            });
+        setCust(val);
+    };
+
+    const getVendors = () => {
+
+        let userRef = firebase.database().ref("vender/" + userId);
+        let val = '';
+        userRef.on('value', function (snapshot) {
+            let val = snapshot.val();
+
+            setVend(val);
+            setUsers(vend);
+        });
+        setVend(val);
+    };
 
   useEffect(() => {
-    getVenders();
+      getFoodTrucks();
   }, []);
 
-  const getVenders = () => {
+    const getFoodTrucks = () => {
+        let foodTruckRef = firebase.database().ref("vender/");
+        foodTruckRef.on("value", (snapshot) => {
+            let val = snapshot.val();
+            let valToArray = _.map(val, (element) => {
+                return { ...element };
+            });
+            setFindFoodTrucks(valToArray);
+            setMasterDataSource(valToArray);
+        });
+    };
 
-    let menuRef = firebase.database().ref("vender/");
-
-    menuRef.on("value", (snapshot) => {
-      let val = snapshot.val();
-
-      let valToArray = _.map(val, (element) => {
-        return { ...element };
-      });
-
-
-      setVenders(valToArray);
-
-      //console.log(venders[0].FullName)
-
-    });
-  };
-
-  const logout = () => {
-    auth
-      .signOut()
-      .then(() => console.log("User signed out"))
-    navigation.replace('SignIn');
-
-  }
+    //Firebase Search
+    const searchFilterFunction = (text) => {
+        if (text) {
+            const newData = masterDataSource.filter(function (item) {
+                const itemData = item.FoodTruckName
+                    ? item.FoodTruckName.toUpperCase()
+                    : ''.toUpperCase();
+                const textData = text.toUpperCase();
+                return itemData.indexOf(textData) > -1;
+            });
+            setFindFoodTrucks(newData);
+            setSearch(text);
+        } else {
+            setFindFoodTrucks(masterDataSource);
+            setSearch(text);
+        }
+    };
 
   return (
-    <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.body}>
-      <View style={styles.MainView}>
+    <LinearGradient colors={["#F5F5F5", "#F5F5F5"]} style={styles.body}>
+      <SafeAreaView style={styles.MainView}>
         <View style={styles.Top}>
           <View
             style={{
@@ -101,11 +155,8 @@ const Home = ({ navigation }) => {
           >
             <Text style={{ color: "#FFF" }}> Home </Text>
 
-            {/*<Image
-                            style={{ width: 85, height: 45, alignItems: 'center', marginTop: 0 }}
-                            source={require('../../assets/orange-food-truck.png')}
-                            resizeMode={'cover'} />  */}
-          </View>
+                  </View>
+                  <Text style={{ color: "#FFF"}}>Welcome {users.Fullname} </Text>
           {/* Click profile image to navigate to account screen*/}
           <TouchableOpacity
             onPress={() => navigation.navigate("Account")}
@@ -113,104 +164,71 @@ const Home = ({ navigation }) => {
           >
             <Image
               style={styles.profilePic}
-              source={require("../../assets/default.png")}
-              resizeMode={"cover"}
+              source={{ uri: users.profileImage ? users.profileImage : null }} 
             />
           </TouchableOpacity>
+            
         </View>
 
-        {/* This View will have the types of foods above the list view and under the pink line*/}
-
+        {/* This will be the search bar*/}
         <View style={styles.categories}>
-          <FlatList
-            data={categories}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "white",
-                    //  backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
-                    borderRadius: 200,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: 50,
-                    width: 50,
-                    margin: 10,
-                  }}
-                >
-                  {/* <View 
-                                         style={{
-                                            width: 30,
-                                            height: 30,
-                                            borderRadius: 25,
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            backgroundColor: "white"
-                                        }}> 
 
-                                    </View> */}
-
-                  <Image
-                    source={item.source}
-                    resizeMode="contain"
-                    style={{
-                      marginTop: 30,
-                      width: "50%",
-                      height: "50%",
-                    }}
-                  ></Image>
-
-                  <Text
-                    style={{
-                      position: "relative",
-                      marginTop: 12,
-                      color: "black",
-                      fontSize: 9,
-                    }}
-                  >
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          />
+                  <TextInput
+                      style={styles.textInputStyle}
+                      placeholder="Search Food Trucks"
+                      onChangeText={(text) => searchFilterFunction(text)}
+                      onClear={(text) => searchFilterFunction('')}
+                      value={search}
+                  />
         </View>
 
         {/* Line that separates categories Flatlist and Food Truck Flatlist */}
-
         <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
-
         {/*<FlatList style={{ borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#FC5976' }} */}
 
         <FlatList
           numColumns={1}
           showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          data={venders}
+          keyExtractor={(item, index) => index.toString()}
+          data={findFoodTrucks}
           renderItem={({ item }) => (
             <View>
+              {/*When clicked go to Food Truck Details */}
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("RestaurantDetails", {
+                  navigation.navigate("FoodTruckDetails", {
                     item,
                   })
                 }
               >
+                {/* <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#F5F5F5', marginTop: 10, borderRadius: 20 }}> */}
                 <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
-                    backgroundColor: "#F5F5F5",
+                    marginTop: 10,
+                    borderRadius: 20,
+                    marginBottom: 20,
+                    padding: 5,
+                    borderRadius: 12,
+                    //        backgroundColor: 'red',
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    //   shadowOffset: {
+                    //       width: 0,
+                    //       height: 10
+                    //   },
+                    //   shadowColor: "#000",
+                    //  shadowOpacity: 1,
+                  //  shadowRadius: 20,
+                  //  shadowOffset: { width: 0, height: 20 },
+                 //   shadowColor: "black",
+                 //   shadowOpacity: 1,
+                  //  elevation: 3,
+                    // background color must be set
+                    //  backgroundColor: "#0000" // invisible color
                   }}
                 >
+                  {/* Food Truck Image */}
                   <Image
                     source={item.source}
                     style={{
@@ -224,23 +242,31 @@ const Home = ({ navigation }) => {
                   <View
                     style={{ flex: 1, flexDirection: "column", height: 100 }}
                   >
-                    <Text style={styles.flatListItem2}>{item.name}</Text>
+                              {/*Food Truck Name */}
+                               <Text style={styles.flatListItem2}>{item.FoodTruckName}</Text>  
 
-                    <Text style={styles.flatListItem}>{item.food}</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      {/*Food Truck Category */}
+                          <View style={{ flexDirection: "row" }}>
+                                         <Text style={styles.flatListItem3}>{item.FoodType}</Text> 
+                                  </View>
+                    </View>
 
-                    <Text style={styles.flatListItem3}>{item.time}</Text>
+                    {/*Food Truck Time */}
+                              {/*    <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
 
-                    <Text style={styles.flatListItem3}>{item.distance}</Text>
+                              {/*Food Truck Distance */}
+                              {/*   <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
                   </View>
                 </View>
               </TouchableOpacity>
               {/* Line that separates Food Trucks */}
 
-              <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
+              {/*  <View style={{ height: 1, backgroundColor: '#F5AF19' }} /> */}
             </View>
           )}
         />
-      </View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -261,11 +287,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     height: "8%",
-    //backgroundColor: '#000',
+    backgroundColor: "#F5AF19",
     color: "#fff",
-    // borderColor: '#FC5976',
-    //  borderBottomWidth: 1,
-    // borderTopWidth: 1,
   },
 
   profilePic: {
@@ -287,11 +310,7 @@ const styles = StyleSheet.create({
   },
 
   categories: {
-    height: "15%",
-    //   backgroundColor: '#F5AF19'
     backgroundColor: "#F5F5F5",
-    alignItems: "center",
-    justifyContent: "center",
   },
 
   flatListItem2: {
@@ -304,21 +323,30 @@ const styles = StyleSheet.create({
     color: "black",
     paddingRight: 20,
     marginTop: 5,
-    // marginLeft: 20,
-    fontSize: 14,
+    fontSize: 16,
     justifyContent: "flex-end",
     flexDirection: "row",
-    marginTop: "auto",
+    marginTop: 10,
   },
 
   flatListItem: {
     color: "black",
     marginTop: "auto",
-    //  padding: 0,
     fontSize: 16,
     textAlign: "center",
     marginRight: "auto",
   },
+
+    textInputStyle: {
+        height: 50,
+        borderWidth: 1,
+        paddingLeft: 20,
+        borderRadius: 15,
+        margin: 5,
+        borderColor: '#F5AF19',
+        backgroundColor: 'white',
+    },
+
 });
 
 export default Home;
