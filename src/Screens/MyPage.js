@@ -21,9 +21,6 @@ import _ from "lodash";
 
 import * as ImagePicker from "expo-image-picker";
 
-
-
-
 import { AuthContext } from "../../App";
 
 const MyPage = ({ navigation, route }) => {
@@ -61,46 +58,50 @@ const MyPage = ({ navigation, route }) => {
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
         }
-	  }
-	
+      }
+
     })();
   }, []);
 
   //method to obtain to get the new location if changed or want to change to a new location
   const getLocation = async () => {
     let { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log('location',newLocation.coords.latitude);
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    console.log('location', newLocation.coords.latitude);
   };
   //storing location to data base
   const storeLocation = () => {
     setLocationVisible(false);
 
     let locationRef = firebase.database()
-    .ref("vender/" + userId + "/location")
-    .update({
+      .ref("vender/" + userId + "/location")
+      .update({
         latitude: newLocation.coords.latitude,
         longitude: newLocation.coords.longitude,
       })
-    .catch((err) => console.log(err));
-    
+      .catch((err) => console.log(err));
+
   }
   //store the vendor announcements
   const storeAnnouncement = () => {
     setAnnouncementVisible(false);
     console.log(userId)
-    let announcementRef = firebase.database().ref("vender/" + userId + "/announcements");
+    let announcementRef = firebase.database().ref("announcements/");
     let createdAnnouncemnt = announcementRef.push();
     
     let announcement = {
       id: createdAnnouncemnt.key,
-      announcement: NewAnnouncement
+      announcement: NewAnnouncement,
+      userid: userId,
+      vendorname: getName(),
+      timestamp: Date.now(),
+      
     };
   
     createdAnnouncemnt
@@ -111,6 +112,20 @@ const MyPage = ({ navigation, route }) => {
       .catch((err) => console.log(err));
   };
   
+  const getName = () => {
+    let name = "";
+    let menuRef = firebase.database().ref("vender/" + userId + "/FoodTruckName");
+    menuRef.on("value", (snapshot) => {
+
+        let val = snapshot.val();
+        name = val
+       
+    });
+
+    
+    return name
+};
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -128,17 +143,21 @@ const MyPage = ({ navigation, route }) => {
   }, []);
 
   const getMenus = () => {
-    
+
     let menuRef = firebase.database().ref("vender/" + userId + "/menu");
 
     menuRef.on("value", (snapshot) => {
       let val = snapshot.val();
 
       let valToArray = _.map(val, (element) => {
+
         return { ...element };
       });
-      
-	  setMenus(valToArray);
+
+
+      setMenus(valToArray);
+
+
 
     });
   };
@@ -149,7 +168,7 @@ const MyPage = ({ navigation, route }) => {
     let menuRef = firebase.database().ref("vender/" + userId + "/menu");
 
     let createdMenu = menuRef.push();
-    
+
     let menu = {
       id: createdMenu.key,
       image: url,
@@ -157,7 +176,7 @@ const MyPage = ({ navigation, route }) => {
       price: newPrice,
       description: newDescription,
     };
-  
+
     createdMenu
       .set(menu)
       .then((res) => {
@@ -165,7 +184,7 @@ const MyPage = ({ navigation, route }) => {
         setNewPrice("");
         setNewDescription("");
         setTempImage("");
-        
+
       })
       .catch((err) => console.log(err));
   };
@@ -174,22 +193,22 @@ const MyPage = ({ navigation, route }) => {
   const uploadImageToStorage = async () => {
     let response = await fetch(tempImage);
     let blob = await response.blob();
-   
 
-     firebase
+
+    firebase
       .storage()
       .ref()
       .child(userId + "/foodImages/" + newName)
       .put(blob).then((snapshot) => {
-        
-         snapshot.ref.getDownloadURL()
-       .then(url => {
-          
-          console.log(' * new url', url)
-         
-          insertMenu(url);
-          
-        })
+
+        snapshot.ref.getDownloadURL()
+          .then(url => {
+
+            console.log(' * new url', url)
+
+            insertMenu(url);
+
+          })
       });
   };
 
@@ -209,17 +228,17 @@ const MyPage = ({ navigation, route }) => {
       .database()
       .ref("vender/" + userId + "/menu/" + item.id);
 
-      //deleting the item
-      menuRef.remove().then(() => {
-        // File deleted successfully
-        console.log('item deleted successfully')
-      }).catch((error) => {
-        // Uh-oh, an error occurred!
-        console.log('an error occurred!')
-      });
-      
-      //deleting the image
-      var imageRef = 
+    //deleting the item
+    menuRef.remove().then(() => {
+      // File deleted successfully
+      console.log('item deleted successfully')
+    }).catch((error) => {
+      // Uh-oh, an error occurred!
+      console.log('an error occurred!')
+    });
+
+    //deleting the image
+    var imageRef =
       firebase
       .storage()
       .ref().child(userId + "/foodImages/" + item.name);
@@ -352,10 +371,10 @@ const MyPage = ({ navigation, route }) => {
       <Modal visible={locationVisible}>
         <View style={styles.modal}>
           <Text>Your new location: {JSON.stringify(newLocation)}</Text>
-         
-         <Button title="Click me to get current location" onPress={getLocation} style={styles.buttonLocation}/>
 
-          
+          <Button title="Click me to get current location" onPress={getLocation} style={styles.buttonLocation} />
+
+
           <View style={{ flexDirection: "row" }}>
             <View style={styles.view2}>
               {/* If correct credentials go to the homepage via bottom navigation */}
@@ -512,7 +531,7 @@ const MyPage = ({ navigation, route }) => {
               </Text>
             </TouchableOpacity>
           </View>
-          
+
           <View style={{ alignSelf: "center" }}>
             <TouchableOpacity
               style={{
@@ -547,7 +566,7 @@ const MyPage = ({ navigation, route }) => {
                   fontSize: 9,
                 }}
               >
-              Location Change
+                Location Change
               </Text>
             </TouchableOpacity>
           </View>
@@ -584,9 +603,11 @@ const MyPage = ({ navigation, route }) => {
                 marginTop: 12,
                 color: "black",
                 fontSize: 9,
+                width: '160%',
+                marginLeft: 20
               }}
             >
-              Post Announcement
+              Post Announcements
             </Text>
           </TouchableOpacity>
         </View>

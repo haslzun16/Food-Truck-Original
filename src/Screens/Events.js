@@ -25,26 +25,40 @@ const Events = () => {
     const [announcements, setAnnouncements] = useState([]);
     const { getUserId } = React.useContext(AuthContext);
     let userId = getUserId();
-
+  
     useEffect(() => {
         getAnnouncements();
       }, []);
     
+      //method to getAnnouncements from Database
       const getAnnouncements = () => {
-        
-        let announcementRef = firebase.database().ref("vender/" + userId + "/announcements");
-    
+        let announcementRef = firebase.database().ref("announcements/");
         announcementRef.on("value", (snapshot) => {
           let val = snapshot.val();
     
           let valToArray = _.map(val, (element) => {
+            
             return { ...element };
           });
-          
-          setAnnouncements(valToArray);
-    
+            
+          console.log(valToArray);
+          setAnnouncements(valToArray)
         });
       };
+
+      //delete old announcements 
+    const deleteOldAnnouncements = () =>{
+      now = Date.now();
+      let ref = firebase.database().ref("announcements/");
+      var cutoff = now - 120000;
+      var old = ref.orderByChild('timestamp').endAt(cutoff).limitToLast(1);
+      var listener = old.on('child_added', function(snapshot) {
+      snapshot.ref.remove();
+      });
+    };
+    //used to call deleteOldAnnouncements every minute 
+      setInterval(deleteOldAnnouncements, 60000);
+
     return (
         <LinearGradient colors={['#F5AF19', '#FC5976']} style={styles.body}>
         <View style={styles.MainView} >
@@ -54,7 +68,7 @@ const Events = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     }}>
-                <Text style={styles.headerText}> Events </Text>
+                <Text style={styles.headerText}> Announcements </Text>
                 </View>
             </View>
 
@@ -79,15 +93,15 @@ const Events = () => {
                   
 
                   <View
-                    style={{ flex: 1, flexDirection: "column", height: 50 }}
+                    style={{ flex: 1, flexDirection: "column", }}
                   >
-                    {/* Food Truck Name */}
-                    <Text style={styles.flatListItem2}>{item.announcement}</Text>
+                    {/* Vender announcment */}
+                    <Text style={styles.vendername}>{item.vendorname}</Text>
 
                     <View style={{ flexDirection: "row" }}></View>
 
-                    {/* Food Truck Time
-                    <Text style={styles.flatListItem3}>{item.price}</Text>
+                    {/* vendor name */}
+                    <Text style={styles.announcementPost}>{item.announcement}</Text>
 
                     {/* Food Truck Distance */}
                     {/* <Text style={styles.flatListItem3}>{item.description}</Text> */} 
@@ -114,7 +128,7 @@ const styles = StyleSheet.create({
     },
 
     MainView: {
-        flex:1,
+        flex: 1,
         alignContent: 'center',
         height: 100
     },
@@ -123,18 +137,18 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '10%',
+        height: '8%',
         color: '#fff',
         borderColor: '#FC5976',
         borderBottomWidth: 1,
         backgroundColor: 'yellow',
 
     },
-    headerText:{
+    headerText: {
         color: 'black',
-        marginTop: 20,
+        marginTop: 10,
         fontSize: 28,
-        
+
     },
     content:{
        height:'100%',
@@ -148,10 +162,26 @@ const styles = StyleSheet.create({
         width: "100%",
         //backgroundColor: 'blue'
       },
-      flatListItem2: {
+      announcementPost: {
         color: "black",
-        paddingLeft: 0,
-        fontSize: 20,
+        fontSize: 17,
+        //textAlign: "center",
+        marginLeft: 15,
+        marginTop: 5
+      },
+      vendername: {
+        color: "black",
+        //paddingRight: 20,
+        //marginTop: 5,
+        marginLeft: 15,
+        fontSize: 22,
+        //justifyContent: "center",
+        //flexDirection: "row",
+        marginTop: "auto",
+        //textAlign: 'center',
+       
+       
+       
       },
 });
 
