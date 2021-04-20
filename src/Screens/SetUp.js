@@ -1,3 +1,14 @@
+/**
+ * Anthony Barrera
+ *
+ * Last edited 4/20/21
+ * 
+ * shows the input fields that new users have to enter
+ *
+ * npm install react-native-dropdown-picker --save
+ */
+
+//imports
 import * as React from 'react';
 import { Text, View, StyleSheet, Image, TextInput, TouchableOpacity, ListViewComponent } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -6,9 +17,8 @@ import 'react-native-gesture-handler';
 import { AuthContext } from '../../App'
 import * as firebase from "firebase";
 import DropDownPicker from 'react-native-dropdown-picker';
-//import { decode, encode } from 'base-64'
 
-//have to use npm install react-native-dropdown-picker --save
+
 
 export default function SetUp({ navigation }) {
 const [FoodTruckName, setFoodTruckName] = useState("");

@@ -50,7 +50,7 @@ const Events = () => {
     const deleteOldAnnouncements = () =>{
       now = Date.now();
       let ref = firebase.database().ref("announcements/");
-      var cutoff = now - 120000;
+      var cutoff = now - 86400000;
       var old = ref.orderByChild('timestamp').endAt(cutoff).limitToLast(1);
       var listener = old.on('child_added', function(snapshot) {
       snapshot.ref.remove();
@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
         color: '#fff',
         borderColor: '#FC5976',
         borderBottomWidth: 1,
-        backgroundColor: 'yellow',
+        backgroundColor: '#F5AF19',
 
     },
     headerText: {
-        color: 'black',
-        marginTop: 10,
+        color: 'white',
+        marginTop: 30,
         fontSize: 28,
 
     },
