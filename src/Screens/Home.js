@@ -17,6 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as firebase from "firebase";
 import _ from "lodash";
 import { AuthContext } from "../../App";
+import { useTheme } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
 
@@ -28,6 +29,8 @@ const Home = ({ navigation }) => {
   const [cust, setCust] = useState([]);
   const [vend, setVend] = useState([]);
   const { getUserId } = React.useContext(AuthContext);
+
+    const { colors } = useTheme();
 
     let userId = getUserId();
 
@@ -142,6 +145,25 @@ const Home = ({ navigation }) => {
         }
     };
 
+
+
+
+   const renderSeparator = () => {
+        return (
+            <View
+                style={{
+                    height: 1,
+                    width: "100%",
+                    backgroundColor: "#CED0CE",
+                   // marginLeft: "14%"
+                }}
+            />
+        );
+    };
+
+
+
+
   return (
     <LinearGradient colors={["#F5F5F5", "#F5F5F5"]} style={styles.body}>
       <SafeAreaView style={styles.MainView}>
@@ -189,10 +211,11 @@ const Home = ({ navigation }) => {
         <FlatList
           numColumns={1}
           showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={renderSeparator}
           keyExtractor={(item, index) => index.toString()}
           data={findFoodTrucks}
           renderItem={({ item }) => (
-            <View>
+            <View style={{backgroundColor:"white"}}>
               {/*When clicked go to Food Truck Details */}
               <TouchableOpacity
                 onPress={() =>
@@ -206,13 +229,13 @@ const Home = ({ navigation }) => {
                   style={{
                     flex: 1,
                     flexDirection: "row",
-                    marginTop: 10,
+                 //   marginTop: 10,
                     borderRadius: 20,
-                    marginBottom: 20,
+                //    marginBottom: 20,
                     padding: 5,
                     borderRadius: 12,
                     //        backgroundColor: 'red',
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                //    backgroundColor: "rgba(255, 255, 255, 0.8)",
                     //   shadowOffset: {
                     //       width: 0,
                     //       height: 10
@@ -226,11 +249,12 @@ const Home = ({ navigation }) => {
                   //  elevation: 3,
                     // background color must be set
                     //  backgroundColor: "#0000" // invisible color
+                    backgroundColor: "white"
                   }}
                 >
                   {/* Food Truck Image */}
                   <Image
-                    source={item.source}
+                    source={{ uri: item.foodTruckImage ? item.foodTruckImage : null }}
                     style={{
                       width: 200,
                       height: 100,

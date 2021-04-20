@@ -17,8 +17,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AuthContext } from "../App";
 import { useState, useEffect, useContext } from "react";
 import * as firebase from "firebase";
+import { useTheme } from '@react-navigation/native';
+
 
 const BottomNavigation = () => {
+
+    const { colors } = useTheme();
 
     const [setUp, assignSetUp] = useState()
     const { getUserId } = React.useContext(AuthContext);
@@ -48,6 +52,7 @@ const Tab = createBottomTabNavigator();
         tabBarOptions={{
           style: {
             backgroundColor: "#FFF",
+           //   backgroundColor: colors.background
           },
           activeTintColor: "#FEAD44",
           inactiveTintColor: "#FC5976",
