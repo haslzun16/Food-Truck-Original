@@ -18,7 +18,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SetUp from "./SetUp";
 import BottomNavigation from "../BottomNavigation";
-import AnimatedLoader from "react-native-animated-loader";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 
 function Loading({ navigation }) {

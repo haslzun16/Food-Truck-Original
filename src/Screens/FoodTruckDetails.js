@@ -96,7 +96,9 @@ const MyPage = ({ navigation, route }) => {
 
             <View style={styles.Top}>
                 <ImageBackground
-                    source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                    //source={uri: route.params.item.foodTruckImage}
+                    source={{ uri: route.params.item.foodTruckImage ? route.params.item.foodTruckImage : null }}
+
                     //	resizeMode="contain"
                     style={styles.TopImage}
                 />

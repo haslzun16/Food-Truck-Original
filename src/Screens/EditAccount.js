@@ -42,14 +42,8 @@ const Account = ({ navigation }) => {
     const { getUserId } = React.useContext(AuthContext);
     const [email, setEmail] = useState("");
 
-
     let userId = getUserId();
 
-    const updateEmail = () => {
-
-    }
-
-     
     useEffect(() => {
         navigateUser();
     }, []);
@@ -66,6 +60,17 @@ const Account = ({ navigation }) => {
         test();
     }, [users]);
 
+    const getInfo = () => {
+
+        let infoRef = firebase.database().ref("vender/" + userId);
+
+        infoRef.on('value', function (snapshot) {
+
+            setInfo(snapshot.val());
+
+        });
+
+    };
      
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -78,7 +83,6 @@ const Account = ({ navigation }) => {
             setTempImage(result.uri);
         }
     };
-
 
     const insertProfileImage = (url) => {
         setModalVisible(false);
@@ -167,18 +171,12 @@ const Account = ({ navigation }) => {
         setNewName(users.Fullname);
         setNewPhone(users.phone);
 
-
         var user = firebase.auth().currentUser;
-
 
             user.providerData.forEach(function (profile) {
                 console.log("  Email: " + profile.email);
                 setEmail(profile.email);
             });
-
-
-
-
     }
       
     const updateUser = () => {
@@ -266,7 +264,8 @@ const Account = ({ navigation }) => {
                 <TextInput
                     style={styles.textInput}
                     onChangeText={text => setNewName(text)}
-                    defaultValue={users.Fullname}
+                     defaultValue={users.Fullname}
+                    //defaultValue={newName}
                 />
 
 
@@ -291,18 +290,6 @@ const Account = ({ navigation }) => {
                     style={styles.textInput}
                     onChangeText={text => setNewPhone(text)}
                     defaultValue={users.phone}
-                />
-
-                <Text style={styles.text}>
-                    Password
-                </Text>
-
-                <TextInput
-                    placeholder="Password"
-                    style={styles.textInput}
-                    secureTextEntry={true}
-                    //onChangeText={text => setNewDescription(text)}
-                    //defaultValue={item.description}
                 />
 
                 <View style={styles.view2}>

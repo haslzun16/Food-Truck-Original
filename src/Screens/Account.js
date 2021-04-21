@@ -18,12 +18,12 @@ import {
     Image,
     StyleSheet,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../../App";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import _ from "lodash";
-
 import * as firebase from "firebase";
 
 const EditAccount = ({ navigation }) => {
@@ -35,6 +35,14 @@ const EditAccount = ({ navigation }) => {
     const [cust, setCust] = useState([]);
     const [vend, setVend] = useState([]);
     const { getUserId } = React.useContext(AuthContext);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
+
+
+
+
 
     let userId = getUserId();
 
@@ -129,12 +137,128 @@ const EditAccount = ({ navigation }) => {
                 // Uh-oh, an error occurred!
                 console.log('an error occurred!')
             });
-        } 
+        }
         console.log("User Account Deleted");
     }
 
+
+
+    const updatePassword = () => {
+
+        setModalVisible(false);
+
+/*        var credential = firebase.auth.EmailAuthProvider.credential(
+            firebase.auth().currentUser.email,
+            providedPassword
+        );
+
+        if (currentPassword !== credential) {
+            alert("Passwords don't match.");
+            return;
+        }*/
+
+        if (newPassword.length < 6) {
+            alert("Password is too short.")
+            return;
+        }
+        if (newPassword !== confirmNewPassword) {
+            alert("Passwords don't match.");
+            return;
+        }
+
+        var user = firebase.auth().currentUser;
+
+        user.updatePassword(confirmNewPassword).then(function () {
+            // Update successful.
+        }).catch(function (error) {
+            // An error happened.
+        });
+
+    };
+
+
+
+    accountDeletionAlert = () => {
+/*        Alert.alert(
+            'Are you sure you want to delete your account?',
+            [
+                { text: 'Yes', onPress: () => deleteaccount },
+                { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
+            ],
+            {
+                cancelable: true
+            }
+        );*/
+
+        Alert.alert('Delete Account', 'Are you sure you want to delete your account?', [
+            { text: 'Yes', onPress: () => deleteaccount() },
+            { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
+    ],
+        { cancelable: true });
+
+    }
+
+
+
+
+
     return (
         <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.MainView}>
+
+
+
+            <Modal visible={modalVisible}>
+                <View style={styles.modal}>
+
+                    <TextInput
+                        secureTextEntry={true}
+                        style={styles.textInput2}
+                        placeholder="Current Password"
+                        value={currentPassword}
+                        onChangeText={(text) => setCurrentPassword(text)}
+                    />
+
+                    <TextInput
+                        secureTextEntry={true}
+                        style={styles.textInput2}
+                        placeholder="New Password"
+                        value={newPassword}
+                        onChangeText={(text) => setNewPassword(text)}
+                    />
+
+                    <TextInput
+                        secureTextEntry={true}
+                        style={styles.textInput2}
+                        placeholder="Cofirm New Password"
+                        value={confirmNewPassword}
+                        onChangeText={(text) => setConfirmNewPassword(text)}
+                    />
+
+                    <View style={{ flexDirection: "row" }}>
+                        <View style={styles.view2}>
+                            {/* Close and Cancel the Modal */}
+                            <TouchableOpacity
+                                onPress={() => setModalVisible(false)}
+                                style={styles.buttonModal}
+                            >
+                                <Text style={styles.buttonTextModal}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.view2}>
+                            {/* Add Profile Image to the database */}
+                            <TouchableOpacity
+                                onPress={() => updatePassword()}
+                                style={styles.buttonModal}
+                            >
+                                <Text style={styles.buttonTextModal}>Confirm</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+
 
             <View style={styles.MainView2}>
 
@@ -157,12 +281,26 @@ const EditAccount = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.newButton}
                         onPress={() => navigation.navigate("EditAccount")}>
+                        <MaterialCommunityIcons
+                            name="account-outline"
+                            style={{
+                                //alignSelf: "center",
+                                marginTop: 5,
+                               // paddingLeft: 14,
+                                width: 35,
+                                height: 35,
+                                color: "black"
+                            }}
+                            size={26}
+                            Account
+                        ></MaterialCommunityIcons>
                         <Text style={styles.accountText}
                         >Edit Profile</Text>
                 </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={styles.newButton}>
+                        style={styles.newButton}
+                        onPress={() => setModalVisible(true)}>
                         <Text style={styles.accountText}
                         >Change Password</Text>
                     </TouchableOpacity>
@@ -182,7 +320,7 @@ const EditAccount = ({ navigation }) => {
 
                     <TouchableOpacity
                         style={styles.newButton}
-                        onPress={() => deleteaccount()}
+                        onPress={() => accountDeletionAlert()}
                     >
                         <Text style={styles.accountText}>Delete Account</Text>
                     </TouchableOpacity>
@@ -215,6 +353,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         borderWidth: 0.5,
         borderColor: "#F5F5F5",
+        alignSelf: 'center',
     },
 
     text: {
@@ -245,7 +384,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         padding: 10,
         paddingHorizontal: 20,
-        marginTop: 'auto',
+        marginTop: 50,
         width: "90%",
         color: 'black',
         fontSize: 16
@@ -313,8 +452,10 @@ const styles = StyleSheet.create({
     newButton: {
         borderBottomColor: "#F5F5F5",
         borderBottomWidth: 1,
-        width: '100%',
-        margin: '4%'
+        width: '105%',
+        marginTop: '4%',
+        marginBottom: '4%',
+        flexDirection: "row"
     },
 
     nameText: {
