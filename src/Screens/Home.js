@@ -69,6 +69,10 @@ const Home = ({ navigation }) => {
         setUsers();
         test();
 
+
+        console.log(users.Fullname);
+        console.log(users.profileImage);
+
         if (users.profileImage == null) {
             users.profileImage == require("../../assets/default.png");
         }
@@ -278,6 +282,7 @@ const Home = ({ navigation }) => {
 
                     {/*Food Truck Time */}
                               {/*    <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
+                              <Text style={styles.flatListItem3}>{item.hours}</Text> 
 
                               {/*Food Truck Distance */}
                               {/*   <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}

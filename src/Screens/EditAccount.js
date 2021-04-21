@@ -28,7 +28,7 @@ import * as firebase from "firebase";
 
 import * as ImagePicker from "expo-image-picker";
 
-const Account = ({ navigation }) => {
+const EditAccount = ({ navigation }) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisibleName, setModalVisibleName] = useState(false);
@@ -272,25 +272,28 @@ const Account = ({ navigation }) => {
                 <Text style={styles.text}>
                     Email
                 </Text>
-
+                
                 <TextInput
                    // placeholder="Email"
                     style={styles.textInput}
                     onChangeText={text => setEmail(text)}
                     defaultValue={email}
                 />
-
-                <Text style={styles.text}>
+                
+                {setUp &&
+                    <Text style={styles.text}>
                     Phone Number
                 </Text>
-
-                <TextInput
+                }
+                {setUp &&
+                    <TextInput
+                    // If user is a customer hide the phone number text input and phone text above
                     keyboardType="numeric"
                     //placeholder="Phone Number"
                     style={styles.textInput}
                     onChangeText={text => setNewPhone(text)}
                     defaultValue={users.phone}
-                />
+                />}
 
                 <View style={styles.view2}>
 
@@ -424,4 +427,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Account;
+export default EditAccount;

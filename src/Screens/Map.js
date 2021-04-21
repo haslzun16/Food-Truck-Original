@@ -134,7 +134,8 @@ function Map() {
                                 <Text>
                                     <Image
                                         style={styles.image}
-                                        source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                                        //source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                                        source={{ uri: marker.foodTruckImage}}
                                     />
                                 </Text>
                                 <Text style={styles.name}>{marker.FoodTruckName}</Text>
