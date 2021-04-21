@@ -764,7 +764,7 @@ const MyPage = ({ navigation, route }) => {
             onPress={() => setAnnouncementVisible(true)}
           >
             <MaterialCommunityIcons
-              name="calendar-clock"
+              name="message-plus"
               style={{
                 alignSelf: "center",
                 marginTop: 30,
