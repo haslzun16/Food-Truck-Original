@@ -158,10 +158,6 @@ const MyPage = ({ navigation, route }) => {
             setMenus(valToArray);
         });
 
-        //Sets the value of the field to properly update each individual field
-        setNewName(theID.name);
-        setNewPrice(theID.price);
-        setNewDescription(theID.description);
     };
 
     const insertMenu = (url) => {
@@ -211,27 +207,62 @@ const MyPage = ({ navigation, route }) => {
             });
     };
 
-    const updateMenu = (item) => {
-         setModalVisible2(false);
+    const updateMenu = (theID, url) => {
+        setModalVisible2(false);
 
+        const imageRef = firebase.database();
+        imageRef.ref("vender/" + userId + "/menu/" + theID.id)
+            .update({ image: url })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        
         const nameRef = firebase.database();
-        nameRef.ref("vender/" + userId + "/menu/" + item.id)
+        nameRef.ref("vender/" + userId + "/menu/" + theID.id)
             .update({ name: newName })
             .then(res => console.log(res))
             .catch(err => console.log(err));
 
         const priceRef = firebase.database();
-        priceRef.ref("vender/" + userId + "/menu/" + item.id)
+        priceRef.ref("vender/" + userId + "/menu/" + theID.id)
             .update({ price: newPrice })
             .then(res => console.log(res))
             .catch(err => console.log(err));
 
         const descriptionRef = firebase.database();
-        descriptionRef.ref("vender/" + userId + "/menu/" + item.id)
+        descriptionRef.ref("vender/" + userId + "/menu/" + theID.id)
             .update({ description: newDescription })
             .then(res => console.log(res))
             .catch(err => console.log(err));
     };
+
+
+
+
+    // T0-Do you need to add a loading screen because the uploading image kinda takes time to upload
+    //method to upload image to database then it downloads the image and sends the url to insertmenu method
+    const updateImageToStorage = async () => {
+        let response = await fetch(tempImage);
+        let blob = await response.blob();
+
+        firebase
+            .storage()
+            .ref()
+            .child(userId + "/foodImages/" + newName)
+            .put(blob).then((snapshot) => {
+
+                snapshot.ref.getDownloadURL()
+                    .then(url => {
+
+                        console.log(' * new url', url)
+
+                        updateMenu(theID, url);
+
+                    })
+            });
+    };
+
+
+
 
 
     const deleteMenu = (item) => {
@@ -330,7 +361,10 @@ const MyPage = ({ navigation, route }) => {
                 <View>
                     {/*When clicked go to Open the Modal  */}
                     <TouchableOpacity
-                        onPress={() => { setModalVisible2(true), setTheID(item), console.log(theID.name) }}
+                            onPress={() => {
+                                setModalVisible2(true), setTheID(item), setNewName(item.name),
+                                setNewPrice(item.price),
+                                setNewDescription(item.description), console.log(theID.name) }}
                         //onLongPress={() => deleteMenu(item)}
                     >
                         <View
@@ -489,8 +523,8 @@ const MyPage = ({ navigation, route }) => {
 
                             <View style={styles.view2} >
                                 {/* Updates the menu */}
-                                <TouchableOpacity
-                                    onPress={() => updateMenu(theID)} style={styles.button}>
+                            <TouchableOpacity
+                                onPress={() => updateImageToStorage()} style={styles.button}>
 
                                     <Text style={styles.buttonText}>
                                         Confirm
@@ -727,7 +761,7 @@ const MyPage = ({ navigation, route }) => {
                             onPress={() => setLocationVisible(true)}
                         >
                             <MaterialCommunityIcons
-                                name="silverware"
+                                name="map-marker-radius"
                                 style={{
                                     alignSelf: "center",
                                     marginTop: 30,

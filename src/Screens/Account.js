@@ -26,7 +26,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import _ from "lodash";
 import * as firebase from "firebase";
 
-const EditAccount = ({ navigation }) => {
+const Account = ({ navigation }) => {
 
     const [setUp, assignSetUp] = useState();
     const { signOut } = React.useContext(AuthContext);
@@ -466,4 +466,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default EditAccount;
+export default Account;
