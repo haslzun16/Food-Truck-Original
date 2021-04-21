@@ -48,9 +48,10 @@ const Events = () => {
 
       //delete old announcements 
     const deleteOldAnnouncements = () =>{
-      now = Date.now();
+      let now = Date.now();
       let ref = firebase.database().ref("announcements/");
-      var cutoff = now - 86400000;
+      //posts can only be up for 5 minutes
+      var cutoff = now - 300000;
       var old = ref.orderByChild('timestamp').endAt(cutoff).limitToLast(1);
       var listener = old.on('child_added', function(snapshot) {
       snapshot.ref.remove();
