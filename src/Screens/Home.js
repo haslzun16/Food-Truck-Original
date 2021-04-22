@@ -1,17 +1,17 @@
 import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import {
-    FlatList,
-    Button,
-    View,
-    Modal,
-    Text,
-    TextInput,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    ImageBackground,
-    SafeAreaView
+  FlatList,
+  Button,
+  View,
+  Modal,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+  SafeAreaView
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as firebase from "firebase";
@@ -30,140 +30,140 @@ const Home = ({ navigation }) => {
   const [vend, setVend] = useState([]);
   const { getUserId } = React.useContext(AuthContext);
 
-    const { colors } = useTheme();
+  const { colors } = useTheme();
 
-    let userId = getUserId();
-
-    useEffect(() => {
-        navigateUser();
-    }, []);
-
-    useEffect(() => {
-        getCustomers();
-    }, []);
-
-    useEffect(() => {
-        getVendors();
-    }, []); 
-
-    useEffect(() => {
-
-        let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
-        isSetUpRef.on("value", (snapshot) => {
-            if (snapshot.exists()) {
-                assignSetUp(false)
-            }
-            else {
-                assignSetUp(true)
-            }
-        });
-         
-        const test = () => {
-            if (setUp == true) {
-                setUsers(vend);
-            } else {
-                setUsers(cust);
-            }
-
-        }
-        setUsers();
-        test();
-
-
-        console.log(users.Fullname);
-        console.log(users.profileImage);
-
-        if (users.profileImage == null) {
-            users.profileImage == require("../../assets/default.png");
-        }
-    }, [users]);
-
-    const navigateUser = () => {
-
-        let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
-        isSetUpRef.on("value", (snapshot) => {
-            if (snapshot.exists()) {
-                assignSetUp(false)
-            }
-            else {
-                assignSetUp(true)
-            }
-        });
-    };
-
-    const getCustomers = () => {
-        let userRef = firebase.database().ref("users/" + userId);
-        let val = '';
-            userRef.on('value', function (snapshot) {
-                let val = snapshot.val();
-                setCust(val);
-                setUsers(cust);
-            });
-        setCust(val);
-    };
-
-    const getVendors = () => {
-
-        let userRef = firebase.database().ref("vender/" + userId);
-        let val = '';
-        userRef.on('value', function (snapshot) {
-            let val = snapshot.val();
-
-            setVend(val);
-            setUsers(vend);
-        });
-        setVend(val);
-    };
+  let userId = getUserId();
 
   useEffect(() => {
-      getFoodTrucks();
+    navigateUser();
   }, []);
 
-    const getFoodTrucks = () => {
-        let foodTruckRef = firebase.database().ref("vender/");
-        foodTruckRef.on("value", (snapshot) => {
-            let val = snapshot.val();
-            let valToArray = _.map(val, (element) => {
-                return { ...element };
-            });
-            setFindFoodTrucks(valToArray);
-            setMasterDataSource(valToArray);
-        });
-    };
+  useEffect(() => {
+    getCustomers();
+  }, []);
 
-    //Firebase Search
-    const searchFilterFunction = (text) => {
-        if (text) {
-            const newData = masterDataSource.filter(function (item) {
-                const itemData = item.FoodTruckName
-                    ? item.FoodTruckName.toUpperCase()
-                    : ''.toUpperCase();
-                const textData = text.toUpperCase();
-                return itemData.indexOf(textData) > -1;
-            });
-            setFindFoodTrucks(newData);
-            setSearch(text);
-        } else {
-            setFindFoodTrucks(masterDataSource);
-            setSearch(text);
-        }
-    };
+  useEffect(() => {
+    getVendors();
+  }, []);
+
+  useEffect(() => {
+
+    let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
+    isSetUpRef.on("value", (snapshot) => {
+      if (snapshot.exists()) {
+        assignSetUp(false)
+      }
+      else {
+        assignSetUp(true)
+      }
+    });
+
+    const test = () => {
+      if (setUp == true) {
+        setUsers(vend);
+      } else {
+        setUsers(cust);
+      }
+
+    }
+    setUsers();
+    test();
+
+
+    console.log(users.Fullname);
+    console.log(users.profileImage);
+
+    if (users.profileImage == null) {
+      users.profileImage == require("../../assets/default.png");
+    }
+  }, [users]);
+
+  const navigateUser = () => {
+
+    let isSetUpRef = firebase.database().ref("users/" + userId + "/user");
+    isSetUpRef.on("value", (snapshot) => {
+      if (snapshot.exists()) {
+        assignSetUp(false)
+      }
+      else {
+        assignSetUp(true)
+      }
+    });
+  };
+
+  const getCustomers = () => {
+    let userRef = firebase.database().ref("users/" + userId);
+    let val = '';
+    userRef.on('value', function (snapshot) {
+      let val = snapshot.val();
+      setCust(val);
+      setUsers(cust);
+    });
+    setCust(val);
+  };
+
+  const getVendors = () => {
+
+    let userRef = firebase.database().ref("vender/" + userId);
+    let val = '';
+    userRef.on('value', function (snapshot) {
+      let val = snapshot.val();
+
+      setVend(val);
+      setUsers(vend);
+    });
+    setVend(val);
+  };
+
+  useEffect(() => {
+    getFoodTrucks();
+  }, []);
+
+  const getFoodTrucks = () => {
+    let foodTruckRef = firebase.database().ref("vender/");
+    foodTruckRef.on("value", (snapshot) => {
+      let val = snapshot.val();
+      let valToArray = _.map(val, (element) => {
+        return { ...element };
+      });
+      setFindFoodTrucks(valToArray);
+      setMasterDataSource(valToArray);
+    });
+  };
+
+  //Firebase Search
+  const searchFilterFunction = (text) => {
+    if (text) {
+      const newData = masterDataSource.filter(function (item) {
+        const itemData = item.FoodTruckName
+          ? item.FoodTruckName.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFindFoodTrucks(newData);
+      setSearch(text);
+    } else {
+      setFindFoodTrucks(masterDataSource);
+      setSearch(text);
+    }
+  };
 
 
 
 
-   const renderSeparator = () => {
-        return (
-            <View
-                style={{
-                    height: 1,
-                    width: "100%",
-                    backgroundColor: "#CED0CE",
-                   // marginLeft: "14%"
-                }}
-            />
-        );
-    };
+  const renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "100%",
+          backgroundColor: "#CED0CE",
+          // marginLeft: "14%"
+        }}
+      />
+    );
+  };
 
 
 
@@ -181,8 +181,8 @@ const Home = ({ navigation }) => {
           >
             <Text style={{ color: "#FFF" }}> Home </Text>
 
-                  </View>
-                  <Text style={{ color: "#FFF"}}>Welcome {users.Fullname} </Text>
+          </View>
+          <Text style={{ color: "#FFF" }}>Welcome {users.Fullname} </Text>
           {/* Click profile image to navigate to account screen*/}
           <TouchableOpacity
             onPress={() => navigation.navigate("Account")}
@@ -190,22 +190,22 @@ const Home = ({ navigation }) => {
           >
             <Image
               style={styles.profilePic}
-              source={{ uri: users.profileImage ? users.profileImage : null }} 
+              source={{ uri: users.profileImage ? users.profileImage : null }}
             />
           </TouchableOpacity>
-            
+
         </View>
 
         {/* This will be the search bar*/}
         <View style={styles.categories}>
 
-                  <TextInput
-                      style={styles.textInputStyle}
-                      placeholder="Search Food Trucks"
-                      onChangeText={(text) => searchFilterFunction(text)}
-                      onClear={(text) => searchFilterFunction('')}
-                      value={search}
-                  />
+          <TextInput
+            style={styles.textInputStyle}
+            placeholder="Search Food Trucks"
+            onChangeText={(text) => searchFilterFunction(text)}
+            onClear={(text) => searchFilterFunction('')}
+            value={search}
+          />
         </View>
 
         {/* Line that separates categories Flatlist and Food Truck Flatlist */}
@@ -215,11 +215,11 @@ const Home = ({ navigation }) => {
         <FlatList
           numColumns={1}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={renderSeparator}
+          // ItemSeparatorComponent={renderSeparator}
           keyExtractor={(item, index) => index.toString()}
           data={findFoodTrucks}
           renderItem={({ item }) => (
-            <View style={{backgroundColor:"white"}}>
+            <View style={{ backgroundColor: "white" }}>
               {/*When clicked go to Food Truck Details */}
               <TouchableOpacity
                 onPress={() =>
@@ -233,24 +233,24 @@ const Home = ({ navigation }) => {
                   style={{
                     flex: 1,
                     flexDirection: "row",
-                 //   marginTop: 10,
+                    //   marginTop: 10,
                     borderRadius: 20,
-                //    marginBottom: 20,
+                    //    marginBottom: 20,
                     padding: 5,
                     borderRadius: 12,
                     //        backgroundColor: 'red',
-                //    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    //    backgroundColor: "rgba(255, 255, 255, 0.8)",
                     //   shadowOffset: {
                     //       width: 0,
                     //       height: 10
                     //   },
                     //   shadowColor: "#000",
                     //  shadowOpacity: 1,
-                  //  shadowRadius: 20,
-                  //  shadowOffset: { width: 0, height: 20 },
-                 //   shadowColor: "black",
-                 //   shadowOpacity: 1,
-                  //  elevation: 3,
+                    //  shadowRadius: 20,
+                    //  shadowOffset: { width: 0, height: 20 },
+                    //   shadowColor: "black",
+                    //   shadowOpacity: 1,
+                    //  elevation: 3,
                     // background color must be set
                     //  backgroundColor: "#0000" // invisible color
                     backgroundColor: "white"
@@ -270,28 +270,28 @@ const Home = ({ navigation }) => {
                   <View
                     style={{ flex: 1, flexDirection: "column", height: 100 }}
                   >
-                              {/*Food Truck Name */}
-                               <Text style={styles.flatListItem2}>{item.FoodTruckName}</Text>  
+                    {/*Food Truck Name */}
+                    <Text style={styles.flatListItem2}>{item.FoodTruckName}</Text>
 
                     <View style={{ flexDirection: "row" }}>
                       {/*Food Truck Category */}
-                          <View style={{ flexDirection: "row" }}>
-                                         <Text style={styles.flatListItem3}>{item.FoodType}</Text> 
-                                  </View>
+                      <View style={{ flexDirection: "row" }}>
+                        <Text style={styles.flatListItem3}>{item.FoodType}</Text>
+                      </View>
                     </View>
 
                     {/*Food Truck Time */}
-                              {/*    <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
-                              <Text style={styles.flatListItem3}>{item.hours}</Text> 
+                    {/*    <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
+                    <Text style={styles.flatListItem3}>{item.hours}</Text>
 
-                              {/*Food Truck Distance */}
-                              {/*   <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
+                    {/*Food Truck Distance */}
+                    {/*   <Text style={styles.flatListItem3}>{item.LicensePlate}</Text> */}
                   </View>
                 </View>
               </TouchableOpacity>
               {/* Line that separates Food Trucks */}
 
-              {/*  <View style={{ height: 1, backgroundColor: '#F5AF19' }} /> */}
+              <View style={{ height: 1, backgroundColor: '#F5AF19' }} />
             </View>
           )}
         />
@@ -366,15 +366,15 @@ const styles = StyleSheet.create({
     marginRight: "auto",
   },
 
-    textInputStyle: {
-        height: 50,
-        borderWidth: 1,
-        paddingLeft: 20,
-        borderRadius: 15,
-        margin: 5,
-        borderColor: '#F5AF19',
-        backgroundColor: 'white',
-    },
+  textInputStyle: {
+    height: 50,
+    borderWidth: 1,
+    paddingLeft: 20,
+    borderRadius: 15,
+    margin: 5,
+    borderColor: '#F5AF19',
+    backgroundColor: 'white',
+  },
 
 });
 

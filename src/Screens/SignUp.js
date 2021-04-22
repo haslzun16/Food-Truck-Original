@@ -103,6 +103,7 @@ export default function SignUp({ navigation }) {
 
             {isVender ? (
               <TextInput
+                keyboardType="numeric"
                 style={styles.textInput2}
                 placeholder="Phone Number"
                 value={phone}

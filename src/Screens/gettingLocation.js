@@ -49,7 +49,7 @@ export function gettingLocation() {
 
     return (
         <View>
-            </View>
-        );
+        </View>
+    );
 
 }

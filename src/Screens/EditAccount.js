@@ -8,7 +8,7 @@
  */
 
 import * as React from "react";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
     Button,
     View,
@@ -32,7 +32,7 @@ const EditAccount = ({ navigation }) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisibleName, setModalVisibleName] = useState(false);
-    const [setUp, assignSetUp] = useState(); 
+    const [setUp, assignSetUp] = useState();
     const [newName, setNewName] = useState("");
     const [newPhone, setNewPhone] = useState("");
     const [tempImage, setTempImage] = useState("");
@@ -51,7 +51,7 @@ const EditAccount = ({ navigation }) => {
     useEffect(() => {
         getCustomers();
     }, []);
-       
+
     useEffect(() => {
         getVendors();
     }, []);
@@ -71,7 +71,7 @@ const EditAccount = ({ navigation }) => {
         });
 
     };
-     
+
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -87,17 +87,17 @@ const EditAccount = ({ navigation }) => {
     const insertProfileImage = (url) => {
         setModalVisible(false);
         if (setUp == true) {
-        let profileImageRef = firebase.database().ref("vender/" + userId);
-        let createdProfileImage = profileImageRef
-        let profileImage = {
-            profileImage: url,
-        };
-        createdProfileImage
-            .update(profileImage)
-            .then((res) => {
-                setTempImage("");
-            })
-            .catch((err) => console.log(err));
+            let profileImageRef = firebase.database().ref("vender/" + userId);
+            let createdProfileImage = profileImageRef
+            let profileImage = {
+                profileImage: url,
+            };
+            createdProfileImage
+                .update(profileImage)
+                .then((res) => {
+                    setTempImage("");
+                })
+                .catch((err) => console.log(err));
         } else {
             let profileImageRef = firebase.database().ref("users/" + userId);
             let createdProfileImage = profileImageRef
@@ -110,7 +110,7 @@ const EditAccount = ({ navigation }) => {
                     setTempImage("");
                 })
                 .catch((err) => console.log(err));
-        } 
+        }
     };
 
     // T0-Do you need to add a loading screen because the uploading image kinda takes time to upload
@@ -157,7 +157,7 @@ const EditAccount = ({ navigation }) => {
         let userR = firebase.database().ref("vender/" + userId);
         userR.on('value', function (snapshot) {
             setVend(snapshot.val());
-        }); 
+        });
     };
 
     //Gets the info based on if the user is a customer or a vendor
@@ -166,26 +166,26 @@ const EditAccount = ({ navigation }) => {
             setUsers(vend);
         } else {
             setUsers(cust);
-        } 
+        }
         //Sets the value of the field to properly update each individual field
         setNewName(users.Fullname);
         setNewPhone(users.phone);
 
         var user = firebase.auth().currentUser;
 
-            user.providerData.forEach(function (profile) {
-                console.log("  Email: " + profile.email);
-                setEmail(profile.email);
-            });
+        user.providerData.forEach(function (profile) {
+            console.log("  Email: " + profile.email);
+            setEmail(profile.email);
+        });
     }
-      
+
     const updateUser = () => {
         if (setUp == true) {
-        const nameRef = firebase.database();
+            const nameRef = firebase.database();
             nameRef.ref("vender/" + userId)
                 .update({ Fullname: newName, phone: newPhone })
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
         } else {
             const nameRef = firebase.database();
             nameRef.ref("users/" + userId)
@@ -198,7 +198,7 @@ const EditAccount = ({ navigation }) => {
                 .update({ phone: newPhone })
                 .then(res => console.log(res))
                 .catch(err => console.log(err));
-        } 
+        }
 
         var user = firebase.auth().currentUser;
 
@@ -247,16 +247,16 @@ const EditAccount = ({ navigation }) => {
 
             <View style={styles.MainView2}>
                 <TouchableOpacity
-                      onPress={() => setModalVisible(true)}>
+                    onPress={() => setModalVisible(true)}>
                     <Image
                         style={styles.profilePic}
                         source={{ uri: users.profileImage }}
                     />
-                 
+
                 </TouchableOpacity>
             </View>
             <View>
-                 
+
                 <Text style={styles.text}>
                     Name
                 </Text>
@@ -264,42 +264,42 @@ const EditAccount = ({ navigation }) => {
                 <TextInput
                     style={styles.textInput}
                     onChangeText={text => setNewName(text)}
-                     defaultValue={users.Fullname}
-                    //defaultValue={newName}
+                    defaultValue={users.Fullname}
+                //defaultValue={newName}
                 />
 
 
                 <Text style={styles.text}>
                     Email
                 </Text>
-                
+
                 <TextInput
-                   // placeholder="Email"
+                    // placeholder="Email"
                     style={styles.textInput}
                     onChangeText={text => setEmail(text)}
                     defaultValue={email}
                 />
-                
+
                 {setUp &&
                     <Text style={styles.text}>
-                    Phone Number
+                        Phone Number
                 </Text>
                 }
                 {setUp &&
                     <TextInput
-                    // If user is a customer hide the phone number text input and phone text above
-                    keyboardType="numeric"
-                    //placeholder="Phone Number"
-                    style={styles.textInput}
-                    onChangeText={text => setNewPhone(text)}
-                    defaultValue={users.phone}
-                />}
+                        // If user is a customer hide the phone number text input and phone text above
+                        keyboardType="numeric"
+                        //placeholder="Phone Number"
+                        style={styles.textInput}
+                        onChangeText={text => setNewPhone(text)}
+                        defaultValue={users.phone}
+                    />}
 
                 <View style={styles.view2}>
 
                     {/* If correct credentials go to the homepage via bottom navigation */}
                     <TouchableOpacity
-                              onPress={() => updateUser()}
+                        onPress={() => updateUser()}
                         //onPress={() => updateEmail()}
                         style={styles.button}
                     >

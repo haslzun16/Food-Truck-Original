@@ -37,6 +37,8 @@ const MyPage = ({ navigation, route }) => {
     const [menus, setMenus] = useState([]);
     const { getUserId } = React.useContext(AuthContext);
     const [tempImage, setTempImage] = useState("");
+    const [tempImage2, setTempImage2] = useState("");
+
 
     let userId = getUserId();
 
@@ -78,42 +80,42 @@ const MyPage = ({ navigation, route }) => {
     }
 
     //store the vendor announcements
-  const storeAnnouncement = () => {
-    setAnnouncementVisible(false);
-    console.log(userId)
-    let announcementRef = firebase.database().ref("announcements/");
-    let createdAnnouncemnt = announcementRef.push();
-    
-    let announcement = {
-      id: createdAnnouncemnt.key,
-      announcement: NewAnnouncement,
-      userid: userId,
-      vendorname: getName(),
-      timestamp: Date.now(),
-      
+    const storeAnnouncement = () => {
+        setAnnouncementVisible(false);
+        console.log(userId)
+        let announcementRef = firebase.database().ref("announcements/");
+        let createdAnnouncemnt = announcementRef.push();
+
+        let announcement = {
+            id: createdAnnouncemnt.key,
+            announcement: NewAnnouncement,
+            userid: userId,
+            vendorname: getName(),
+            timestamp: Date.now(),
+
+        };
+
+        createdAnnouncemnt
+            .set(announcement)
+            .then((res) => {
+                setNewAnnouncement("");
+            })
+            .catch((err) => console.log(err));
     };
-  
-    createdAnnouncemnt
-      .set(announcement)
-      .then((res) => {
-        setNewAnnouncement("");
-      })
-      .catch((err) => console.log(err));
-  };
-  
-  const getName = () => {
-    let name = "";
-    let menuRef = firebase.database().ref("vender/" + userId + "/FoodTruckName");
-    menuRef.on("value", (snapshot) => {
 
-        let val = snapshot.val();
-        name = val
-       
-    });
+    const getName = () => {
+        let name = "";
+        let menuRef = firebase.database().ref("vender/" + userId + "/FoodTruckName");
+        menuRef.on("value", (snapshot) => {
 
-    
-    return name
-};
+            let val = snapshot.val();
+            name = val
+
+        });
+
+
+        return name
+    };
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -124,6 +126,18 @@ const MyPage = ({ navigation, route }) => {
         });
         if (!result.cancelled) {
             setTempImage(result.uri);
+        }
+    };
+
+    const pickImage2 = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        if (!result.cancelled) {
+            setTempImage2(result.uri);
         }
     };
 
@@ -139,7 +153,7 @@ const MyPage = ({ navigation, route }) => {
 
             setInfo(snapshot.val());
 
-        }); 
+        });
 
     };
 
@@ -215,7 +229,7 @@ const MyPage = ({ navigation, route }) => {
             .update({ image: url })
             .then(res => console.log(res))
             .catch(err => console.log(err));
-        
+
         const nameRef = firebase.database();
         nameRef.ref("vender/" + userId + "/menu/" + theID.id)
             .update({ name: newName })
@@ -241,7 +255,7 @@ const MyPage = ({ navigation, route }) => {
     // T0-Do you need to add a loading screen because the uploading image kinda takes time to upload
     //method to upload image to database then it downloads the image and sends the url to insertmenu method
     const updateImageToStorage = async () => {
-        let response = await fetch(tempImage);
+        let response = await fetch(tempImage2);
         let blob = await response.blob();
 
         firebase
@@ -339,7 +353,7 @@ const MyPage = ({ navigation, route }) => {
 
 
     const editPageNavigation = () => {
-     //   navigation.navigate("EditMyPage");
+        //   navigation.navigate("EditMyPage");
     };
 
     const keyExtractor = (item, index) => index.toString();
@@ -348,95 +362,160 @@ const MyPage = ({ navigation, route }) => {
 
         var swipeoutRightBtns = [
             {
-              backgroundColor: "#F5AF19",
-              onPress: () => {
-                  deleteMenu(item)
-              },
-                  text:'Delete'
+                backgroundColor: "#F5AF19",
+                onPress: () => {
+                    deleteMenu(item)
+                },
+                text: 'Delete'
             }
         ];
         return (
             <View>
-                <Swipeout right={swipeoutRightBtns}  backgroundColor="#fff">
-                <View>
-                    {/*When clicked go to Open the Modal  */}
-                    <TouchableOpacity
+                <Swipeout right={swipeoutRightBtns} backgroundColor="#fff">
+                    <View>
+                        {/*When clicked go to Open the Modal  */}
+                        <TouchableOpacity
                             onPress={() => {
-                                setModalVisible2(true), setTheID(item), setNewName(item.name),
-                                setNewPrice(item.price),
-                                setNewDescription(item.description), console.log(theID.name) }}
-                        //onLongPress={() => deleteMenu(item)}
-                    >
-                        <View
-/*                            style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                backgroundColor: "#F5F5F5",
-                                marginTop: 10,
-                                borderRadius: 20,
-                            }}*/
-
-
-                            style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                marginTop: 10,
-                                borderRadius: 20,
-                                marginBottom: 20,
-                                padding: 5,
-                                borderRadius: 12,
-                                //        backgroundColor: 'red',
-                             //   backgroundColor: "rgba(255, 255, 255, 0.8)",
-                                //   shadowOffset: {
-                                //       width: 0,
-                                //       height: 10
-                                //   },
-                                //   shadowColor: "#000",
-                                //  shadowOpacity: 1,
-                                shadowRadius: 20,
-                                shadowOffset: { width: 0, height: 20 },
-                                shadowColor: "black",
-                                shadowOpacity: 1,
-                                elevation: 2,
+                                setModalVisible2(true), setTheID(item), setTempImage2(item.image), setNewName(item.name),
+                                    setNewPrice(item.price),
+                                    setNewDescription(item.description), console.log(theID.name)
                             }}
+                        //onLongPress={() => deleteMenu(item)}
                         >
-
-                            {/* Food Image */}
-                            <Image
-                                source={{ uri: item.image }}
-                                style={{
-                                    width: 100,
-                                    height: 100,
-                                    margin: 5,
-                                    borderRadius: 5,
-                                }}
-                            ></Image>
-
                             <View
-                                style={{ flex: 1, flexDirection: "column", height: 100 }}
+                                /*                            style={{
+                                                                flex: 1,
+                                                                flexDirection: "row",
+                                                                backgroundColor: "#F5F5F5",
+                                                                marginTop: 10,
+                                                                borderRadius: 20,
+                                                            }}*/
+
+
+                                style={{
+                                    /*         flex: 1,
+                                             flexDirection: "row",
+                                             marginTop: 10,
+                                             borderRadius: 20,
+                                             marginBottom: 20,
+                                             padding: 5,
+                                             borderRadius: 12,
+                                             //        backgroundColor: 'red',
+                                          //   backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                             //   shadowOffset: {
+                                             //       width: 0,
+                                             //       height: 10
+                                             //   },
+                                             //   shadowColor: "#000",
+                                             //  shadowOpacity: 1,
+                                             shadowRadius: 20,
+                                             shadowOffset: { width: 0, height: 20 },
+                                             shadowColor: "black",
+                                             shadowOpacity: 1,
+                                             elevation: 2, */
+
+
+                                    flex: 1,
+                                    flexDirection: "row",
+                                    //   marginTop: 10,
+                                    borderRadius: 20,
+                                    //    marginBottom: 20,
+                                    padding: 5,
+                                    borderRadius: 12,
+                                    //        backgroundColor: 'red',
+                                    //    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                    //   shadowOffset: {
+                                    //       width: 0,
+                                    //       height: 10
+                                    //   },
+                                    //   shadowColor: "#000",
+                                    //  shadowOpacity: 1,
+                                    //  shadowRadius: 20,
+                                    //  shadowOffset: { width: 0, height: 20 },
+                                    //   shadowColor: "black",
+                                    //   shadowOpacity: 1,
+                                    //  elevation: 3,
+                                    // background color must be set
+                                    //  backgroundColor: "#0000" // invisible color
+                                    backgroundColor: "white"
+
+
+                                }}
                             >
-                                {/* Food Name */}
-                                <Text style={styles.flatListItem2}>{item.name}</Text>
+                                <View
+                                    /*                            style={{
+                                                                    flex: 1,
+                                                                    flexDirection: "row",
+                                                                    backgroundColor: "#F5F5F5",
+                                                                    marginTop: 10,
+                                                                    borderRadius: 20,
+                                                                }}*/
 
-                                <View style={{ flexDirection: "row" }}></View>
 
-                                {/* Food Price */}
-                                <Text style={styles.flatListItem3}>{item.price}</Text>
+                                    style={{
+                                        flex: 1,
+                                        flexDirection: "row",
+                                        marginTop: 10,
+                                        borderRadius: 20,
+                                        marginBottom: 20,
+                                        padding: 5,
+                                        borderRadius: 12,
+                                        //        backgroundColor: 'red',
+                                        //   backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                        //   shadowOffset: {
+                                        //       width: 0,
+                                        //       height: 10
+                                        //   },
+                                        //   shadowColor: "#000",
+                                        //  shadowOpacity: 1,
+                                        shadowRadius: 20,
+                                        shadowOffset: { width: 0, height: 20 },
+                                        shadowColor: "black",
+                                        shadowOpacity: 1,
+                                        elevation: 2,
+                                    }}
+                                >
 
-                                {/* Food Description */}
-                                <Text style={styles.flatListItem3}>{item.description}</Text>
+                                    {/* Food Image */}
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            margin: 5,
+                                            borderRadius: 5,
+                                        }}
+                                    ></Image>
+
+                                    <View
+                                        style={{ flex: 1, flexDirection: "column", height: 100 }}
+                                    >
+                                        {/* Food Name */}
+                                        <Text style={styles.flatListItem2}>{item.name}</Text>
+
+                                        <View style={{ flexDirection: "row" }}></View>
+
+                                        {/* Food Price */}
+                                        <Text style={styles.flatListItem3}>{item.price}</Text>
+
+                                        {/* Food Description */}
+                                        <Text style={styles.flatListItem3}>{item.description}</Text>
+                                    </View>
+                                </View>
                             </View>
-                        </View>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
 
-                    {/* Line that separates Food */}
+                        {/* Line that separates Food */}
 
-                    {/*   <View style={{ height: 1, backgroundColor: "#F5AF19" }} />   */}
-               
-               </View>
-            </Swipeout>
+                        {/*   <View style={{ height: 1, backgroundColor: "#F5AF19" }} />   */}
+
+                        <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
+                    </View>
+
+                </Swipeout>
 
             </View>
+
         );
     };
 
@@ -482,64 +561,67 @@ const MyPage = ({ navigation, route }) => {
 
 
 
-                <Modal visible={modalVisible2}>
-                    <View style={styles.modal}>
-                        <Button title="Pick an image from camera roll" onPress={pickImage} />
-                    <Image source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }} style={{ width: 200, height: 200 }} />
+            <Modal visible={modalVisible2}>
+                <View style={styles.modal}>
+                    <Button title="Pick an image from camera roll" onPress={pickImage2} />
+                    <Image
+                        source={{ uri: tempImage2 ? tempImage2 : "../../assets/NoImage.png" }}
+                        //source={{ uri: theID.image ? theID.image : "../../assets/NoImage.png" }}
+                        style={{ width: 200, height: 200 }} />
 
-                        <TextInput
-                            placeholder="Food Name"
-                            style={styles.textInput}
-                            onChangeText={text => setNewName(text)}
-                            defaultValue={theID.name}
-                        />
+                    <TextInput
+                        placeholder="Food Name"
+                        style={styles.textInput}
+                        onChangeText={text => setNewName(text)}
+                        defaultValue={theID.name}
+                    />
 
-                        <TextInput
-                            keyboardType="numeric"
-                            placeholder="Food Price"
-                            style={styles.textInput}
-                            onChangeText={text => setNewPrice(text)}
-                            defaultValue={theID.price}
-                        />
+                    <TextInput
+                        keyboardType="numeric"
+                        placeholder="Food Price"
+                        style={styles.textInput}
+                        onChangeText={text => setNewPrice(text)}
+                        defaultValue={theID.price}
+                    />
 
-                        <TextInput
-                            placeholder="Food Description"
-                            style={styles.textInput}
-                            onChangeText={text => setNewDescription(text)}
-                            defaultValue={theID.description}
-                        />
+                    <TextInput
+                        placeholder="Food Description"
+                        style={styles.textInput}
+                        onChangeText={text => setNewDescription(text)}
+                        defaultValue={theID.description}
+                    />
 
-                        <View style={{ flexDirection: 'row', }}>
+                    <View style={{ flexDirection: 'row', }}>
 
-                            <View style={styles.view2} >
-                                {/* Closes the Modal */}
-                                <TouchableOpacity
-                                    onPress={() => setModalVisible2(false)} style={styles.button}>
-                                    <Text style={styles.buttonText}>
-                                        Cancel
+                        <View style={styles.view2} >
+                            {/* Closes the Modal */}
+                            <TouchableOpacity
+                                onPress={() => setModalVisible2(false)} style={styles.button}>
+                                <Text style={styles.buttonText}>
+                                    Cancel
 								    </Text>
-                                </TouchableOpacity>
-                            </View>
+                            </TouchableOpacity>
+                        </View>
 
-                            <View style={styles.view2} >
-                                {/* Updates the menu */}
+                        <View style={styles.view2} >
+                            {/* Updates the menu */}
                             <TouchableOpacity
                                 onPress={() => updateImageToStorage()} style={styles.button}>
 
-                                    <Text style={styles.buttonText}>
-                                        Confirm
+                                <Text style={styles.buttonText}>
+                                    Confirm
 								    </Text>
-                                </TouchableOpacity>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
-                </Modal>
- 
+                </View>
+            </Modal>
+
             <Modal visible={modalVisible}>
                 <View style={styles.modal}>
                     <Button title="Pick an image from camera roll" onPress={pickImage} />
                     <Image
-                       // source={{ uri: tempImage }}
+                        // source={{ uri: tempImage }}
                         source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }}
                         style={{ width: 200, height: 200 }}
                     />
@@ -615,38 +697,38 @@ const MyPage = ({ navigation, route }) => {
                 </View>
             </Modal>
 
-      <Modal visible={announcementVisible}>
-        <View style={styles.modal}>
-          <Text>Post an announcement for customers!</Text>
-          <TextInput
-            placeholder="Enter Your Annoucement"
-            style={styles.textInput}
-            onChangeText={(text) => setNewAnnouncement(text)}
-          />
+            <Modal visible={announcementVisible}>
+                <View style={styles.modal}>
+                    <Text>Post an announcement for customers!</Text>
+                    <TextInput
+                        placeholder="Enter Your Annoucement"
+                        style={styles.textInput}
+                        onChangeText={(text) => setNewAnnouncement(text)}
+                    />
 
-          <View style={{ flexDirection: "row" }}>
-            <View style={styles.view2}>
-              {/* If correct credentials go to the homepage via bottom navigation */}
-              <TouchableOpacity
-                onPress={() => setAnnouncementVisible(false)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+                    <View style={{ flexDirection: "row" }}>
+                        <View style={styles.view2}>
+                            {/* If correct credentials go to the homepage via bottom navigation */}
+                            <TouchableOpacity
+                                onPress={() => setAnnouncementVisible(false)}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
 
-            <View style={styles.view2}>
-              {/* If correct credentials go to the homepage via bottom navigation */}
-              <TouchableOpacity
-                onPress={() => storeAnnouncement()}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Post!</Text>
-              </TouchableOpacity>
-            </View>
-        </View>
-        </View>
-      </Modal>
+                        <View style={styles.view2}>
+                            {/* If correct credentials go to the homepage via bottom navigation */}
+                            <TouchableOpacity
+                                onPress={() => storeAnnouncement()}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Post!</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
             <View style={styles.Top}>
 
@@ -654,11 +736,11 @@ const MyPage = ({ navigation, route }) => {
 
                 <TouchableOpacity
                     onPress={() => setModalVisible3(true)}>
-                <ImageBackground
-                    // source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
-                    source={{ uri: info.foodTruckImage ? info.foodTruckImage : null }}
-                    style={styles.TopImage}
-                />
+                    <ImageBackground
+                        // source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
+                        source={{ uri: info.foodTruckImage ? info.foodTruckImage : null }}
+                        style={styles.TopImage}
+                    />
                 </TouchableOpacity>
 
 
@@ -676,40 +758,7 @@ const MyPage = ({ navigation, route }) => {
                         flexDirection: "row",
                     }}
                 >
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: "#F5AF19",
-                            borderRadius: 200,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: 50,
-                            width: 50,
-                            margin: 0,
-                        }}
-                        onPress={editPageNavigation}
-                    >
-                        <MaterialCommunityIcons
-                            name="account-edit"
-                            style={{
-                                alignSelf: "center",
-                                marginTop: 30,
-                                width: "50%",
-                                height: "50%",
-                            }}
-                            size={26}
-                            Account
-                        ></MaterialCommunityIcons>
-                        <Text
-                            style={{
-                                position: "relative",
-                                marginTop: 12,
-                                color: "black",
-                                fontSize: 9,
-                            }}
-                        >
-                            Edit Page
-                        </Text>
-                    </TouchableOpacity>
+
                     <View style={{ alignSelf: "center" }}>
                         <TouchableOpacity
                             style={{
@@ -783,45 +832,45 @@ const MyPage = ({ navigation, route }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-         <TouchableOpacity
-            style={{
-              backgroundColor: "#F5AF19",
-              // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
-              borderRadius: 200,
-              alignItems: "center",
-              justifyContent: "center",
-              height: 50,
-              width: 50,
-              //	margin: 10,
-            }}
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: "#F5AF19",
+                            // backgroundColor: (selectedCategory?.id == item.id) ? '#F5AF19' : 'white',
+                            borderRadius: 200,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: 50,
+                            width: 50,
+                            //	margin: 10,
+                        }}
 
-            onPress={() => setAnnouncementVisible(true)}
-          >
-            <MaterialCommunityIcons
-              name="message-plus"
-              style={{
-                alignSelf: "center",
-                marginTop: 30,
-                width: "50%",
-                height: "50%",
-              }}
-              size={26}
-              Account
-            ></MaterialCommunityIcons>
+                        onPress={() => setAnnouncementVisible(true)}
+                    >
+                        <MaterialCommunityIcons
+                            name="message-plus"
+                            style={{
+                                alignSelf: "center",
+                                marginTop: 30,
+                                width: "50%",
+                                height: "50%",
+                            }}
+                            size={26}
+                            Account
+                        ></MaterialCommunityIcons>
 
-            <Text
-              style={{
-                position: "relative",
-                marginTop: 12,
-                color: "black",
-                fontSize: 9,
-                width: '160%',
-                marginLeft: 20
-              }}
-            >
-              Post Announcements
+                        <Text
+                            style={{
+                                position: "relative",
+                                marginTop: 12,
+                                color: "black",
+                                fontSize: 9,
+                                width: '160%',
+                                marginLeft: 20
+                            }}
+                        >
+                            Post Announcements
             </Text>
-          </TouchableOpacity>
+                    </TouchableOpacity>
                 </View>
             </View>
             <View style={{ height: 1, backgroundColor: "#F5AF19" }} />

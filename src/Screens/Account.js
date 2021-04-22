@@ -147,15 +147,15 @@ const Account = ({ navigation }) => {
 
         setModalVisible(false);
 
-/*        var credential = firebase.auth.EmailAuthProvider.credential(
-            firebase.auth().currentUser.email,
-            providedPassword
-        );
-
-        if (currentPassword !== credential) {
-            alert("Passwords don't match.");
-            return;
-        }*/
+        /*        var credential = firebase.auth.EmailAuthProvider.credential(
+                    firebase.auth().currentUser.email,
+                    providedPassword
+                );
+        
+                if (currentPassword !== credential) {
+                    alert("Passwords do not match.");
+                    return;
+                }*/
 
         if (newPassword.length < 6) {
             alert("Password is too short.")
@@ -170,6 +170,7 @@ const Account = ({ navigation }) => {
 
         user.updatePassword(confirmNewPassword).then(function () {
             // Update successful.
+            alert("Password changed")
         }).catch(function (error) {
             // An error happened.
         });
@@ -179,22 +180,22 @@ const Account = ({ navigation }) => {
 
 
     accountDeletionAlert = () => {
-/*        Alert.alert(
-            'Are you sure you want to delete your account?',
-            [
-                { text: 'Yes', onPress: () => deleteaccount },
-                { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
-            ],
-            {
-                cancelable: true
-            }
-        );*/
+        /*        Alert.alert(
+                    'Are you sure you want to delete your account?',
+                    [
+                        { text: 'Yes', onPress: () => deleteaccount },
+                        { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
+                    ],
+                    {
+                        cancelable: true
+                    }
+                );*/
 
         Alert.alert('Delete Account', 'Are you sure you want to delete your account?', [
             { text: 'Yes', onPress: () => deleteaccount() },
             { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
-    ],
-        { cancelable: true });
+        ],
+            { cancelable: true });
 
     }
 
@@ -209,14 +210,6 @@ const Account = ({ navigation }) => {
 
             <Modal visible={modalVisible}>
                 <View style={styles.modal}>
-
-                    <TextInput
-                        secureTextEntry={true}
-                        style={styles.textInput2}
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChangeText={(text) => setCurrentPassword(text)}
-                    />
 
                     <TextInput
                         secureTextEntry={true}
@@ -262,10 +255,10 @@ const Account = ({ navigation }) => {
 
             <View style={styles.MainView2}>
 
-                    <Image
-                        style={styles.profilePic}
-                        source={{ uri: users.profileImage }}
-                    />
+                <Image
+                    style={styles.profilePic}
+                    source={{ uri: users.profileImage }}
+                />
 
                 <Text
                     style={styles.nameText}>
@@ -281,34 +274,15 @@ const Account = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.newButton}
                         onPress={() => navigation.navigate("EditAccount")}>
-                        <MaterialCommunityIcons
-                            name="account-outline"
-                            style={{
-                                //alignSelf: "center",
-                                marginTop: 5,
-                               // paddingLeft: 14,
-                                width: 35,
-                                height: 35,
-                                color: "black"
-                            }}
-                            size={26}
-                            Account
-                        ></MaterialCommunityIcons>
                         <Text style={styles.accountText}
                         >Edit Profile</Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         style={styles.newButton}
                         onPress={() => setModalVisible(true)}>
                         <Text style={styles.accountText}
                         >Change Password</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.newButton}>
-                        <Text style={styles.accountText}
-                        >About</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity

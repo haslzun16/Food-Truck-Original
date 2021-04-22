@@ -13,21 +13,23 @@ import * as firebase from "firebase";
 import _ from "lodash";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const FoodTruckDetails = ({ navigation, route }) => {
+
+const AnnouncementDetails = ({ navigation, route }) => {
 
     const [menus, setMenus] = useState([]);
-    const [location, setLocation] = useState([]);
 
-    const [loading, setLoading] = useState(false);
+    const [info, setInfo] = useState([]);
 
     useEffect(() => {
         getMenus();
-        getlocation();
     }, []);
 
     const getMenus = () => {
 
-        let menuRef = firebase.database().ref("vender/" + route.params.item.userId + "/menu");
+        console.log("ROUTE ID: " + route.params.item.userid);
+
+        let menuRef = firebase.database().ref("vender/" + route.params.item.userid + "/menu");
+
 
         menuRef.on("value", (snapshot) => {
             let val = snapshot.val();
@@ -39,25 +41,24 @@ const FoodTruckDetails = ({ navigation, route }) => {
 
         });
     };
-    const getlocation = () => {
 
-        let menuRef = firebase.database().ref("vender/" + route.params.item.userId + "/location");
 
-        menuRef.on("value", (snapshot) => {
-            let val = snapshot.val();
-            
-            
-            setLocation(val);
+    useEffect(() => {
+        getFoodTruck();
+    }, []);
+
+    const getFoodTruck = () => {
+
+        let foodTruckRef = firebase.database().ref("vender/" + route.params.item.userid);
+
+        foodTruckRef.on('value', function (snapshot) {
+
+            setInfo(snapshot.val());
+
+            // console.log(info)
 
         });
-       
     };
-
-    
-
-    const goToTruck = () => {
-        openMap({ latitude: location.latitude, longitude: location.longitude, end: location.latitude + ", " + location.longitude });
-    }
 
     const keyExtractor = (item, index) => index.toString();
 
@@ -69,12 +70,11 @@ const FoodTruckDetails = ({ navigation, route }) => {
                         disabled={true}>
                         <View
                             style={{
-                                /*       flex: 1,
-                                       flexDirection: "row",
-                                       backgroundColor: "#F5F5F5",
-                                       marginTop: 10,
-                                       borderRadius: 20, */
-
+                                /*      flex: 1,
+                                      flexDirection: "row",
+                                      backgroundColor: "#F5F5F5",
+                                      marginTop: 10,
+                                      borderRadius: 20,  */
 
 
                                 flex: 1,
@@ -101,7 +101,6 @@ const FoodTruckDetails = ({ navigation, route }) => {
                                 //  backgroundColor: "#0000" // invisible color
                                 backgroundColor: "white"
 
-
                             }}
                         >
                             {/* Food Image */}
@@ -114,7 +113,6 @@ const FoodTruckDetails = ({ navigation, route }) => {
                                     borderRadius: 5,
                                 }}
                             ></Image>
-                            
 
                             <View
                                 style={{ flex: 1, flexDirection: "column", height: 100 }}
@@ -148,7 +146,7 @@ const FoodTruckDetails = ({ navigation, route }) => {
             <View style={styles.Top}>
                 <ImageBackground
                     //source={uri: route.params.item.foodTruckImage}
-                    source={{ uri: route.params.item.foodTruckImage ? route.params.item.foodTruckImage : null }}
+                    source={{ uri: info.foodTruckImage ? info.foodTruckImage : null }}
 
                     //	resizeMode="contain"
                     style={styles.TopImage}
@@ -156,7 +154,7 @@ const FoodTruckDetails = ({ navigation, route }) => {
             </View>
             <View style={styles.Mid}>
                 {/*  <Text style={styles.FoodTruckName}> Amoroso's Bakery </Text>  */}
-                <Text style={styles.FoodTruckName}> {route.params.item.FoodTruckName} </Text>
+                <Text style={styles.FoodTruckName}> {route.params.item.vendorname} </Text>
 
                 <View
                     style={{
@@ -179,7 +177,7 @@ const FoodTruckDetails = ({ navigation, route }) => {
                             size={20}
                             Account
                         ></MaterialCommunityIcons>
-                        {route.params.item.FoodTruckLocation}
+                        {info.FoodTruckLocation}
                     </Text>
 
                     <Text style={styles.Location}>
@@ -193,7 +191,7 @@ const FoodTruckDetails = ({ navigation, route }) => {
                             size={20}
                             Account
                         ></MaterialCommunityIcons>
-                        {route.params.item.hours}
+                        {info.hours}
                     </Text>
 
                     <Text style={styles.Location}>
@@ -207,13 +205,12 @@ const FoodTruckDetails = ({ navigation, route }) => {
                             size={20}
                             Account
                         ></MaterialCommunityIcons>
-                        {route.params.item.FoodType}
+                        {info.FoodType}
                     </Text>
 
                 </View>
 
             </View>
-            
             <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
 
             <View style={styles.Bottom}>
@@ -326,4 +323,4 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
     },
 });
-export default FoodTruckDetails;
+export default AnnouncementDetails;
