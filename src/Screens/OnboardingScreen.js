@@ -10,6 +10,9 @@ import * as React from "react";
 import { Text, Image, TouchableOpacity } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
 import { AuthContext } from "../../App";
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); 
+LogBox.ignoreAllLogs();
 
 //Done button
 const Done = ({ ...props }) => (
@@ -50,6 +53,23 @@ function OnboardingScreen({ navigation }) {
           image: (
             <Image
               style={{
+                width: 300,
+                height: 190,
+                alignItems: "center",
+                marginTop: 10,
+              }}
+              source={require("../../assets/new-megaP.png")}
+            />
+          ),
+          title: "Up-To-Date",
+          subtitle: "Stay informed about food truck announcments in your area! ",
+          },
+        //Third Page
+          {
+          backgroundColor: "#F5AF19",
+          image: (
+            <Image
+              style={{
                 width: 350,
                 height: 230,
                 alignItems: "center",
@@ -60,23 +80,6 @@ function OnboardingScreen({ navigation }) {
           ),
           title: "Explore",
           subtitle: "Search for food trucks near you!",
-        },
-        //Third Page
-        {
-          backgroundColor: "#F5AF19",
-          image: (
-            <Image
-              style={{
-                width: 350,
-                height: 230,
-                alignItems: "center",
-                marginTop: 10,
-              }}
-              source={require("../../assets/new-megaP.png")}
-            />
-          ),
-          title: "Up-To-Date",
-          subtitle: "Stay informed about food truck announcments in your area! ",
         },
       ]}
       transitionAnimationDuration={0}

@@ -69,7 +69,20 @@ export default function SignIn({ navigation }) {
           <Modal visible={modalVisible}>
               <View style={styles.modal}>
 
-                  <Text> Forgot Your Password? </Text>
+                  <Text style={{ fontSize: 30 }}> Forgot Your Password? </Text>
+
+                  <Image
+                      style={{
+                          width: 180,
+                          height: 187,
+                          alignItems: "center",
+                          marginTop: 10,
+                      }}
+                      source={require("../../assets/lock.png")}
+                      resizeMode={"cover"}
+                  />
+
+                  <Text style={{ marginTop: 20, fontSize: 15, textAlign: 'center' }}> Enter your email address to be sent a link to reset your password. </Text>
 
                   <TextInput
                       style={styles.textInput2}
@@ -104,7 +117,7 @@ export default function SignIn({ navigation }) {
       <View>
         <View style={styles.top}>
           <View style={styles.view}>
-            <Text style={styles.Text}> Food Truck Finder </Text>
+            <Text style={styles.Text}> Fogul Moves </Text>
             <Image
               style={{
                 width: 280,
@@ -123,7 +136,7 @@ export default function SignIn({ navigation }) {
             <TextInput
               style={styles.textInput}
               placeholder="Email"
-              value={email}
+           //   value={email}
               onChangeText={(text) => setEmail(text)}
             />
 
