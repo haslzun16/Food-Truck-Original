@@ -21,7 +21,7 @@ import * as firebase from "firebase";
 import { AuthContext } from "../../App";
 import _ from "lodash";
 
-const Events = () => {
+const Events = ({ navigation }) => {
     const [announcements, setAnnouncements] = useState([]);
     const { getUserId } = React.useContext(AuthContext);
     let userId = getUserId();
@@ -81,7 +81,15 @@ const Events = () => {
           data={announcements}
           renderItem={({ item }) => (
             <View>
-              
+
+                <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("AnnouncementDetails", {
+                        item,
+                      })
+                    }
+                  >
+
                 <View
                   style={{
                     flex: 1,
@@ -108,7 +116,7 @@ const Events = () => {
                     {/* <Text style={styles.flatListItem3}>{item.description}</Text> */} 
                   </View>
                 </View>
-             
+              </TouchableOpacity>
 
               {/* Line that separates Food Trucks */}
 
@@ -143,11 +151,12 @@ const styles = StyleSheet.create({
         borderColor: '#FC5976',
         borderBottomWidth: 1,
         backgroundColor: '#F5AF19',
-
     },
+
     headerText: {
         color: 'white',
-        marginTop: 30,
+      //  marginTop: 30,
+        marginTop: '1%',
         fontSize: 28,
 
     },

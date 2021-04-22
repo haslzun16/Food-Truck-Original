@@ -68,6 +68,7 @@ let userId = getUserId();
                 .update(foodTruckImage)
                 .then((res) => {
                     setTempImage("");
+                    alert('Food Truck Image Added!')
                 })
                 .catch((err) => console.log(err));
    

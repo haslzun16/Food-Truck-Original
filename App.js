@@ -24,6 +24,7 @@ import OnBoardingScreen from "./src/Screens/OnboardingScreen";
 import Account from "./src/Screens/Account";
 import EditAccount from "./src/Screens/EditAccount";
 import FoodTruckDetails from "./src/Screens/FoodTruckDetails";
+import AnnouncementDetails from "./src/Screens/AnnouncementDetails";
 import Loading from "./src/Screens/Loading";
 import BottomNavigation from "./src/BottomNavigation";
 import SetUp from "./src/Screens/SetUp";
@@ -374,11 +375,16 @@ export default function App() {
              />
             </>
           )}
-                    <Stack.Screen
-                        name="FoodTruckDetails"
-                        component={FoodTruckDetails}
-                        options={{ headerShown: false }}
-                    />
+             <Stack.Screen
+                 name="FoodTruckDetails"
+                 component={FoodTruckDetails}
+                 options={{ headerShown: false }}
+             />
+             <Stack.Screen
+                 name="AnnouncementDetails"
+                 component={AnnouncementDetails}
+                 options={{ headerShown: false }}
+             />
 
                 </Stack.Navigator>
             </NavigationContainer>

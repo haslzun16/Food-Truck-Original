@@ -41,8 +41,8 @@ function OnboardingScreen({ navigation }) {
               source={require("../../assets/burger-2.png")}
             />
           ),
-          title: "Onboarding",
-          subtitle: "Done with React Native Onboarding Swiper",
+          title: "Discover",
+          subtitle: "Amazing varieties of food trucks and food!",
         },
         //Second Page
         {
@@ -50,16 +50,16 @@ function OnboardingScreen({ navigation }) {
           image: (
             <Image
               style={{
-                width: 250,
-                height: 130,
+                width: 350,
+                height: 230,
                 alignItems: "center",
                 marginTop: 10,
               }}
-              source={require("../../assets/orange-food-truck.png")}
+              source={require("../../assets/mmap.png")}
             />
           ),
-          title: "Onboarding",
-          subtitle: "Done with React Native Onboarding Swiper",
+          title: "Explore",
+          subtitle: "Search for food trucks near you!",
         },
         //Third Page
         {
@@ -67,16 +67,16 @@ function OnboardingScreen({ navigation }) {
           image: (
             <Image
               style={{
-                width: 250,
-                height: 130,
+                width: 350,
+                height: 230,
                 alignItems: "center",
                 marginTop: 10,
               }}
-              source={require("../../assets/orange-food-truck.png")}
+              source={require("../../assets/new-megaP.png")}
             />
           ),
-          title: "Onboarding",
-          subtitle: "Done with React Native Onboarding Swiper",
+          title: "Up-To-Date",
+          subtitle: "Stay informed about food truck announcments in your area! ",
         },
       ]}
       transitionAnimationDuration={0}

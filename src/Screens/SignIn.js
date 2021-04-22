@@ -14,6 +14,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 //import { auth } from "../firebase";
@@ -23,10 +24,13 @@ LogBox.ignoreLogs(["Setting a timer"]);
 import "firebase/firestore";
 import { Alert } from "react-native";
 import { AuthContext } from "../../App";
+import * as firebase from "firebase";
 
 export default function SignIn({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const { signIn } = React.useContext(AuthContext);
 
@@ -46,8 +50,57 @@ export default function SignIn({ navigation }) {
     }
   };
 
+
+    const forgotPassword = () => {
+        setModalVisible(false);
+
+        firebase.auth().sendPasswordResetEmail(email)
+            .then(function (user) {
+                alert('Please check your email.')
+            }).catch(function (e) {
+                console.log(e)
+            })
+    }
+
+
   return (
     <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.body}>
+
+          <Modal visible={modalVisible}>
+              <View style={styles.modal}>
+
+                  <Text> Forgot Your Password? </Text>
+
+                  <TextInput
+                      style={styles.textInput2}
+                      placeholder="Enter Email Address"
+                      onChangeText={(text) => setEmail(text)}
+                  />
+
+                  <View style={{ flexDirection: "row" }}>
+                      <View style={styles.view2}>
+                          {/* Close and Cancel the Modal */}
+                          <TouchableOpacity
+                              onPress={() => setModalVisible(false)}
+                              style={styles.buttonModal}
+                          >
+                              <Text style={styles.buttonTextModal}>Cancel</Text>
+                          </TouchableOpacity>
+                      </View>
+
+                      <View style={styles.view2}>
+                          {/* Add Profile Image to the database */}
+                          <TouchableOpacity
+                              onPress={() => forgotPassword()}
+                              style={styles.buttonModal}
+                          >
+                              <Text style={styles.buttonTextModal}>Confirm</Text>
+                          </TouchableOpacity>
+                      </View>
+                  </View>
+              </View>
+          </Modal>
+
       <View>
         <View style={styles.top}>
           <View style={styles.view}>
@@ -83,7 +136,16 @@ export default function SignIn({ navigation }) {
               secureTextEntry
             />
 
+            <TouchableOpacity
+                style={{    paddingLeft: 5,
+                textAlign: "left",
+                alignSelf: "stretch",}}
+                onPress={() => setModalVisible(true) }
+                      >
             <Text style={styles.forgotPass}>Forgot Password?</Text>
+            
+            </TouchableOpacity>
+
           </View>
         </View>
 
@@ -213,4 +275,39 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     color: "#fff",
   },
+  modal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+    textInput2: {
+    alignSelf: 'center',
+    borderWidth: 1,
+    backgroundColor: "#fff",
+    borderColor: "#FEAD44",
+    borderRadius: 30,
+    padding: 10,
+    paddingHorizontal: 20,
+    marginTop: 50,
+    width: "90%",
+    color: 'black',
+    fontSize: 16
+},
+
+buttonModal: {
+    width: 100,
+    height: 40,
+    marginTop: 10,
+    borderRadius: 10,
+    backgroundColor: "#FEAD44",
+},
+
+buttonTextModal: {
+    fontSize: 18,
+    textAlign: "center",
+    margin: 5,
+    color: "#FFFFFF",
+},
+
 });

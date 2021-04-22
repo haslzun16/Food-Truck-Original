@@ -3,8 +3,9 @@
     "",
     "\\assets",
     "\\src",
+    "\\src\\firebase",
     "\\src\\Screens"
   ],
-  "SelectedNode": "\\src\\Screens\\MyPage.js",
+  "SelectedNode": "\\assets\\icon.png",
   "PreviewInSolutionExplorer": false
 }

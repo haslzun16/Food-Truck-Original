@@ -362,7 +362,7 @@ const MyPage = ({ navigation, route }) => {
                     {/*When clicked go to Open the Modal  */}
                     <TouchableOpacity
                             onPress={() => {
-                                setModalVisible2(true), setTheID(item), setNewName(item.name),
+                                setModalVisible2(true), setTheID(item), setTempImage(item.image), setNewName(item.name),
                                 setNewPrice(item.price),
                                 setNewDescription(item.description), console.log(theID.name) }}
                         //onLongPress={() => deleteMenu(item)}
@@ -378,7 +378,7 @@ const MyPage = ({ navigation, route }) => {
 
 
                             style={{
-                                flex: 1,
+                       /*         flex: 1,
                                 flexDirection: "row",
                                 marginTop: 10,
                                 borderRadius: 20,
@@ -397,7 +397,34 @@ const MyPage = ({ navigation, route }) => {
                                 shadowOffset: { width: 0, height: 20 },
                                 shadowColor: "black",
                                 shadowOpacity: 1,
-                                elevation: 2,
+                                elevation: 2, */
+
+
+                                    flex: 1,
+                                    flexDirection: "row",
+                                    //   marginTop: 10,
+                                    borderRadius: 20,
+                                    //    marginBottom: 20,
+                                    padding: 5,
+                                    borderRadius: 12,
+                                    //        backgroundColor: 'red',
+                                    //    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                    //   shadowOffset: {
+                                    //       width: 0,
+                                    //       height: 10
+                                    //   },
+                                    //   shadowColor: "#000",
+                                    //  shadowOpacity: 1,
+                                    //  shadowRadius: 20,
+                                    //  shadowOffset: { width: 0, height: 20 },
+                                    //   shadowColor: "black",
+                                    //   shadowOpacity: 1,
+                                    //  elevation: 3,
+                                    // background color must be set
+                                    //  backgroundColor: "#0000" // invisible color
+                                    backgroundColor: "white"
+
+
                             }}
                         >
 
@@ -431,7 +458,7 @@ const MyPage = ({ navigation, route }) => {
 
                     {/* Line that separates Food */}
 
-                    {/*   <View style={{ height: 1, backgroundColor: "#F5AF19" }} />   */}
+                       <View style={{ height: 1, backgroundColor: "#F5AF19" }} />   
                
                </View>
             </Swipeout>
@@ -485,7 +512,10 @@ const MyPage = ({ navigation, route }) => {
                 <Modal visible={modalVisible2}>
                     <View style={styles.modal}>
                         <Button title="Pick an image from camera roll" onPress={pickImage} />
-                    <Image source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }} style={{ width: 200, height: 200 }} />
+                    <Image
+                        source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }}
+                        //source={{ uri: theID.image ? theID.image : "../../assets/NoImage.png" }}
+                        style={{ width: 200, height: 200 }} />
 
                         <TextInput
                             placeholder="Food Name"

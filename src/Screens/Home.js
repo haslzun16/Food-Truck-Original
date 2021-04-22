@@ -215,7 +215,7 @@ const Home = ({ navigation }) => {
         <FlatList
           numColumns={1}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={renderSeparator}
+         // ItemSeparatorComponent={renderSeparator}
           keyExtractor={(item, index) => index.toString()}
           data={findFoodTrucks}
           renderItem={({ item }) => (
@@ -291,7 +291,7 @@ const Home = ({ navigation }) => {
               </TouchableOpacity>
               {/* Line that separates Food Trucks */}
 
-              {/*  <View style={{ height: 1, backgroundColor: '#F5AF19' }} /> */}
+                <View style={{ height: 1, backgroundColor: '#F5AF19' }} /> 
             </View>
           )}
         />
