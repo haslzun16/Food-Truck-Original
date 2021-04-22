@@ -153,7 +153,7 @@ const Account = ({ navigation }) => {
         );
 
         if (currentPassword !== credential) {
-            alert("Passwords don't match.");
+            alert("Passwords do not match.");
             return;
         }*/
 
@@ -170,6 +170,7 @@ const Account = ({ navigation }) => {
 
         user.updatePassword(confirmNewPassword).then(function () {
             // Update successful.
+            alert("Password changed")
         }).catch(function (error) {
             // An error happened.
         });
@@ -209,14 +210,6 @@ const Account = ({ navigation }) => {
 
             <Modal visible={modalVisible}>
                 <View style={styles.modal}>
-
-                    <TextInput
-                        secureTextEntry={true}
-                        style={styles.textInput2}
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChangeText={(text) => setCurrentPassword(text)}
-                    />
 
                     <TextInput
                         secureTextEntry={true}

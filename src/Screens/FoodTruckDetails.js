@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import * as firebase from "firebase";
 import _ from "lodash";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const FoodTruckDetails = ({ navigation, route }) => {
 
@@ -135,10 +136,60 @@ const FoodTruckDetails = ({ navigation, route }) => {
                 {/*  <Text style={styles.FoodTruckName}> Amoroso's Bakery </Text>  */}
                 <Text style={styles.FoodTruckName}> {route.params.item.FoodTruckName} </Text>  
 
+                <View
+                    style={{
+                        alignItems: "center",
+                        //justifyContent: "center",
+                        justifyContent: "space-evenly",
+                        flexDirection: "row",
+                        marginTop: '5%',
+                    }}
+                >
+
                 <Text style={styles.Location}>
+                <MaterialCommunityIcons
+                    name="city-variant"
+                    style={{
+                     //   alignSelf: "center",
+                     //   width: 50,
+                     //   height: 50,
+                    }}
+                    size={20}
+                    Account
+                ></MaterialCommunityIcons>
                     {route.params.item.FoodTruckLocation}
                 </Text>
-                   
+
+                <Text style={styles.Location}>
+                    <MaterialCommunityIcons
+                        name="clock-time-four"
+                        style={{
+                            //   alignSelf: "center",
+                            //   width: 50,
+                            //   height: 50,
+                        }}
+                        size={20}
+                        Account
+                    ></MaterialCommunityIcons>
+                    {route.params.item.hours}
+                </Text>
+
+                <Text style={styles.Location}>
+                    <MaterialCommunityIcons
+                        name="silverware"
+                        style={{
+                            //   alignSelf: "center",
+                            //   width: 50,
+                            //   height: 50,
+                        }}
+                        size={20}
+                        Account
+                    ></MaterialCommunityIcons>
+                    {route.params.item.FoodType}
+                </Text>
+
+                </View>
+
             </View>
             <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
 
@@ -175,7 +226,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     Location: {
-        fontSize: 20,
+        fontSize: 18,
         alignSelf: "center",
     },
     Bottom: {
