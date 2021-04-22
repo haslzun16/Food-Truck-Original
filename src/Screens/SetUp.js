@@ -1,12 +1,3 @@
-/**
- * Anthony Barrera
- *
- * Last edited 4/20/21
- * 
- * shows the input fields that new users have to enter
- *
- * npm install react-native-dropdown-picker --save
- */
 
 //imports
 import * as React from 'react';

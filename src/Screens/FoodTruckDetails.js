@@ -11,15 +11,20 @@ import {
 } from "react-native";
 import * as firebase from "firebase";
 import _ from "lodash";
+import openMap from 'react-native-open-maps';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 
 const MyPage = ({ navigation, route }) => {
 
     const [menus, setMenus] = useState([]);
+    const [location, setLocation] = useState([]);
 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getMenus();
+        getlocation();
     }, []);
 
     const getMenus = () => {
@@ -36,6 +41,25 @@ const MyPage = ({ navigation, route }) => {
 
         });
     };
+    const getlocation = () => {
+
+        let menuRef = firebase.database().ref("vender/" + route.params.item.userId + "/location");
+
+        menuRef.on("value", (snapshot) => {
+            let val = snapshot.val();
+            
+            
+            setLocation(val);
+
+        });
+       
+    };
+
+    
+
+    const goToTruck = () => {
+        openMap({ latitude: location.latitude, longitude: location.longitude, end: location.latitude + ", " + location.longitude });
+    }
 
     const keyExtractor = (item, index) => index.toString();
 
@@ -64,6 +88,7 @@ const MyPage = ({ navigation, route }) => {
                                     borderRadius: 5,
                                 }}
                             ></Image>
+                            
 
                             <View
                                 style={{ flex: 1, flexDirection: "column", height: 100 }}
@@ -110,8 +135,43 @@ const MyPage = ({ navigation, route }) => {
                 <Text style={styles.Location}>
                     {route.params.item.FoodTruckLocation}
                 </Text>
+                <TouchableOpacity
+                        style={{
+                            backgroundColor: "#F5AF19",
+                            borderRadius: 200,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: 50,
+                            width: 50,
+                            margin: 0,
+                        }}
+                        onPress={goToTruck}
+                    >
+                        <MaterialCommunityIcons
+                            name="account-edit"
+                            style={{
+                                alignSelf: "center",
+                                marginTop: 30,
+                                width: "50%",
+                                height: "50%",
+                            }}
+                            size={26}
+                            Account
+                        ></MaterialCommunityIcons>
+                        <Text
+                            style={{
+                                position: "relative",
+                                marginTop: 12,
+                                color: "black",
+                                fontSize: 9,
+                            }}
+                        >
+                            Locate
+                        </Text>
+                    </TouchableOpacity>
                    
             </View>
+            
             <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
 
             <View style={styles.Bottom}>
