@@ -37,6 +37,8 @@ const MyPage = ({ navigation, route }) => {
     const [menus, setMenus] = useState([]);
     const { getUserId } = React.useContext(AuthContext);
     const [tempImage, setTempImage] = useState("");
+    const [tempImage2, setTempImage2] = useState("");
+
 
     let userId = getUserId();
 
@@ -124,6 +126,18 @@ const MyPage = ({ navigation, route }) => {
         });
         if (!result.cancelled) {
             setTempImage(result.uri);
+        }
+    };
+
+    const pickImage2 = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        if (!result.cancelled) {
+            setTempImage2(result.uri);
         }
     };
 
@@ -241,7 +255,7 @@ const MyPage = ({ navigation, route }) => {
     // T0-Do you need to add a loading screen because the uploading image kinda takes time to upload
     //method to upload image to database then it downloads the image and sends the url to insertmenu method
     const updateImageToStorage = async () => {
-        let response = await fetch(tempImage);
+        let response = await fetch(tempImage2);
         let blob = await response.blob();
 
         firebase
@@ -362,7 +376,7 @@ const MyPage = ({ navigation, route }) => {
                     {/*When clicked go to Open the Modal  */}
                     <TouchableOpacity
                             onPress={() => {
-                                setModalVisible2(true), setTheID(item), setTempImage(item.image), setNewName(item.name),
+                                setModalVisible2(true), setTheID(item), setTempImage2(item.image), setNewName(item.name),
                                 setNewPrice(item.price),
                                 setNewDescription(item.description), console.log(theID.name) }}
                         //onLongPress={() => deleteMenu(item)}
@@ -511,9 +525,9 @@ const MyPage = ({ navigation, route }) => {
 
                 <Modal visible={modalVisible2}>
                     <View style={styles.modal}>
-                        <Button title="Pick an image from camera roll" onPress={pickImage} />
+                        <Button title="Pick an image from camera roll" onPress={pickImage2} />
                     <Image
-                        source={{ uri: tempImage ? tempImage : "../../assets/NoImage.png" }}
+                        source={{ uri: tempImage2 ? tempImage2 : "../../assets/NoImage.png" }}
                         //source={{ uri: theID.image ? theID.image : "../../assets/NoImage.png" }}
                         style={{ width: 200, height: 200 }} />
 
