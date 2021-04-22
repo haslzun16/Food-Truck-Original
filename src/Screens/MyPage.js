@@ -720,40 +720,7 @@ const MyPage = ({ navigation, route }) => {
                         flexDirection: "row",
                     }}
                 >
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: "#F5AF19",
-                            borderRadius: 200,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: 50,
-                            width: 50,
-                            margin: 0,
-                        }}
-                        onPress={editPageNavigation}
-                    >
-                        <MaterialCommunityIcons
-                            name="account-edit"
-                            style={{
-                                alignSelf: "center",
-                                marginTop: 30,
-                                width: "50%",
-                                height: "50%",
-                            }}
-                            size={26}
-                            Account
-                        ></MaterialCommunityIcons>
-                        <Text
-                            style={{
-                                position: "relative",
-                                marginTop: 12,
-                                color: "black",
-                                fontSize: 9,
-                            }}
-                        >
-                            Edit Page
-                        </Text>
-                    </TouchableOpacity>
+                    
                     <View style={{ alignSelf: "center" }}>
                         <TouchableOpacity
                             style={{
