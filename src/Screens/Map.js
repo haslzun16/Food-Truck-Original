@@ -1,7 +1,7 @@
 /**
  * Kalob Reinholz
  *
- * Last edited 3/7/21
+ * Last edited 4/22/2021
  * 
  * Shows the user a map with their location and the location of
  * nearby food trucks
@@ -9,7 +9,7 @@
  * npm install -g react-native-cli
  * npm install react-native-maps
  * npm install @react-native-firebase/database
- * npm install --save react-native-open-maps
+ * npm install --save react-native-open-maps    //https://www.npmjs.com/package/react-native-open-maps
  */
 
 //imports
@@ -19,21 +19,10 @@ import * as firebase from 'firebase';
 import React from "react";
 import { useState, useEffect } from "react";
 import _ from "lodash";
-import {
-    FlatList,
-    Button,
-    View,
-    Modal,
-    Text,
-    TextInput,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    ImageBackground,
-} from "react-native";
+import { View, Text, Image, StyleSheet, } from "react-native";
 import { Platform } from "react-native";
 import { Linking } from "react-native";
-import openMap from 'react-native-open-maps'; //https://www.npmjs.com/package/react-native-open-maps
+import openMap from 'react-native-open-maps';
 
 function Map() {
 
@@ -74,16 +63,12 @@ function Map() {
             setLocations(tempArray);
 
             //prints JSON on venders
-            //console.log("arrrr2: " + JSON.stringify(locations, null, 2));
-            //console.log("arrrr3: " + JSON.stringify(tempArray, null, 2));
-
-            console.log("arrrr3: " + JSON.stringify(tempArray, null, 2));
+            //console.log("tempArray: " + JSON.stringify(tempArray, null, 2));
         });
     }
 
+    //method that opens the users phone and enters the food trucks number
     const dialCall = (number) => {
-
-        console.log("PHONE: " + number)
         let phoneNumber = '';
 
         if (Platform.OS === 'android') {
@@ -97,8 +82,15 @@ function Map() {
         Linking.openURL(phoneNumber);
     };
 
+    //method that opens maps on phone based on OS
     const goToTruck = (lat, lon, name) => {
-        openMap({ latitude: lat, longitude: lon, end: lat + ", " + lon });
+        if (Platform.OS === 'android') {
+            openMap({ latitude: lat, longitude: lon, end: lat + ", " + lon });
+        }
+
+        else {
+            openMap({ latitude: lat, longitude: lon, query: lat + ", " + lon });
+        }
     }
 
 
@@ -109,9 +101,6 @@ function Map() {
             //shows users location
             showsUserLocation={true}
 
-            //should follow the user if they move
-            followsUserLocation={true}
-
             //button to zoom in on users current location
             //there is a bug with this button where the button does not show up unless you rotate the phone 
             showsMyLocationButton={true}
@@ -121,29 +110,40 @@ function Map() {
                 locations.map((marker, i) => (
                     <Marker
                         key={i}
+
+                        //creates the marker
                         coordinate={{
                             latitude: marker.location.latitude,
                             longitude: marker.location.longitude
                         }}
+
                         //use if you want the user to be able to call the truck when they click on it 
                         //onCalloutPress={() => { dialCall(marker.phone) }}
+
+                        //use if you want the user to be able go the the food trucks location in their phone's map
                         onCalloutPress={() => { goToTruck(marker.location.latitude, marker.location.longitude, marker.FoodTruckName) }}
                     >
                         <Callout tooltip>
                             <View style={styles.bubble}>
+
                                 <Text>
                                     <Image
                                         style={styles.image}
                                         //source={require("../../assets/FoodTrucks/FoodTruck1.jpg")}
-                                        source={{ uri: marker.foodTruckImage}}
+                                        source={{ uri: marker.foodTruckImage }}
                                     />
                                 </Text>
+
                                 <Text style={styles.name}>{marker.FoodTruckName}</Text>
+
                                 <Text>Food Type: {marker.FoodType}</Text>
                                 <Text>Phone Number: {marker.phone}</Text>
+
                             </View>
+
                             <View style={styles.arrowBorder} />
                             <View styles={styles.arrow} />
+
                         </Callout>
                     </Marker>
                 ))

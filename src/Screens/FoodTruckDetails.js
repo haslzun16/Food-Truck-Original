@@ -48,11 +48,11 @@ const FoodTruckDetails = ({ navigation, route }) => {
                         disabled={true}>
                         <View
                             style={{
-                         /*       flex: 1,
-                                flexDirection: "row",
-                                backgroundColor: "#F5F5F5",
-                                marginTop: 10,
-                                borderRadius: 20, */
+                                /*       flex: 1,
+                                       flexDirection: "row",
+                                       backgroundColor: "#F5F5F5",
+                                       marginTop: 10,
+                                       borderRadius: 20, */
 
 
 
@@ -132,9 +132,9 @@ const FoodTruckDetails = ({ navigation, route }) => {
                     style={styles.TopImage}
                 />
             </View>
-         <View style={styles.Mid}>
+            <View style={styles.Mid}>
                 {/*  <Text style={styles.FoodTruckName}> Amoroso's Bakery </Text>  */}
-                <Text style={styles.FoodTruckName}> {route.params.item.FoodTruckName} </Text>  
+                <Text style={styles.FoodTruckName}> {route.params.item.FoodTruckName} </Text>
 
                 <View
                     style={{
@@ -146,47 +146,47 @@ const FoodTruckDetails = ({ navigation, route }) => {
                     }}
                 >
 
-                <Text style={styles.Location}>
-                <MaterialCommunityIcons
-                    name="city-variant"
-                    style={{
-                     //   alignSelf: "center",
-                     //   width: 50,
-                     //   height: 50,
-                    }}
-                    size={20}
-                    Account
-                ></MaterialCommunityIcons>
-                    {route.params.item.FoodTruckLocation}
-                </Text>
+                    <Text style={styles.Location}>
+                        <MaterialCommunityIcons
+                            name="city-variant"
+                            style={{
+                                //   alignSelf: "center",
+                                //   width: 50,
+                                //   height: 50,
+                            }}
+                            size={20}
+                            Account
+                        ></MaterialCommunityIcons>
+                        {route.params.item.FoodTruckLocation}
+                    </Text>
 
-                <Text style={styles.Location}>
-                    <MaterialCommunityIcons
-                        name="clock-time-four"
-                        style={{
-                            //   alignSelf: "center",
-                            //   width: 50,
-                            //   height: 50,
-                        }}
-                        size={20}
-                        Account
-                    ></MaterialCommunityIcons>
-                    {route.params.item.hours}
-                </Text>
+                    <Text style={styles.Location}>
+                        <MaterialCommunityIcons
+                            name="clock-time-four"
+                            style={{
+                                //   alignSelf: "center",
+                                //   width: 50,
+                                //   height: 50,
+                            }}
+                            size={20}
+                            Account
+                        ></MaterialCommunityIcons>
+                        {route.params.item.hours}
+                    </Text>
 
-                <Text style={styles.Location}>
-                    <MaterialCommunityIcons
-                        name="silverware"
-                        style={{
-                            //   alignSelf: "center",
-                            //   width: 50,
-                            //   height: 50,
-                        }}
-                        size={20}
-                        Account
-                    ></MaterialCommunityIcons>
-                    {route.params.item.FoodType}
-                </Text>
+                    <Text style={styles.Location}>
+                        <MaterialCommunityIcons
+                            name="silverware"
+                            style={{
+                                //   alignSelf: "center",
+                                //   width: 50,
+                                //   height: 50,
+                            }}
+                            size={20}
+                            Account
+                        ></MaterialCommunityIcons>
+                        {route.params.item.FoodType}
+                    </Text>
 
                 </View>
 
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     Mid: {
         height: "20%",
         width: "100%",
-       // backgroundColor: 'red'
+        // backgroundColor: 'red'
     },
 
     FoodTruckName: {

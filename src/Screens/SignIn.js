@@ -51,68 +51,68 @@ export default function SignIn({ navigation }) {
   };
 
 
-    const forgotPassword = () => {
-        setModalVisible(false);
+  const forgotPassword = () => {
+    setModalVisible(false);
 
-        firebase.auth().sendPasswordResetEmail(email)
-            .then(function (user) {
-                alert('Please check your email.')
-            }).catch(function (e) {
-                console.log(e)
-            })
-    }
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(function (user) {
+        alert('Please check your email.')
+      }).catch(function (e) {
+        console.log(e)
+      })
+  }
 
 
   return (
     <LinearGradient colors={["#F5AF19", "#FC5976"]} style={styles.body}>
 
-          <Modal visible={modalVisible}>
-              <View style={styles.modal}>
+      <Modal visible={modalVisible}>
+        <View style={styles.modal}>
 
-                  <Text style={{ fontSize: 30 }}> Forgot Your Password? </Text>
+          <Text style={{ fontSize: 30 }}> Forgot Your Password? </Text>
 
-                  <Image
-                      style={{
-                          width: 180,
-                          height: 187,
-                          alignItems: "center",
-                          marginTop: 10,
-                      }}
-                      source={require("../../assets/lock.png")}
-                      resizeMode={"cover"}
-                  />
+          <Image
+            style={{
+              width: 180,
+              height: 187,
+              alignItems: "center",
+              marginTop: 10,
+            }}
+            source={require("../../assets/lock.png")}
+            resizeMode={"cover"}
+          />
 
-                  <Text style={{ marginTop: 20, fontSize: 15, textAlign: 'center' }}> Enter your email address to be sent a link to reset your password. </Text>
+          <Text style={{ marginTop: 20, fontSize: 15, textAlign: 'center' }}> Enter your email address to be sent a link to reset your password. </Text>
 
-                  <TextInput
-                      style={styles.textInput2}
-                      placeholder="Enter Email Address"
-                      onChangeText={(text) => setEmail(text)}
-                  />
+          <TextInput
+            style={styles.textInput2}
+            placeholder="Enter Email Address"
+            onChangeText={(text) => setEmail(text)}
+          />
 
-                  <View style={{ flexDirection: "row" }}>
-                      <View style={styles.view2}>
-                          {/* Close and Cancel the Modal */}
-                          <TouchableOpacity
-                              onPress={() => setModalVisible(false)}
-                              style={styles.buttonModal}
-                          >
-                              <Text style={styles.buttonTextModal}>Cancel</Text>
-                          </TouchableOpacity>
-                      </View>
+          <View style={{ flexDirection: "row" }}>
+            <View style={styles.view2}>
+              {/* Close and Cancel the Modal */}
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.buttonModal}
+              >
+                <Text style={styles.buttonTextModal}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
 
-                      <View style={styles.view2}>
-                          {/* Add Profile Image to the database */}
-                          <TouchableOpacity
-                              onPress={() => forgotPassword()}
-                              style={styles.buttonModal}
-                          >
-                              <Text style={styles.buttonTextModal}>Confirm</Text>
-                          </TouchableOpacity>
-                      </View>
-                  </View>
-              </View>
-          </Modal>
+            <View style={styles.view2}>
+              {/* Add Profile Image to the database */}
+              <TouchableOpacity
+                onPress={() => forgotPassword()}
+                style={styles.buttonModal}
+              >
+                <Text style={styles.buttonTextModal}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <View>
         <View style={styles.top}>
@@ -136,7 +136,7 @@ export default function SignIn({ navigation }) {
             <TextInput
               style={styles.textInput}
               placeholder="Email"
-           //   value={email}
+              //   value={email}
               onChangeText={(text) => setEmail(text)}
             />
 
@@ -150,13 +150,15 @@ export default function SignIn({ navigation }) {
             />
 
             <TouchableOpacity
-                style={{    paddingLeft: 5,
+              style={{
+                paddingLeft: 5,
                 textAlign: "left",
-                alignSelf: "stretch",}}
-                onPress={() => setModalVisible(true) }
-                      >
-            <Text style={styles.forgotPass}>Forgot Password?</Text>
-            
+                alignSelf: "stretch",
+              }}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.forgotPass}>Forgot Password?</Text>
+
             </TouchableOpacity>
 
           </View>
@@ -294,7 +296,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-    textInput2: {
+  textInput2: {
     alignSelf: 'center',
     borderWidth: 1,
     backgroundColor: "#fff",
@@ -306,21 +308,21 @@ const styles = StyleSheet.create({
     width: "90%",
     color: 'black',
     fontSize: 16
-},
+  },
 
-buttonModal: {
+  buttonModal: {
     width: 100,
     height: 40,
     marginTop: 10,
     borderRadius: 10,
     backgroundColor: "#FEAD44",
-},
+  },
 
-buttonTextModal: {
+  buttonTextModal: {
     fontSize: 18,
     textAlign: "center",
     margin: 5,
     color: "#FFFFFF",
-},
+  },
 
 });

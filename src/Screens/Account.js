@@ -147,15 +147,15 @@ const Account = ({ navigation }) => {
 
         setModalVisible(false);
 
-/*        var credential = firebase.auth.EmailAuthProvider.credential(
-            firebase.auth().currentUser.email,
-            providedPassword
-        );
-
-        if (currentPassword !== credential) {
-            alert("Passwords do not match.");
-            return;
-        }*/
+        /*        var credential = firebase.auth.EmailAuthProvider.credential(
+                    firebase.auth().currentUser.email,
+                    providedPassword
+                );
+        
+                if (currentPassword !== credential) {
+                    alert("Passwords do not match.");
+                    return;
+                }*/
 
         if (newPassword.length < 6) {
             alert("Password is too short.")
@@ -180,22 +180,22 @@ const Account = ({ navigation }) => {
 
 
     accountDeletionAlert = () => {
-/*        Alert.alert(
-            'Are you sure you want to delete your account?',
-            [
-                { text: 'Yes', onPress: () => deleteaccount },
-                { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
-            ],
-            {
-                cancelable: true
-            }
-        );*/
+        /*        Alert.alert(
+                    'Are you sure you want to delete your account?',
+                    [
+                        { text: 'Yes', onPress: () => deleteaccount },
+                        { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
+                    ],
+                    {
+                        cancelable: true
+                    }
+                );*/
 
         Alert.alert('Delete Account', 'Are you sure you want to delete your account?', [
             { text: 'Yes', onPress: () => deleteaccount() },
             { text: 'No', onPress: () => console.log('Canceled'), style: 'cancel' },
-    ],
-        { cancelable: true });
+        ],
+            { cancelable: true });
 
     }
 
@@ -255,10 +255,10 @@ const Account = ({ navigation }) => {
 
             <View style={styles.MainView2}>
 
-                    <Image
-                        style={styles.profilePic}
-                        source={{ uri: users.profileImage }}
-                    />
+                <Image
+                    style={styles.profilePic}
+                    source={{ uri: users.profileImage }}
+                />
 
                 <Text
                     style={styles.nameText}>
@@ -276,7 +276,7 @@ const Account = ({ navigation }) => {
                         onPress={() => navigation.navigate("EditAccount")}>
                         <Text style={styles.accountText}
                         >Edit Profile</Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         style={styles.newButton}
