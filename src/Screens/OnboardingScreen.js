@@ -10,6 +10,9 @@ import * as React from "react";
 import { Text, Image, TouchableOpacity } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
 import { AuthContext } from "../../App";
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); 
+LogBox.ignoreAllLogs();
 
 //Done button
 const Done = ({ ...props }) => (
@@ -41,8 +44,8 @@ function OnboardingScreen({ navigation }) {
               source={require("../../assets/burger-2.png")}
             />
           ),
-          title: "Onboarding",
-          subtitle: "Done with React Native Onboarding Swiper",
+          title: "Discover",
+          subtitle: "Amazing varieties of food trucks and food!",
         },
         //Second Page
         {
@@ -50,33 +53,33 @@ function OnboardingScreen({ navigation }) {
           image: (
             <Image
               style={{
-                width: 250,
-                height: 130,
+                width: 300,
+                height: 190,
                 alignItems: "center",
                 marginTop: 10,
               }}
-              source={require("../../assets/orange-food-truck.png")}
+              source={require("../../assets/new-megaP.png")}
             />
           ),
-          title: "Onboarding",
-          subtitle: "Done with React Native Onboarding Swiper",
-        },
+          title: "Up-To-Date",
+          subtitle: "Stay informed about food truck announcments in your area! ",
+          },
         //Third Page
-        {
+          {
           backgroundColor: "#F5AF19",
           image: (
             <Image
               style={{
-                width: 250,
-                height: 130,
+                width: 350,
+                height: 230,
                 alignItems: "center",
                 marginTop: 10,
               }}
-              source={require("../../assets/orange-food-truck.png")}
+              source={require("../../assets/mmap.png")}
             />
           ),
-          title: "Onboarding",
-          subtitle: "Done with React Native Onboarding Swiper",
+          title: "Explore",
+          subtitle: "Search for food trucks near you!",
         },
       ]}
       transitionAnimationDuration={0}

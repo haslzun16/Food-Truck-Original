@@ -281,19 +281,6 @@ const Account = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.newButton}
                         onPress={() => navigation.navigate("EditAccount")}>
-                        <MaterialCommunityIcons
-                            name="account-outline"
-                            style={{
-                                //alignSelf: "center",
-                                marginTop: 5,
-                               // paddingLeft: 14,
-                                width: 35,
-                                height: 35,
-                                color: "black"
-                            }}
-                            size={26}
-                            Account
-                        ></MaterialCommunityIcons>
                         <Text style={styles.accountText}
                         >Edit Profile</Text>
                 </TouchableOpacity>
@@ -303,12 +290,6 @@ const Account = ({ navigation }) => {
                         onPress={() => setModalVisible(true)}>
                         <Text style={styles.accountText}
                         >Change Password</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.newButton}>
-                        <Text style={styles.accountText}
-                        >About</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity

@@ -198,8 +198,8 @@ const styles = StyleSheet.create({
     },
 
     image: {
-        width: 120,
-        height: 80,
+        width: 200,
+        height: 150,
     },
 
     fixToText: {

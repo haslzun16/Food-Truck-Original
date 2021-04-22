@@ -12,11 +12,11 @@ import {
 import * as firebase from "firebase";
 import _ from "lodash";
 
-const FoodTruckDetails = ({ navigation, route }) => {
+const AnnouncementDetails = ({ navigation, route }) => {
 
     const [menus, setMenus] = useState([]);
 
-    const [loading, setLoading] = useState(false);
+    const [info, setInfo] = useState([]);
 
     useEffect(() => {
         getMenus();
@@ -24,7 +24,10 @@ const FoodTruckDetails = ({ navigation, route }) => {
 
     const getMenus = () => {
 
-        let menuRef = firebase.database().ref("vender/" + route.params.item.userId + "/menu");
+        console.log("ROUTE ID: " + route.params.item.userid);
+
+        let menuRef = firebase.database().ref("vender/" + route.params.item.userid + "/menu");
+
 
         menuRef.on("value", (snapshot) => {
             let val = snapshot.val();
@@ -33,6 +36,24 @@ const FoodTruckDetails = ({ navigation, route }) => {
             });
 
             setMenus(valToArray);
+
+        });
+    };
+
+
+    useEffect(() => {
+        getFoodTruck();
+    }, []);
+
+    const getFoodTruck = () => {
+
+        let foodTruckRef = firebase.database().ref("vender/" + route.params.item.userid);
+
+        foodTruckRef.on('value', function (snapshot) {
+
+            setInfo(snapshot.val());
+
+           // console.log(info)
 
         });
     };
@@ -47,12 +68,11 @@ const FoodTruckDetails = ({ navigation, route }) => {
                         disabled={true}>
                         <View
                             style={{
-                         /*       flex: 1,
+                          /*      flex: 1,
                                 flexDirection: "row",
                                 backgroundColor: "#F5F5F5",
                                 marginTop: 10,
-                                borderRadius: 20, */
-
+                                borderRadius: 20,  */
 
 
                                 flex: 1,
@@ -78,7 +98,6 @@ const FoodTruckDetails = ({ navigation, route }) => {
                                 // background color must be set
                                 //  backgroundColor: "#0000" // invisible color
                                 backgroundColor: "white"
-
 
                             }}
                         >
@@ -125,20 +144,20 @@ const FoodTruckDetails = ({ navigation, route }) => {
             <View style={styles.Top}>
                 <ImageBackground
                     //source={uri: route.params.item.foodTruckImage}
-                    source={{ uri: route.params.item.foodTruckImage ? route.params.item.foodTruckImage : null }}
+                    source={{ uri: info.foodTruckImage ? info.foodTruckImage : null }}
 
                     //	resizeMode="contain"
                     style={styles.TopImage}
                 />
             </View>
-         <View style={styles.Mid}>
+            <View style={styles.Mid}>
                 {/*  <Text style={styles.FoodTruckName}> Amoroso's Bakery </Text>  */}
-                <Text style={styles.FoodTruckName}> {route.params.item.FoodTruckName} </Text>  
+                <Text style={styles.FoodTruckName}> {route.params.item.vendorname} </Text>
 
                 <Text style={styles.Location}>
-                    {route.params.item.FoodTruckLocation}
+                    {info.FoodTruckLocation}
                 </Text>
-                   
+
             </View>
             <View style={{ height: 1, backgroundColor: "#F5AF19" }} />
 
@@ -167,7 +186,7 @@ const styles = StyleSheet.create({
     Mid: {
         height: "20%",
         width: "100%",
-       // backgroundColor: 'red'
+        // backgroundColor: 'red'
     },
 
     FoodTruckName: {
@@ -252,4 +271,4 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
     },
 });
-export default FoodTruckDetails;
+export default AnnouncementDetails;
