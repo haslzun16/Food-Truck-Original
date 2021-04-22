@@ -48,7 +48,7 @@ function Loading({ navigation }) {
 
   return (
     // <AnimatedLoader
-      
+
     //   //overlayColor="rgba(255,255,255,0.75)"
     //   source={require("../../assets/LoadingImage.json")}
     //   animationStyle={styles.lottie}

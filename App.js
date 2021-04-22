@@ -16,7 +16,8 @@ import "react-native-gesture-handler";
 import * as React from "react";
 import {
     NavigationContainer, DefaultTheme as NavigationDefaultTheme,
-    DarkTheme as NavigationDarkTheme } from "@react-navigation/native";
+    DarkTheme as NavigationDarkTheme
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignIn from "./src/Screens/SignIn";
 import SignUp from "./src/Screens/SignUp";
@@ -228,7 +229,7 @@ export default function App() {
             dispatch({ type: "SET_UP" })
         },
 
-        deleteAccount:  () => {
+        deleteAccount: () => {
 
             var user = firebase.auth().currentUser;
 
@@ -320,75 +321,75 @@ export default function App() {
               console.log(user);
   })*/
 
-  return (
-    <PaperProvider theme={theme}>
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer theme={theme}>
-        <Stack.Navigator>
-          {state.userToken == null ? (
-            state.isLoading ? (
-              <Stack.Screen
-                name="OnBoardingScreen"
-                component={OnBoardingScreen}
-                options={{ headerShown: false }}
-              />
-            ) : (
-              <>
-                <Stack.Screen
-                  name="SignIn"
-                  component={SignIn}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="SignUp"
-                  component={SignUp}
-                  options={{ headerShown: false }}
-                />
-              </>
-            )
-          ) : (
-            <>
-            <Stack.Screen
-                  name="Loading"
-                  component={Loading}
-                  options={{ headerShown: false }}
-                />
-               <Stack.Screen
-                 name="SetUp"
-                 component={SetUp}
-                 options={{ headerShown: false }}
-               />
-               <Stack.Screen
-                 name="BottomNavigation"
-                 component={BottomNavigation}
-                 options={{headerShown: false }}
-              />
-             <Stack.Screen
-                 name="Account"
-                 component={Account}
-                 options={{ headerShown: false }}
-             />
-             <Stack.Screen
-                name="EditAccount"
-                component={EditAccount}
-                options={{ headerShown: false }}
-             />
-            </>
-          )}
-             <Stack.Screen
-                 name="FoodTruckDetails"
-                 component={FoodTruckDetails}
-                 options={{ headerShown: false }}
-             />
-             <Stack.Screen
-                 name="AnnouncementDetails"
-                 component={AnnouncementDetails}
-                 options={{ headerShown: false }}
-             />
+    return (
+        <PaperProvider theme={theme}>
+            <AuthContext.Provider value={authContext}>
+                <NavigationContainer theme={theme}>
+                    <Stack.Navigator>
+                        {state.userToken == null ? (
+                            state.isLoading ? (
+                                <Stack.Screen
+                                    name="OnBoardingScreen"
+                                    component={OnBoardingScreen}
+                                    options={{ headerShown: false }}
+                                />
+                            ) : (
+                                <>
+                                    <Stack.Screen
+                                        name="SignIn"
+                                        component={SignIn}
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="SignUp"
+                                        component={SignUp}
+                                        options={{ headerShown: false }}
+                                    />
+                                </>
+                            )
+                        ) : (
+                            <>
+                                <Stack.Screen
+                                    name="Loading"
+                                    component={Loading}
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="SetUp"
+                                    component={SetUp}
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="BottomNavigation"
+                                    component={BottomNavigation}
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="Account"
+                                    component={Account}
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="EditAccount"
+                                    component={EditAccount}
+                                    options={{ headerShown: false }}
+                                />
+                            </>
+                        )}
+                        <Stack.Screen
+                            name="FoodTruckDetails"
+                            component={FoodTruckDetails}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="AnnouncementDetails"
+                            component={AnnouncementDetails}
+                            options={{ headerShown: false }}
+                        />
 
-                </Stack.Navigator>
-            </NavigationContainer>
-        </AuthContext.Provider>
-      </PaperProvider>
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </AuthContext.Provider>
+        </PaperProvider>
     );
 }

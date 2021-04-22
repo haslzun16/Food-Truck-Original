@@ -55,7 +55,7 @@ const AnnouncementDetails = ({ navigation, route }) => {
 
             setInfo(snapshot.val());
 
-           // console.log(info)
+            // console.log(info)
 
         });
     };
@@ -70,11 +70,11 @@ const AnnouncementDetails = ({ navigation, route }) => {
                         disabled={true}>
                         <View
                             style={{
-                          /*      flex: 1,
-                                flexDirection: "row",
-                                backgroundColor: "#F5F5F5",
-                                marginTop: 10,
-                                borderRadius: 20,  */
+                                /*      flex: 1,
+                                      flexDirection: "row",
+                                      backgroundColor: "#F5F5F5",
+                                      marginTop: 10,
+                                      borderRadius: 20,  */
 
 
                                 flex: 1,

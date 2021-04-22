@@ -11,7 +11,7 @@ import { Text, Image, TouchableOpacity } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
 import { AuthContext } from "../../App";
 import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['Warning: ...']); 
+LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
 
 //Done button
@@ -63,9 +63,9 @@ function OnboardingScreen({ navigation }) {
           ),
           title: "Up-To-Date",
           subtitle: "Stay informed about food truck announcments in your area! ",
-          },
+        },
         //Third Page
-          {
+        {
           backgroundColor: "#F5AF19",
           image: (
             <Image
